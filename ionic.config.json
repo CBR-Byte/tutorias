@@ -1,0 +1,7 @@
+{
+  "name": "tutorias",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react-vite"
+}
