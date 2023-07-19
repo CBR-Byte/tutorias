@@ -1,16 +1,17 @@
-import {IonPage, IonCheckbox, IonButton, IonInput, IonLabel, IonRow, IonIcon, IonContent, IonItem,} from '@ionic/react';
+import {IonPage, IonCheckbox, IonButton, IonInput, IonLabel, IonRow, IonIcon, IonContent, IonItem, IonRouterLink,} from '@ionic/react';
 import {arrowBack} from 'ionicons/icons/';
 import './Register.css';
 
 const Register: React.FC = () => {
   return (
-    <form className="ion-padding">
-    <IonItem lines='none'>   
+    <IonPage className="ion-padding">
+    <IonItem lines='none'>
+      <IonRouterLink routerLink='/home'>
         <IonButton shape='round'>
-        <IonIcon icon={arrowBack} />
-        Regresar
-        </IonButton>
-   
+          <IonIcon icon={arrowBack} />
+            Regresar
+        </IonButton> 
+      </IonRouterLink>   
     </IonItem>
     <IonItem  lines='none'>
         <IonInput shape='round' fill='outline' input-Mode='md' className='form' type='email' placeholder='Correo'></IonInput>
@@ -26,7 +27,7 @@ const Register: React.FC = () => {
     <IonButton className="ion-margin-top" type="submit" expand="block">
       Login
     </IonButton>
-  </form>
+  </IonPage>
   );
 };
 
