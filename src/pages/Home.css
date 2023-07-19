@@ -1,0 +1,35 @@
+.title {
+    margin-bottom: 20%;
+    text-align: center;
+    font-size: 38px;
+}
+
+.form {
+    text-align: left;
+    margin-top: 10%;}
+
+.forget {
+    font-size: 10px;
+}
+
+.grid {
+    margin-top: 50%;
+    align-items: center;
+}
+
+.btn {
+    margin-top: 60%;
+    margin-bottom: 10%;
+}
+
+.circulo {
+    width: 700px;
+    height: 700px;
+    bottom: -45%;
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+    position: absolute;
+    z-index: -1;
+    border-radius: 50%;
+    background: #155B68;
+}
