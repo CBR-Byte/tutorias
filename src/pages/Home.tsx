@@ -9,9 +9,9 @@ import {
   IonRow,
   IonTitle,
   IonRouterLink,
-  InputChangeEventDetail,
   IonContent,
   IonCol,
+  IonImg,
 } from "@ionic/react";
 import "./Home.css";
 import { useEffect, useState } from "react";
@@ -32,23 +32,12 @@ const validationSchema = Yup.object({
 const Home: React.FC = () => {
   const dispatch = useAppDispatch();
   const stateUser = useAppSelector((state) => state.user);
-  const [nombre, setNombre] = useState("");
-  const [contraseña, setContraseña] = useState("");
   const history = useHistory();
   const [modal, setModal] = useState(false);
 
-  const handleInputChange = (event: CustomEvent<InputChangeEventDetail>) => {
-    const target = event.target as HTMLInputElement;
-    const { name, value } = target;
-    if (name === "name") {
-      setNombre(value);
-    } else if (name === "password") {
-      setContraseña(value);
-    }
-  };
 
   const enviarDatos = (data: loginCredentials) => {
-    // Realizar la solicitud Axios con los datos recogidos
+    // Realizar async action con redux para iniciar sesión
     dispatch(onLogin(data));
   };
   const handleCloseAlert = () => {
