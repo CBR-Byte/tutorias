@@ -121,16 +121,16 @@ const Home: React.FC = () => {
                         ¿HAS OLVIDADO LA CONTRASEÑA?{" "}
                       </IonButton>
                       <IonButton
-                        style={{ marginTop: "80px", marginBottom: "20px" }}
+                        className="log"
                         shape='round'
-                        color='warning'
                         slot='start'
                         type='submit'
                       >
                         Iniciar sesión
                       </IonButton>
                       <IonRouterLink routerLink='/register'>
-                        <IonButton shape='round' color='warning'>
+                        <IonButton 
+                          shape='round'>
                           Registrarse
                         </IonButton>
                       </IonRouterLink>

@@ -7,7 +7,7 @@
     position: relative;
 }
 .grid{
-    margin-top: 25vh;
+    margin-top: 28vh;
 }
 .title{
     font-size: 30px;
@@ -17,19 +17,15 @@
     text-align: center;
 }
 .row {
-    margin-top: 10%;
-    margin-bottom: 10%;
+    margin-top: 5vh;
     margin-left: 20%;
     margin-right: 20%;
     max-height: 40px;
-}
-.button {
     text-align: center;
 }
 .forget {
     overflow: visible;
     font-size: 10px;
-    margin-top: -10px;
     font-weight: 700;
 }
 .logo {
@@ -50,11 +46,12 @@
 .circles {
     width:200vw;
     position: absolute;
-    top: 65%;
+    top: 70vh;
     left: -50vw;background: #155B68;
     height :200vw;
     border-radius: 50%;
   }
   .log {
-    margin-top:15vh;
+    margin-top:17vh;
+    margin-bottom:10px;
   }
