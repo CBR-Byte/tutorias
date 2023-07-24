@@ -1,0 +1,44 @@
+.circle1 {
+    width: 75vw;
+    height: 75vw;
+    position: absolute;
+    top: 33vh;
+    left: 60vw;
+    border-radius: 50%;
+    background: #F3A506;
+}
+.circles2 {   
+    width: 100vw;
+    height: 100vw;
+    position: absolute;
+    border-radius: 50%;
+    background: #155B68;
+}
+.top {
+    top: -15vh;
+    left: -25vw;
+}
+.bottom {
+    top: 70vh;
+    left: -25vw;
+}
+.circles3 {
+    width: 50vw;
+    height: 50vw;
+    position: absolute;
+    border-radius: 50%;
+    border: solid 10px #1F3040;
+    fill: none;
+}
+.top2 {
+    top: -7.5vh;
+    left: -12.5vw;
+}
+.bottom2 {
+    top: 85vh;
+    left: -12.5vw;
+}   
+.bottom3 {
+    top: 39vh;
+    left: 80vw;
+}

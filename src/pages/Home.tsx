@@ -1,4 +1,4 @@
-import { IonButton, IonAlert ,IonGrid, IonInput, IonPage, IonRow, IonTitle, IonRouterLink, InputChangeEventDetail, IonContent, IonCol, IonText} from '@ionic/react';
+import { IonButton, IonImg ,IonAlert ,IonGrid, IonInput, IonPage, IonRow, IonTitle, IonRouterLink, InputChangeEventDetail, IonContent, IonCol, IonText} from '@ionic/react';
 import './Home.css';
 import axios from 'axios';
 import { useState } from 'react';
@@ -45,38 +45,38 @@ const Home: React.FC = () => {
   };
 
   return (
-    <IonPage>
-      <IonContent scrollEvents={false}>
+    <IonPage className='page'>
+      <IonContent className='content' scrollY={false} >
+        <div className="circles"/>
+        <div className='circle'/>
         <IonGrid className='grid'>
           <IonRow>
             <IonCol>
-              <IonTitle className="ion-text-center">Tutoriaap</IonTitle>
+              <IonTitle className="title">Tutoriaap</IonTitle>
             </IonCol>
           </IonRow>
-          <IonRow>
+          <IonRow className='row'>
             <IonCol>
               <IonInput input-Mode='md' fill='outline' shape='round' name="name" type="email" placeholder="Correo" onIonChange={handleInputChange}></IonInput>
             </IonCol>
           </IonRow>
-          <IonRow>
+          <IonRow className='row'>
             <IonCol>
               <IonInput input-Mode='md' fill='outline' shape='round' name="password" type="password" placeholder="Contraseña" onIonChange={handleInputChange}></IonInput>
             </IonCol>
           </IonRow>
-          <IonRow >
-            <IonCol>
+          <IonRow className='row'>
+            <IonCol className='button'>
               <IonButton className='forget' fill='clear' color={'secondary'}> ¿HAS OLVIDADO LA CONTRASEÑA? </IonButton>
             </IonCol>
           </IonRow>
-          <IonRow>
-            <IonCol>
+          <IonRow className='row log'>
+            <IonCol className='button'>
               <IonButton onClick={enviarDatos} shape='round'>
                 Iniciar sesión
               </IonButton>
             </IonCol>
-          </IonRow>
-          <IonRow>
-            <IonCol>
+            <IonCol className='button'>
               <IonRouterLink routerLink="/register">
                 <IonButton shape='round'>
                   Registrarse
@@ -84,7 +84,10 @@ const Home: React.FC = () => {
               </IonRouterLink>
             </IonCol>
           </IonRow>
+          <IonRow>
+          </IonRow>
         </IonGrid>
+        <IonImg className='logo' src='assets/images/logo.png'/>
         <IonAlert isOpen={modal} 
         onDidDismiss={handleCloseAlert} 
         header={'Error'} 

@@ -1,18 +1,60 @@
+.page {
+    display: flex;
+    align-items: center;
+}
 .content {
+    flex-grow: 1;
+    position: relative;
 }
 .grid{
+    margin-top: 25vh;
+}
+.title{
+    font-size: 30px;
+    font-weight: 700;
+    margin-bottom: 1%;
+    font-family: "Roboto",sans-serif;
     text-align: center;
-    margin-top: 60%;
 }
-
-.circulo {
-    max-width: 700px;
-    max-height: 700px;
-    bottom: -45%;
-    -moz-border-radius: 50%;
-    -webkit-border-radius: 50%;
+.row {
+    margin-top: 10%;
+    margin-bottom: 10%;
+    margin-left: 20%;
+    margin-right: 20%;
+    max-height: 40px;
+}
+.button {
+    text-align: center;
+}
+.forget {
+    overflow: visible;
+    font-size: 10px;
+    margin-top: -10px;
+    font-weight: 700;
+}
+.logo {
+    top: 2%;
+    left: 73%;
+    width: 25%;
     position: absolute;
-    z-index: -1;
-    border-radius: 50%;
-    background: #155B68;
 }
+.circle {
+    width:65%;
+    height :65vw;
+    position: absolute;
+    top: -10vh;
+    left: 60vw;
+    border-radius: 50%;
+    background: #F3A506;
+}
+.circles {
+    width:200vw;
+    position: absolute;
+    top: 65%;
+    left: -50vw;background: #155B68;
+    height :200vw;
+    border-radius: 50%;
+  }
+  .log {
+    margin-top:15vh;
+  }
