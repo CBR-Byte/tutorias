@@ -1,0 +1,9 @@
+.inp {
+    border-radius: 20px;
+    border: 2px solid #465869;
+    background-color: #D9D9D9;
+    height: 35px;
+    width: 50vw;
+    font-weight: bold;
+    color: rgb(0, 0, 0);
+}

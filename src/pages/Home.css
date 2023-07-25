@@ -7,6 +7,7 @@
     position: relative;
 }
 .grid{
+    text-align: center;
     margin-top: 28vh;
 }
 .title{
@@ -14,7 +15,6 @@
     font-weight: 700;
     margin-bottom: 1%;
     font-family: "Roboto",sans-serif;
-    text-align: center;
 }
 .row {
     margin-top: 5vh;
@@ -51,6 +51,6 @@
     border-radius: 50%;
   }
 .log {
-margin-top:17vh;
-margin-bottom:10px;
+    margin-top:17vh;
+    margin-bottom:10px;
 }

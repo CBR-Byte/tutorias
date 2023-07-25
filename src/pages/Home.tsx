@@ -63,7 +63,7 @@ const Home: React.FC = () => {
             </IonCol>
           </IonRow>
           <IonRow className='row'>
-            <IonCol>
+            <IonCol className="">
               <Formik
                 initialValues={{
                   email: "",
@@ -77,7 +77,7 @@ const Home: React.FC = () => {
               >
                 {(formikProps) => (
                   <div>
-                    <form onSubmit={formikProps.handleSubmit}>
+                    <form className="form" onSubmit={formikProps.handleSubmit}>
                       <IonInput
                         type='email'
                         name='email'
