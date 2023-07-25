@@ -1,17 +1,29 @@
-import {IonContent, IonInput, IonLabel,} from '@ionic/react';
+import { IonInput, IonLabel,} from '@ionic/react';
+import React from 'react';
 import './Inputlogin.css';
 
 interface InputloginProps {
-    label: string;
+    label?: string;
+    type?: any;
+    name: string;
+    placeholder: string;
+    value: string;
+    onChange: any;
+    onBlur: any;
 }
 
-const Inputlogin: React.FC<InputloginProps> = ({ label }) => {
+const Inputlogin: React.FC<InputloginProps>= ({ value, label, name, type, placeholder, onChange, onBlur }) => {
   return (
     <>
         <IonLabel> {label} </IonLabel>
         <IonInput
           className='inp'
-          placeholder= {"ingrese su " + label} />
+          value={value}
+          type={type}
+          onIonChange={onChange}
+          name={name}
+          onIonBlur={onBlur}
+          placeholder= {" Ingrese su " + placeholder.toLowerCase()} />
     </>
     
   );

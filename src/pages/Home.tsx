@@ -63,7 +63,7 @@ const Home: React.FC = () => {
             </IonCol>
           </IonRow>
           <IonRow className='row'>
-            <IonCol className="">
+            <IonCol>
               <Formik
                 initialValues={{
                   email: "",
