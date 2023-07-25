@@ -1,4 +1,4 @@
-import {IonCheckbox, IonButton, IonInput, IonLabel, IonRow, IonIcon, IonItem, IonRouterLink, IonGrid, IonCol,} from '@ionic/react';
+import {IonCheckbox, IonButton, IonInput, IonLabel, IonRow, IonIcon, IonItem, IonRouterLink, IonGrid, IonCol, IonContent,} from '@ionic/react';
 import {arrowBack} from 'ionicons/icons/';
 import './Register.css';
 import Bg from '../components/Bg/Bg';
@@ -6,7 +6,7 @@ import Bg from '../components/Bg/Bg';
 const Register: React.FC = () => {
   return (
     <Bg>
-      <IonGrid>
+      <IonGrid >
         <IonRow className='form'>
           <IonCol>
             <IonRouterLink routerLink='/home'>
@@ -15,6 +15,136 @@ const Register: React.FC = () => {
                     Regresar
               </IonButton> 
             </IonRouterLink>   
+          </IonCol>
+        </IonRow>
+        <IonRow className='row'>
+          <IonCol>
+            <IonInput
+              input-Mode='md'
+              fill='outline'
+              shape='round'
+              placeholder='nombre'>
+            </IonInput>
+          </IonCol>
+        </IonRow>
+        <IonRow className='row'>
+          <IonCol>
+            <IonInput
+              input-Mode='md'
+              fill='outline'
+              shape='round'
+              placeholder='nombre'>
+            </IonInput>
+          </IonCol>
+        </IonRow>
+        <IonRow className='row'>
+          <IonCol>
+            <IonInput
+              input-Mode='md'
+              fill='outline'
+              shape='round'
+              placeholder='nombre'>
+            </IonInput>
+          </IonCol>
+        </IonRow>
+        <IonRow className='row'>
+          <IonCol>
+            <IonInput
+              input-Mode='md'
+              fill='outline'
+              shape='round'
+              placeholder='nombre'>
+            </IonInput>
+          </IonCol>
+        </IonRow>
+        <IonRow className='row'>
+          <IonCol>
+            <IonInput
+              input-Mode='md'
+              fill='outline'
+              shape='round'
+              placeholder='nombre'>
+            </IonInput>
+          </IonCol>
+        </IonRow>
+        <IonRow className='row'>
+          <IonCol>
+            <IonInput
+              input-Mode='md'
+              fill='outline'
+              shape='round'
+              placeholder='nombre'>
+            </IonInput>
+          </IonCol>
+        </IonRow>
+        <IonRow className='row'>
+          <IonCol>
+            <IonInput
+              input-Mode='md'
+              fill='outline'
+              shape='round'
+              placeholder='nombre'>
+            </IonInput>
+          </IonCol>
+        </IonRow>
+        <IonRow className='row'>
+          <IonCol>
+            <IonInput
+              input-Mode='md'
+              fill='outline'
+              shape='round'
+              placeholder='nombre'>
+            </IonInput>
+          </IonCol>
+        </IonRow>
+        <IonRow className='row'>
+          <IonCol>
+            <IonInput
+              input-Mode='md'
+              fill='outline'
+              shape='round'
+              placeholder='nombre'>
+            </IonInput>
+          </IonCol>
+        </IonRow>
+        <IonRow className='row'>
+          <IonCol>
+            <IonInput
+              input-Mode='md'
+              fill='outline'
+              shape='round'
+              placeholder='nombre'>
+            </IonInput>
+          </IonCol>
+        </IonRow>
+        <IonRow className='row'>
+          <IonCol>
+            <IonInput
+              input-Mode='md'
+              fill='outline'
+              shape='round'
+              placeholder='nombre'>
+            </IonInput>
+          </IonCol>
+        </IonRow>
+        <IonRow className='row'>
+          <IonCol>
+            <IonInput
+              input-Mode='md'
+              fill='outline'
+              shape='round'
+              placeholder='nombre'>
+            </IonInput>
+          </IonCol>
+        </IonRow>
+        <IonRow className='row'>
+          <IonCol>
+            <IonInput
+              input-Mode='md'
+              fill='outline'
+              shape='round'
+              placeholder='nombre'>
+            </IonInput>
           </IonCol>
         </IonRow>
       </IonGrid>

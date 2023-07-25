@@ -21,7 +21,6 @@
     margin-left: 20%;
     margin-right: 20%;
     max-height: 40px;
-    text-align: center;
 }
 .forget {
     overflow: visible;
@@ -41,7 +40,7 @@
     top: -10vh;
     left: 60vw;
     border-radius: 50%;
-    background: #F3A506;
+    background: #c2c0ba;
 }
 .circles {
     width:200vw;
@@ -51,7 +50,7 @@
     height :200vw;
     border-radius: 50%;
   }
-  .log {
-    margin-top:17vh;
-    margin-bottom:10px;
-  }
+.log {
+margin-top:17vh;
+margin-bottom:10px;
+}
