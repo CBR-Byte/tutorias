@@ -3,7 +3,6 @@ import { IonApp, IonRouterOutlet, setupIonicReact } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import Home from './pages/Home';
 import Register from './pages/Register';
-import Horarios from './pages/Horarios';
 import Inicio from './pages/Inicio';
 import UserForm from './pages/UserForm';
 /* Core CSS required for Ionic components to work properly */
@@ -45,9 +44,6 @@ const App: React.FC = () => (
         </Route>
         <Route exact path="/userForm">
           <UserForm />
-        </Route>
-        <Route exact path="/horario">
-          <Horarios />
         </Route>
       </IonRouterOutlet>
     </IonReactRouter>

@@ -1,18 +1,14 @@
 /** @format */
 
 import {
-    IonCheckbox,
     IonButton,
-    IonInput,
     IonLabel,
     IonRow,
     IonIcon,
-    IonItem,
     IonRouterLink,
     IonGrid,
     IonCol,
-    IonContent,
-    IonSelect,
+    IonModal,
   } from "@ionic/react";
   import { arrowBack } from "ionicons/icons/";
   import "./UserForm.css";
@@ -21,6 +17,7 @@ import {
   import GridHorarios from "../components/GridHorarios/GridHorarios";
   import { Field, Form, Formik } from "formik";
   import * as Yup from "yup";
+import { useRef, useState } from "react";
   
   const validationSchema = Yup.object({
     carrera: Yup.string().required("Carrera requerida"),
@@ -29,10 +26,18 @@ import {
     presupuesto: Yup.number().required("Presupuesto Requerido"),
     metodo: Yup.array().required("Método Requerido"),
     grupo: Yup.array().required("Grupo Requerido"),
-    //disponibilidad: Yup.string().required("Disponibilidad Requerida"),
   });
+
+  export interface Slot {
+    day: number;
+    hour: number;
+  }
   
   const UserForm: React.FC = () => {
+
+    const modal = useRef<HTMLIonModalElement>(null);
+    const [selectedSlots, setSelectedSlots] = useState<Slot[]>([]);
+
     return (
       <Bg>
         <IonGrid>
@@ -56,14 +61,16 @@ import {
               <Formik
                 initialValues={{
                   carrera: "",
-                  semestre: 0,
+                  semestre:"",
                   formato: [],
-                  presupuesto: 0,
+                  presupuesto: "",
                   metodo: [],
-                  grupo:[]
+                  grupo:[],
+                  disponibilidad:selectedSlots,
                 }}
                 validationSchema={validationSchema}
                 onSubmit={(values) => {
+                  values.disponibilidad = selectedSlots;
                   alert(JSON.stringify(values));
                   console.log(values)
                 }}
@@ -171,9 +178,13 @@ import {
                         </div>
                       ) : null}
                       <div className="btn">
-                        <IonRouterLink routerLink="/horario">
-                            <IonButton type='submit'>Continuar</IonButton>
-                        </IonRouterLink>
+                        <IonButton id="open-modal" expand="block" >Disponibilidad</IonButton>
+                        <IonModal ref={modal} trigger="open-modal" >
+                          <GridHorarios modal={modal} estado={selectedSlots} actualizar={setSelectedSlots}/>
+                        </IonModal>
+                      </div>
+                      <div className="btn">
+                        <IonButton shape='round' type='submit'>Enviar</IonButton>
                       </div>
                     </Form>
                   </div>
