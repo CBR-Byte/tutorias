@@ -1,0 +1,22 @@
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-gap: 2px;
+}
+.grid-item {
+border: 1px solid #000;
+padding: 10px;
+text-align: center;
+cursor: pointer;
+}
+.selected {
+background-color: yellow;
+}
+.contenedor {
+    display: flex;
+    align-items:center;
+}
+.titulo {
+    text-align: center;
+    margin-top: 2vh;
+}

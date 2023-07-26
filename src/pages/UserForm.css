@@ -1,20 +1,21 @@
 .rol {
     display: flex;
-    align-items: center;
+    align-items: right;
     margin-top: 1vh;
     margin-bottom: 1vh;
+    width: 60vw;
 }
 .category {
-    margin-right: 2vw;
+    margin-right: 0vw;
 }
 .options {
     border-radius: 20px;
     border: 2px solid #465869;
     background-color: #D9D9D9;
     padding-left: 2vw;
-    padding-top:1vh;
+    padding-top:0.3vh;
     height: 7vh;
-    width: 63vw;
+    width: 60vw;
     color: rgb(0, 0, 0);
 } 
 .reg {
@@ -23,7 +24,7 @@
     margin-bottom: 1%;
     font-family: "Roboto",sans-serif;
     text-align: center;
-    margin-top: 12vh;
+    margin-top: 5vh;
 }
 .btn {
     text-align: center;

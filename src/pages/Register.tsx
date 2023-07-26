@@ -53,6 +53,11 @@ const Register: React.FC = () => {
             </IonRouterLink>
           </IonCol>
         </IonRow>
+        <IonRow className="reg">
+          <IonCol>
+            <IonLabel >Registro</IonLabel>
+          </IonCol>
+        </IonRow>
         <IonRow className='row'>
           <IonCol>
             <Formik
@@ -133,23 +138,28 @@ const Register: React.FC = () => {
                         {formikProps.errors.passwordConfirmation}
                       </div>
                     ) : null}
-                    
-                    <IonLabel>Category:</IonLabel>
-                    <Field
-                      as='select'
-                      name='rol'
-                      multiple={true}
-                    >
+                    <div className="rol">
+                      <IonLabel className="category">Category: </IonLabel>
+                      <Field
+                        className="options"
+                        as='select'
+                        name='rol'
+                        multiple={true}
+                      >
                       <option value="Estudiante">Estudiante</option>
                       <option value="Tutor">Tutor</option>
-                      
-                    </Field>
+                      </Field>
+                    </div>
                     {formikProps.touched.rol && formikProps.errors.rol ? (
                       <div style={{ color: "red" }}>
                         {formikProps.errors.rol}
                       </div>
                     ) : null}
-                    <IonButton type='submit'>Prueba</IonButton>
+                    <div className="btn">
+                      <IonRouterLink routerLink="/userForm">
+                        <IonButton type='submit'>Registrarse</IonButton>
+                      </IonRouterLink>
+                    </div>
                   </Form>
                 </div>
               )}
