@@ -13,10 +13,10 @@ import {
   IonCol,
   IonImg,
 } from "@ionic/react";
-import "./Home.css";
+import "./Login.css";
 import { useEffect, useState } from "react";
 import { loginCredentials } from "../components/redux/states/userSlice";
-import { onLogin, changeError } from "../components/redux/states/userSlice";
+import { onLogin, changeErrorLogin } from "../components/redux/states/userSlice";
 import { useAppDispatch, useAppSelector } from "../components/redux/hooks";
 import { useHistory } from "react-router-dom";
 import { Formik } from "formik";
@@ -41,21 +41,29 @@ const Home: React.FC = () => {
     dispatch(onLogin(data));
   };
   const handleCloseAlert = () => {
-    dispatch(changeError());
+    dispatch(changeErrorLogin());
   };
 
   useEffect(() => {
     if (stateUser.isAuthenticated) {
       history.push("/inicio");
     }
-    setModal(stateUser.error);
-  }, [stateUser.error, stateUser.isAuthenticated]);
+    setModal(stateUser.errorLogin);
+  }, [stateUser.errorLogin, stateUser.isAuthenticated]);
 
   return (
     <IonPage className='page'>
       <IonContent className='content' scrollY={false} >
         <div className="circles"/>
         <div className='circle'/>
+        <IonImg className='logo' src='assets/images/logo.png'/>
+        <IonAlert
+          isOpen={modal}
+          onDidDismiss={handleCloseAlert}
+          header={"Error"}
+          message={stateUser.errorMessage}
+          buttons={["OK"]}
+        />
         <IonGrid className='grid'>
           <IonRow>
             <IonCol>
@@ -143,14 +151,6 @@ const Home: React.FC = () => {
           <IonRow>
           </IonRow>
         </IonGrid>
-        <IonImg className='logo' src='assets/images/logo.png'/>
-        <IonAlert
-          isOpen={modal}
-          onDidDismiss={handleCloseAlert}
-          header={"Error"}
-          message={"Email o contraseña incorrectos"}
-          buttons={["OK"]}
-        />
       </IonContent>
     </IonPage>
   );
