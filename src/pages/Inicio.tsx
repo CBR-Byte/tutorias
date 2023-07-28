@@ -28,15 +28,12 @@ const Inicio: React.FC = () => {
     dispatch(logOut());
   }
 
-  useEffect(() => {
-    if (!stateUser.isAuthenticated) {
-      history.push('/');
-    }
-  }, [stateUser.isAuthenticated])
+  
   return (
     <IonPage>
       <IonContent>
-        <IonTitle class="ion-text-center">Bienvenido {stateUser.user?.name}</IonTitle>   
+        <IonTitle class="ion-text-center">Bienvenido </IonTitle>   
+          <IonRouterLink href="/" className="ion-text-center">Ir a registro</IonRouterLink>
           <IonButton onClick={closeSesion} shape='round'>Cerrar sesión</IonButton>
       </IonContent>
     </IonPage>

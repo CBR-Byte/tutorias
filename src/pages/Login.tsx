@@ -16,11 +16,12 @@ import {
 import "./Login.css";
 import { useEffect, useState } from "react";
 import { loginCredentials } from "../components/redux/states/userSlice";
-import { onLogin, changeErrorLogin } from "../components/redux/states/userSlice";
+import { onLogin, changeErrorLogin, verify } from "../components/redux/states/userSlice";
 import { useAppDispatch, useAppSelector } from "../components/redux/hooks";
 import { useHistory } from "react-router-dom";
 import { Formik } from "formik";
 import * as Yup from "yup";
+import { storage } from "../components/redux/store";
 
 const validationSchema = Yup.object({
   email: Yup.string().email("Invalid email address").required("Email Required"),
@@ -44,12 +45,19 @@ const Home: React.FC = () => {
     dispatch(changeErrorLogin());
   };
 
-  useEffect(() => {
-    if (stateUser.isAuthenticated) {
-      history.push("/inicio");
+  const verifyToken = async () => {
+    const token = await storage.get('data')
+    if(token !== null){
+      dispatch(verify(token));
     }
+    return;
+  }
+  
+  useEffect(() => {
     setModal(stateUser.errorLogin);
-  }, [stateUser.errorLogin, stateUser.isAuthenticated]);
+    verifyToken();
+    
+  }, [dispatch,stateUser.errorLogin, stateUser.isAuthenticated]);
 
   return (
     <IonPage className='page'>

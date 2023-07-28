@@ -17,9 +17,10 @@ import Inputlogin from "../components/Inputlogin/Inputlogin";
 import { Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import { useAppDispatch, useAppSelector } from "../components/redux/hooks";
-import { changeErrorRegister, onSignUp } from "../components/redux/states/userSlice";
+import { changeErrorRegister, onSignUp, verify } from "../components/redux/states/userSlice";
 import { useHistory } from "react-router";
 import { useEffect, useState } from "react";
+import { storage } from "../components/redux/store";
 
 const validationSchema = Yup.object({
   name: Yup.string().required("Nombre Requerido"),
@@ -47,13 +48,17 @@ const Register: React.FC = () => {
   const handleCloseAlert = () => {
     dispatch(changeErrorRegister());
   };
-
-  useEffect(() => {
-    if (stateUser.isAuthenticated) {
-      history.push("/inicio");
+  const verifyToken = async () => {
+    const token = await storage.get('data')
+    if(token !== null){
+      dispatch(verify(token));
     }
+    return;
+  }
+  verifyToken();
+  useEffect(() => {
     setModal(stateUser.errorRegister);
-  }, [stateUser.errorRegister, stateUser.isAuthenticated]);
+  }, [stateUser.errorRegister]);
   return (
     <Bg >
       <IonAlert
@@ -66,7 +71,7 @@ const Register: React.FC = () => {
       <IonGrid>
         <IonRow>
           <IonCol>
-            <IonRouterLink routerLink='/home'>
+            <IonRouterLink routerLink='/login'>
               <IonButton shape='round'>
                 <IonIcon icon={arrowBack} />
                 Regresar
@@ -177,6 +182,7 @@ const Register: React.FC = () => {
                         {formikProps.errors.is_tutor}
                       </div>
                     ) : null}
+                    
                     <div className='btn'>
                       <IonButton type='submit'>Registrarse</IonButton>
                     </div>

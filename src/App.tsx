@@ -1,11 +1,14 @@
 import { Redirect, Route } from 'react-router-dom';
 import { IonApp, IonRouterOutlet, setupIonicReact } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import Home from './pages/Login';
+import Login from './pages/Login';
 import Register from './pages/Register';
 import Horarios from './pages/Horarios';
 import Inicio from './pages/Inicio';
 import UserForm from './pages/UserForm';
+import TutorForm from './pages/TutorForm';
+import { PublicRoute } from './components/routes/PublicRoute';
+import { PrivateRoute } from './components/routes/PrivateRoute';
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
 
@@ -31,23 +34,32 @@ const App: React.FC = () => (
   <IonApp>
     <IonReactRouter>
       <IonRouterOutlet>
-        <Route exact path="/home">
-          <Home />
+        <Route exact path="/login">
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
         </Route>
         <Route exact path="/">
-          <Redirect to="/home" />
+          <Redirect to="/login" />
         </Route>
         <Route exact path="/register">
+        <PublicRoute>
           <Register />
+        </PublicRoute>
         </Route>
         <Route exact path="/inicio">
-          <Inicio />
+          <PrivateRoute>
+            <Inicio />
+          </PrivateRoute>
         </Route>
         <Route exact path="/userForm">
           <UserForm />
         </Route>
         <Route exact path="/horario">
           <Horarios />
+        </Route>
+        <Route exact path="/tutorform">
+          <TutorForm />
         </Route>
       </IonRouterOutlet>
     </IonReactRouter>

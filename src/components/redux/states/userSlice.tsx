@@ -44,12 +44,41 @@ export interface loginCredentials {
   password: string;
 }
 
+export type token = {
+  token: string;
+  refresh: string;
+  email: string;
+};
+
+export const verify = createAsyncThunk<
+  any,
+  token,
+  { rejectValue: MyErrorType }
+>("user/verify", async (data, thunkAPI) => {
+  try {
+    
+    const token_access = JSON.parse(data.token);
+    const token_refresh = JSON.parse(data.refresh);
+    const email = JSON.parse(data.email);
+    
+    const response = await axios.get(
+      `http://127.0.0.1:8000/users/${email}`,
+      {headers: {
+        'Authorization': `Bearer ${token_access}`
+      }}
+    );
+    console.log(response.data);
+    return {access_token: token_access, refresh_token: token_refresh, status: "success",user:response.data};
+  } catch (err: any) {
+    return thunkAPI.rejectWithValue({ errorMessage: err.response.data.detail });
+  }
+});
+
 export const onLogin = createAsyncThunk<
   any,
   loginCredentials,
   { rejectValue: MyErrorType }
->
-("user/login", async (credentials, thunkAPI) => {
+>("user/login", async (credentials, thunkAPI) => {
   try {
     const response = await axios.post(
       "http://127.0.0.1:8000/users/login",
@@ -144,6 +173,20 @@ export const userSlice = createSlice({
       .addCase(onSignUp.rejected, (state, action) => {
         state.errorRegister = true;
         state.errorMessage = action.payload?.errorMessage;
+      })
+      .addCase(verify.fulfilled, (state, action) => {
+        state.status = action.payload.status;
+        state.access_token = action.payload.access_token;
+        state.refresh_token = action.payload.refresh_token;
+        state.token_type = "bearer";
+        state.errorMessage = "";
+        state.errorRegister = false;
+        state.isAuthenticated = true;
+        state.user = action.payload.user;
+        
+      })
+      .addCase(verify.rejected, (state, action) => {
+        alert(action.payload?.errorMessage);
       });
   },
 });
