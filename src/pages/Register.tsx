@@ -43,7 +43,6 @@ const validationSchema = Yup.object({
 const Register: React.FC = () => {
   const dispatch= useAppDispatch();
   const stateUser = useAppSelector((state) => state.user);
-  const history = useHistory();
   const [modal, setModal] = useState(false);
   const handleCloseAlert = () => {
     dispatch(changeErrorRegister());
@@ -55,10 +54,11 @@ const Register: React.FC = () => {
     }
     return;
   }
-  verifyToken();
+  
   useEffect(() => {
     setModal(stateUser.errorRegister);
-  }, [stateUser.errorRegister]);
+    verifyToken();
+  }, [dispatch,stateUser.errorRegister]);
   return (
     <Bg >
       <IonAlert

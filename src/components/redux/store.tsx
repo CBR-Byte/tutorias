@@ -25,7 +25,7 @@ const deleteData = async () => {
 };
 
 const loginMiddleware = (store:any) => (next:any) => (action:any) => {
-  if (action.type === 'user/login/fulfilled') {
+  if (action.type === 'user/login/fulfilled' || action.type === 'user/signUp/fulfilled') {
     console.log(action.payload)
     storeData(action.payload);
   }
