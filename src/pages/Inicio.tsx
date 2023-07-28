@@ -32,7 +32,7 @@ const Inicio: React.FC = () => {
   return (
     <IonPage>
       <IonContent>
-        <IonTitle class="ion-text-center">Bienvenido </IonTitle>   
+        <IonTitle class="ion-text-center">Bienvenido {stateUser.user.name}</IonTitle>   
           <IonRouterLink href="/" className="ion-text-center">Ir a registro</IonRouterLink>
           <IonButton onClick={closeSesion} shape='round'>Cerrar sesión</IonButton>
       </IonContent>

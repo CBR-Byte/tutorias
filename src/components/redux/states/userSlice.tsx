@@ -67,7 +67,6 @@ export const verify = createAsyncThunk<
         'Authorization': `Bearer ${token_access}`
       }}
     );
-    console.log(response.data);
     return {access_token: token_access, refresh_token: token_refresh, status: "success",user:response.data};
   } catch (err: any) {
     return thunkAPI.rejectWithValue({ errorMessage: err.response.data.detail });
