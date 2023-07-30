@@ -54,12 +54,6 @@ const App: React.FC = () => (
         <Route exact path="/userForm">
           <UserForm />
         </Route>
-        <Route exact path="/horario">
-          <Horarios />
-        </Route>
-        <Route exact path="/tutorform">
-          <TutorForm />
-        </Route>
       </IonRouterOutlet>
     </IonReactRouter>
   </IonApp>
