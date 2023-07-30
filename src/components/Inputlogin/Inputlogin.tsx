@@ -7,7 +7,7 @@ interface InputloginProps {
     type?: any;
     name: string;
     placeholder: string;
-    value: string;
+    value: string | number;
     onChange: any;
     onBlur: any;
 }

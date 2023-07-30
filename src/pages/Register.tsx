@@ -1,18 +1,14 @@
 /** @format */
 
 import {
-  IonCheckbox,
   IonButton,
-  IonInput,
   IonLabel,
   IonRow,
   IonIcon,
-  IonItem,
   IonRouterLink,
   IonGrid,
   IonCol,
-  IonContent,
-  IonSelect,
+  IonAlert,
 } from "@ionic/react";
 import { arrowBack } from "ionicons/icons/";
 import "./Register.css";
@@ -20,9 +16,14 @@ import Bg from "../components/Bg/Bg";
 import Inputlogin from "../components/Inputlogin/Inputlogin";
 import { Field, Form, Formik } from "formik";
 import * as Yup from "yup";
+import { useAppDispatch, useAppSelector } from "../components/redux/hooks";
+import { changeErrorRegister, onSignUp, verify } from "../components/redux/states/userSlice";
+import { useHistory } from "react-router";
+import { useEffect, useState } from "react";
+import { storage } from "../components/redux/store";
 
 const validationSchema = Yup.object({
-  user: Yup.string().required("Nombre Requerido"),
+  name: Yup.string().required("Nombre Requerido"),
   email: Yup.string()
     .email("Correo electronico inválido")
     .required("Email Requerido"),
@@ -36,16 +37,41 @@ const validationSchema = Yup.object({
       return this.parent.password === value;
     }
   ),
-  rol: Yup.array().required("Rol Requerido"),
+  is_tutor: Yup.string().required("Rol Requerido"),
 });
 
 const Register: React.FC = () => {
+  const dispatch= useAppDispatch();
+  const stateUser = useAppSelector((state) => state.user);
+  const [modal, setModal] = useState(false);
+  const handleCloseAlert = () => {
+    dispatch(changeErrorRegister());
+  };
+  const verifyToken = async () => {
+    const token = await storage.get('data')
+    if(token !== null){
+      dispatch(verify(token));
+    }
+    return;
+  }
+  
+  useEffect(() => {
+    setModal(stateUser.errorRegister);
+    verifyToken();
+  }, [dispatch,stateUser.errorRegister]);
   return (
-    <Bg>
+    <Bg >
+      <IonAlert
+          isOpen={modal}
+          onDidDismiss={handleCloseAlert}
+          header={"Error"}
+          message={stateUser.errorMessage}
+          buttons={["OK"]}
+        />
       <IonGrid>
         <IonRow>
           <IonCol>
-            <IonRouterLink routerLink='/home'>
+            <IonRouterLink routerLink='/login'>
               <IonButton shape='round'>
                 <IonIcon icon={arrowBack} />
                 Regresar
@@ -53,25 +79,25 @@ const Register: React.FC = () => {
             </IonRouterLink>
           </IonCol>
         </IonRow>
-        <IonRow className="reg">
+        <IonRow className='reg'>
           <IonCol>
-            <IonLabel >Registro</IonLabel>
+            <IonLabel>Registro</IonLabel>
           </IonCol>
         </IonRow>
         <IonRow className='row'>
           <IonCol>
             <Formik
               initialValues={{
-                user: "",
+                name: "",
                 email: "",
                 password: "",
                 passwordConfirmation: "",
-                rol: [],
+                is_tutor: "",
               }}
               validationSchema={validationSchema}
-              onSubmit={(values) => {
-                alert(JSON.stringify(values));
-                console.log(values)
+              onSubmit={(values, {resetForm}) => {
+                dispatch(onSignUp(values));
+                resetForm();
               }}
             >
               {(formikProps) => (
@@ -80,15 +106,15 @@ const Register: React.FC = () => {
                     <Inputlogin
                       label='Usuario'
                       type='text'
-                      name='user'
+                      name='name'
                       placeholder='Nombre y Apellido'
-                      value={formikProps.values.user}
+                      value={formikProps.values.name}
                       onChange={formikProps.handleChange}
                       onBlur={formikProps.handleBlur}
                     />
-                    {formikProps.touched.user && formikProps.errors.user ? (
+                    {formikProps.touched.name && formikProps.errors.name ? (
                       <div style={{ color: "red" }}>
-                        {formikProps.errors.user}
+                        {formikProps.errors.name}
                       </div>
                     ) : null}
 
@@ -96,7 +122,7 @@ const Register: React.FC = () => {
                       label='Correo'
                       type='email'
                       name='email'
-                      placeholder='Correo Electronico'
+                      placeholder='Correo Electrónico'
                       value={formikProps.values.email}
                       onChange={formikProps.handleChange}
                       onBlur={formikProps.handleBlur}
@@ -138,27 +164,27 @@ const Register: React.FC = () => {
                         {formikProps.errors.passwordConfirmation}
                       </div>
                     ) : null}
-                    <div className="rol">
-                      <IonLabel className="category">Category: </IonLabel>
-                      <Field
-                        className="options"
-                        as='select'
-                        name='rol'
-                        multiple={true}
-                      >
-                      <option value="Estudiante">Estudiante</option>
-                      <option value="Tutor">Tutor</option>
-                      </Field>
+                    <div className='rol'>
+                      <IonLabel className='category'>
+                        Vas a ser tutor?:{""}
+                      </IonLabel>
+                      <label>
+                        <Field type='radio' name='is_tutor' value='true' style={{marginLeft: "5px"}} />
+                        Sí
+                      </label>
+                      <label>
+                        <Field type='radio' name='is_tutor' value='false' style={{marginLeft: "5px"}}/>
+                        No
+                      </label>
                     </div>
-                    {formikProps.touched.rol && formikProps.errors.rol ? (
+                    {formikProps.touched.is_tutor && formikProps.errors.is_tutor ? (
                       <div style={{ color: "red" }}>
-                        {formikProps.errors.rol}
+                        {formikProps.errors.is_tutor}
                       </div>
                     ) : null}
-                    <div className="btn">
-                      <IonRouterLink routerLink="/userForm">
-                        <IonButton type='submit'>Registrarse</IonButton>
-                      </IonRouterLink>
+                    
+                    <div className='btn'>
+                      <IonButton type='submit'>Registrarse</IonButton>
                     </div>
                   </Form>
                 </div>
