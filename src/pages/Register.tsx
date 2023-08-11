@@ -5,7 +5,6 @@ import {
   IonLabel,
   IonRow,
   IonIcon,
-  IonRouterLink,
   IonGrid,
   IonCol,
   IonAlert,
@@ -17,10 +16,14 @@ import Inputlogin from "../components/Inputlogin/Inputlogin";
 import { Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import { useAppDispatch, useAppSelector } from "../components/redux/hooks";
-import { changeErrorRegister, onSignUp, verify } from "../components/redux/states/userSlice";
-import { useHistory } from "react-router";
+import {
+  changeErrorRegister,
+  onSignUp,
+  verify,
+} from "../components/redux/states/userSlice";
 import { useEffect, useState } from "react";
-import { storage } from "../components/redux/store";
+import { storage } from "../components/redux/states/userSlice";
+import { Link } from "react-router-dom";
 
 const validationSchema = Yup.object({
   name: Yup.string().required("Nombre Requerido"),
@@ -41,42 +44,49 @@ const validationSchema = Yup.object({
 });
 
 const Register: React.FC = () => {
-  const dispatch= useAppDispatch();
+  const dispatch = useAppDispatch();
   const stateUser = useAppSelector((state) => state.user);
-  const [modal, setModal] = useState(false);
+  const [alert, setAlert] = useState(false);
+
   const handleCloseAlert = () => {
     dispatch(changeErrorRegister());
   };
   const verifyToken = async () => {
-    const token = await storage.get('data')
-    if(token !== null){
+    const token = await storage.get("data");
+    if (token !== null) {
       dispatch(verify(token));
     }
     return;
-  }
-  
+  };
+
   useEffect(() => {
-    setModal(stateUser.errorRegister);
-    verifyToken();
-  }, [dispatch,stateUser.errorRegister]);
+    if (!stateUser.isAuthenticated) {
+      verifyToken();
+    }
+  }, []);
+
+  useEffect(() => {
+    setAlert(stateUser.errorRegister);
+  }, [stateUser.errorRegister]);
+  
   return (
-    <Bg >
+    <Bg>
       <IonAlert
-          isOpen={modal}
-          onDidDismiss={handleCloseAlert}
-          header={"Error"}
-          message={stateUser.errorMessage}
-          buttons={["OK"]}
-        />
+        isOpen={alert}
+        onDidDismiss={handleCloseAlert}
+        header={"Error"}
+        message={stateUser.errorMessage}
+        buttons={["OK"]}
+      />
       <IonGrid>
         <IonRow>
           <IonCol>
-            <IonRouterLink routerLink='/login'>
+            <Link to='/login'>
               <IonButton shape='round'>
                 <IonIcon icon={arrowBack} />
                 Regresar
               </IonButton>
-            </IonRouterLink>
+            </Link>
           </IonCol>
         </IonRow>
         <IonRow className='reg'>
@@ -93,9 +103,10 @@ const Register: React.FC = () => {
                 password: "",
                 passwordConfirmation: "",
                 is_tutor: "",
+                is_student: "",
               }}
               validationSchema={validationSchema}
-              onSubmit={(values, {resetForm}) => {
+              onSubmit={(values, { resetForm }) => {
                 dispatch(onSignUp(values));
                 resetForm();
               }}
@@ -169,23 +180,72 @@ const Register: React.FC = () => {
                         Vas a ser tutor?:{""}
                       </IonLabel>
                       <label>
-                        <Field type='radio' name='is_tutor' value='true' style={{marginLeft: "5px"}} />
+                        <Field
+                          type='radio'
+                          name='is_tutor'
+                          value='true'
+                          style={{ marginLeft: "5px" }}
+                        />
                         Sí
                       </label>
                       <label>
-                        <Field type='radio' name='is_tutor' value='false' style={{marginLeft: "5px"}}/>
+                        <Field
+                          type='radio'
+                          name='is_tutor'
+                          value='false'
+                          style={{ marginLeft: "5px" }}
+                        />
                         No
                       </label>
                     </div>
-                    {formikProps.touched.is_tutor && formikProps.errors.is_tutor ? (
+                    {formikProps.touched.is_tutor &&
+                    formikProps.errors.is_tutor ? (
                       <div style={{ color: "red" }}>
                         {formikProps.errors.is_tutor}
                       </div>
                     ) : null}
-                    
-                    <div className='btn'>
-                      <IonButton type='submit'>Registrarse</IonButton>
-                    </div>
+
+                    {formikProps.values.is_tutor === "false" ||
+                    formikProps.values.is_tutor === "" ? null : (
+                      <div className='rol'>
+                        <IonLabel className='category'>
+                          Vas a buscar tutorias?:{""}
+                        </IonLabel>
+                        <label>
+                          <Field
+                            type='radio'
+                            name='is_student'
+                            value='true'
+                            style={{ marginLeft: "5px" }}
+                          />
+                          Sí
+                        </label>
+                        <label>
+                          <Field
+                            type='radio'
+                            name='is_student'
+                            value='false'
+                            style={{ marginLeft: "5px" }}
+                          />
+                          No
+                        </label>
+                      </div>
+                    )}
+                    {formikProps.touched.is_student &&
+                    formikProps.errors.is_student ? (
+                      <div style={{ color: "red" }}>
+                        {formikProps.errors.is_student}
+                      </div>
+                    ) : null}
+                    {formikProps.isValid ? (
+                      <div className='btn'>
+                        <IonButton type='submit'>Registrarse</IonButton>
+                      </div>
+                    ) : (
+                      <div className='btn'>
+                        <IonButton disabled={true}>Registrarse</IonButton>
+                      </div>
+                    )}
                   </Form>
                 </div>
               )}

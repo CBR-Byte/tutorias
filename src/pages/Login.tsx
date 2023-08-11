@@ -12,16 +12,27 @@ import {
   IonContent,
   IonCol,
   IonImg,
+  IonModal,
+  IonLabel,
+  IonIcon,
+  useIonAlert,
 } from "@ionic/react";
 import "./Login.css";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { loginCredentials } from "../components/redux/states/userSlice";
-import { onLogin, changeErrorLogin, verify } from "../components/redux/states/userSlice";
+import {
+  onLogin,
+  changeErrorLogin,
+  verify,
+} from "../components/redux/states/userSlice";
 import { useAppDispatch, useAppSelector } from "../components/redux/hooks";
-import { useHistory } from "react-router-dom";
-import { Formik } from "formik";
+import { Link, useHistory } from "react-router-dom";
+import { Form, Formik } from "formik";
 import * as Yup from "yup";
-import { storage } from "../components/redux/store";
+import { storage } from "../components/redux/states/userSlice";
+import "../components/Bg/Bg.css";
+import axios from "axios";
+import { arrowBack } from "ionicons/icons";
 
 const validationSchema = Yup.object({
   email: Yup.string().email("Invalid email address").required("Email Required"),
@@ -30,52 +41,301 @@ const validationSchema = Yup.object({
     .required("No password provided."),
 });
 
+const PassRecovery: React.FC = () => {
+  const forget = useRef<HTMLIonModalElement>(null);
+
+  const [state, setState] = useState({
+    email: true,
+    emailError: false,
+    message: "",
+    verifyEmail: "",
+    inputValues: ["", "", "", "", "", ""],
+    password: "",
+    newPassword: "",
+    code: false,
+  });
+
+  const fetchToken = async () => {
+    if (passwordVerify()) {
+      const token = state.inputValues.join("");
+      const data = { token: token, password: state.password };
+      await axios
+        .post(`http://localhost:8000/change_password/`, data)
+        .then((res) => {
+          setState({
+            ...state,
+            message: res.data.message,
+            emailError: !state.emailError,
+            email: !state.email,
+            code: !state.code,
+            verifyEmail: "",
+          });
+        })
+        .catch((err) => {
+          setState({
+            ...state,
+            message: err.response.data.detail,
+            emailError: !state.emailError,
+          });
+        });
+    }
+  };
+
+  const fetchEmail = async (email: string) => {
+    await axios
+      .post(`http://localhost:8000/password_reset/${email}`)
+      .then((res) => {
+        //actualizar({message: res.data.message})
+        setState({
+          ...state,
+          message: res.data.message,
+          email: !state.email,
+          code: !state.code,
+          emailError: !state.emailError,
+        });
+      })
+      .catch((err) => {
+        setState({
+          ...state,
+          message: err.response.data.detail,
+          emailError: !state.emailError,
+          verifyEmail: "",
+        });
+      });
+  };
+  const handleInputs = (e: any) => {
+    const { name, value } = e.target;
+    setState({ ...state, [name]: value });
+  };
+  const handleInputChange = (index: number, value: string) => {
+    const values = [...state.inputValues];
+    values[index] = value;
+    setState({ ...state, inputValues: values });
+  };
+
+  const passwordVerify = () => {
+    if (state.password === state.newPassword) {
+      return true;
+    }
+    setState({
+      ...state,
+      emailError: !state.emailError,
+      message: "Las contraseñas no coinciden",
+    });
+    return false;
+  };
+
+  const handleCloseAlertEmail = () => {
+    if (state.message === "Contraseña cambiada satisfactoriamente")
+      forget.current?.dismiss();
+    setState({ ...state, emailError: !state.emailError });
+  };
+
+  return (
+    <>
+      <IonModal ref={forget} trigger='open-modal' className='page'>
+        <IonContent className='grid' scrollY={false}>
+          <div className='circle1' />
+          <div className='circles2 top' />
+          <div className='circles2 bottom' />
+          <div className='circles3 top2' />
+          <div className='circles3 bottom2' />
+          <div className='circles3 bottom3' />
+          <IonAlert
+            isOpen={state.emailError}
+            onDidDismiss={handleCloseAlertEmail}
+            header={"Atención"}
+            message={state.message}
+            buttons={["OK"]}
+            animated={true}
+          />
+          {state.email && (
+            <IonRow>
+              <IonCol>
+                <IonButton
+                  style={{ marginRight: "80%" }}
+                  onClick={() => forget.current?.dismiss()}
+                  shape='round'
+                >
+                  <IonIcon icon={arrowBack} />
+                  Regresar
+                </IonButton>
+              </IonCol>
+            </IonRow>
+          )}
+          <IonRow>
+            <IonCol>
+              <IonTitle
+                style={{ marginTop: state.email ? "30vh" : "5vh" }}
+                className='title'
+              >
+                Recuperar contraseña
+              </IonTitle>
+              {state.email && (
+                <div style={{ marginTop: "5vh" }}>
+                  <p>
+                    Ingrese el email con el que se registro a nuestra plataforma
+                    para recibir un código de recuperación
+                  </p>
+                </div>
+              )}
+              {state.code && (
+                <div style={{ marginTop: "5vh" }}>
+                  <p>
+                    Ingresa el código que te enviamos a tú correo electrónico
+                  </p>
+                </div>
+              )}
+            </IonCol>
+          </IonRow>
+          {state.email && (
+            <div>
+              <IonRow className='row'>
+                <IonCol>
+                  <IonInput
+                    type='email'
+                    name='verifyEmail'
+                    input-Mode='md'
+                    fill='outline'
+                    placeholder='Ingrese su email'
+                    shape='round'
+                    value={state.verifyEmail}
+                    onIonInput={(e) => handleInputs(e)}
+                  />
+                </IonCol>
+              </IonRow>
+              <IonRow className='row'>
+                <IonCol>
+                  <IonButton
+                    className='button'
+                    shape='round'
+                    onClick={() => fetchEmail(state.verifyEmail)}
+                  >
+                    Enviar
+                  </IonButton>
+                </IonCol>
+              </IonRow>
+            </div>
+          )}
+          {state.code && (
+            <>
+              <IonRow className='row'>
+                {state.inputValues.map((value, index) => (
+                  <IonCol className='box' key={index}>
+                    <IonInput
+                      type='text'
+                      onIonInput={(e) =>
+                        handleInputChange(index, e.detail.value || "")
+                      }
+                      value={value}
+                      input-Mode='md'
+                      maxlength={1}
+                    />
+                  </IonCol>
+                ))}
+              </IonRow>
+              <IonRow className='row'>
+                <IonCol>
+                  <IonLabel>Nueva contraseña</IonLabel>
+                </IonCol>
+              </IonRow>
+              <IonRow className='row'>
+                <IonInput
+                  type='password'
+                  input-Mode='md'
+                  name='password'
+                  value={state.password}
+                  onIonInput={(e) => handleInputs(e)}
+                  placeholder='Ingresa tu nueva contraseña'
+                  shape='round'
+                  fill='outline'
+                />
+              </IonRow>
+              <IonRow className='row'>
+                <IonCol>
+                  <IonLabel>Confirma tu contraseña</IonLabel>
+                </IonCol>
+              </IonRow>
+              <IonRow className='row'>
+                <IonInput
+                  type='password'
+                  input-Mode='md'
+                  name='newPassword'
+                  value={state.newPassword}
+                  onIonInput={(e) => handleInputs(e)}
+                  placeholder='Confirma tu contraseña'
+                  shape='round'
+                  fill='outline'
+                />
+              </IonRow>
+              <IonRow className='row'>
+                <IonCol>
+                  <IonButton
+                    onClick={() => fetchToken()}
+                    className='button'
+                    shape='round'
+                  >
+                    Confirmar
+                  </IonButton>
+                </IonCol>
+              </IonRow>
+            </>
+          )}
+        </IonContent>
+      </IonModal>
+    </>
+  );
+};
+
 const Home: React.FC = () => {
   const dispatch = useAppDispatch();
   const stateUser = useAppSelector((state) => state.user);
-  const history = useHistory();
-  const [modal, setModal] = useState(false);
-
+  const [alert, setAlert] = useState(false);
 
   const enviarDatos = (data: loginCredentials) => {
     // Realizar async action con redux para iniciar sesión
     dispatch(onLogin(data));
   };
+
   const handleCloseAlert = () => {
     dispatch(changeErrorLogin());
   };
 
   const verifyToken = async () => {
-    const token = await storage.get('data')
-    if(token !== null){
+    const token = await storage.get("data");
+    if (token !== null) {
       dispatch(verify(token));
     }
     return;
-  }
-  
+  };
+
   useEffect(() => {
-    setModal(stateUser.errorLogin);
-    verifyToken();
-    
-  }, [dispatch,stateUser.errorLogin, stateUser.isAuthenticated]);
+    if (!stateUser.isAuthenticated) {
+      verifyToken();
+    }
+  }, []);
+
+  useEffect(() => {
+    setAlert(stateUser.errorLogin);
+  }, [stateUser.errorLogin]);
 
   return (
     <IonPage className='page'>
-      <IonContent className='content' scrollY={false} >
-        <div className="circles"/>
-        <div className='circle'/>
-        <IonImg className='logo' src='assets/images/logo.png'/>
-        <IonAlert
-          isOpen={modal}
-          onDidDismiss={handleCloseAlert}
-          header={"Error"}
-          message={stateUser.errorMessage}
-          buttons={["OK"]}
-        />
+      <IonContent className='content' scrollY={false}>
+        <div className='circles' />
+        <div className='circle' />
+        <IonImg className='logo' src='assets/images/logo.png' />
         <IonGrid className='grid'>
           <IonRow>
             <IonCol>
-              <IonTitle className="title">Tutoriaap</IonTitle>
+              <IonAlert
+                isOpen={alert}
+                onDidDismiss={handleCloseAlert}
+                header={"Error"}
+                message={stateUser.errorMessage}
+                buttons={["OK"]}
+              />
+              <IonTitle className='title'>Tutoriaap</IonTitle>
             </IonCol>
           </IonRow>
           <IonRow className='row'>
@@ -86,14 +346,14 @@ const Home: React.FC = () => {
                   password: "",
                 }}
                 validationSchema={validationSchema}
-                onSubmit={(values, {resetForm}) => {
+                onSubmit={(values, { resetForm }) => {
                   enviarDatos(values);
                   resetForm();
                 }}
               >
                 {(formikProps) => (
                   <div>
-                    <form className="form" onSubmit={formikProps.handleSubmit}>
+                    <Form className='form' onSubmit={formikProps.handleSubmit}>
                       <IonInput
                         type='email'
                         name='email'
@@ -132,32 +392,30 @@ const Home: React.FC = () => {
                         className='forget'
                         fill='clear'
                         color={"secondary"}
+                        id='open-modal'
                       >
                         {" "}
                         ¿HAS OLVIDADO LA CONTRASEÑA?{" "}
                       </IonButton>
                       <IonButton
-                        className="log"
+                        className='log'
                         shape='round'
                         slot='start'
                         type='submit'
                       >
                         Iniciar sesión
                       </IonButton>
-                      <IonRouterLink routerLink='/register'>
-                        <IonButton 
-                          shape='round'>
-                          Registrarse
-                        </IonButton>
-                      </IonRouterLink>
-                    </form>
+                    </Form>
                   </div>
                 )}
               </Formik>
+              <Link to='/register'>
+                <IonButton shape='round'>Registrarse</IonButton>
+              </Link>
             </IonCol>
           </IonRow>
-          <IonRow>
-          </IonRow>
+
+          <PassRecovery />
         </IonGrid>
       </IonContent>
     </IonPage>

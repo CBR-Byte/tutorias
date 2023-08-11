@@ -1,10 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit'
 import {userSlice} from './states/userSlice'
-import { Storage } from "@ionic/storage";
-import { log } from 'console';
-
-export const storage = new Storage();
-await storage.create();
+import { storage } from "../redux/states/userSlice";
 
 const storeData = async (value: any) => {
   try {
@@ -24,16 +20,37 @@ const deleteData = async () => {
   }
 };
 
+const updateAccessToken = async (value: any) => {
+  try {
+    const data = await storage.get('data');
+    
+    data.token = JSON.stringify(value?.access_token)
+    await storage.set('data', data); 
+  } catch (error) {
+    console.log(error)
+  }
+}
 const loginMiddleware = (store:any) => (next:any) => (action:any) => {
   if (action.type === 'user/login/fulfilled' || action.type === 'user/signUp/fulfilled') {
     console.log(action.payload)
+
     storeData(action.payload);
   }
   return next(action);
 };
 
+const refresh= (store:any) => (next:any) => (action:any) => {
+  if (action.type === 'user/tokenRef/fulfilled') {
+    console.log(action.payload);
+    
+    updateAccessToken(action.payload);
+  }
+  return next(action);
+};
+
+
 const logoutMiddleware = (store:any) => (next:any) => (action:any) => {
-  if (userSlice.actions.logOut.match(action)) {
+  if (userSlice.actions.logOut.match(action) || action.type === 'user/tokenRef/rejected') {
     deleteData();
   }
   return next(action);
@@ -42,7 +59,7 @@ const logoutMiddleware = (store:any) => (next:any) => (action:any) => {
 
 export const store = configureStore({
   reducer: {user : userSlice.reducer},
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(loginMiddleware, logoutMiddleware),
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(loginMiddleware, logoutMiddleware,refresh),
   devTools: true,
 })
 

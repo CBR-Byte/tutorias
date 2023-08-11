@@ -2,12 +2,20 @@
 
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import { Storage } from "@ionic/storage";
+
+
+export const storage = new Storage();
+await storage.create();
+
 
 export interface User {
   status: string;
   access_token: string;
   refresh_token: string;
   token_type: string;
+  isLoading?: boolean;
+  registerCompleted: boolean;
   errorMessage?: string;
   errorRegister: boolean;
   errorLogin: boolean;
@@ -25,6 +33,7 @@ export type dataUser = {
   password: string;
   passwordConfirmation?: string;
   is_tutor: string | boolean;
+  is_student: string | boolean;
 };
 
 const initialState: User = {
@@ -32,6 +41,8 @@ const initialState: User = {
   access_token: "",
   refresh_token: "",
   token_type: "",
+  isLoading: false,
+  registerCompleted: false,
   errorMessage: "",
   errorLogin: false,
   errorRegister: false,
@@ -69,9 +80,56 @@ export const verify = createAsyncThunk<
     );
     return {access_token: token_access, refresh_token: token_refresh, status: "success",user:response.data};
   } catch (err: any) {
-    return thunkAPI.rejectWithValue({ errorMessage: err.response.data.detail });
+    thunkAPI.dispatch(refreshToken({refresh_token: data.refresh}));
+    //return thunkAPI.rejectWithValue({ errorMessage: err.response.data.detail });
   }
 });
+
+export const refreshToken = createAsyncThunk<any,any,{ rejectValue: MyErrorType }
+>("user/tokenRef", async (token, thunkAPI) => {
+  try {
+    const refresh = JSON.parse(token.refresh_token);
+    
+    const response = await axios.post(
+      `http://127.0.0.1:8000/users/refresh`,
+      null,
+      {headers: {
+        'Authorization': `Bearer ${refresh}`
+      }}
+    );
+      return {refresh_token: refresh, access_token: response.data.access_token, user: response.data.user};
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue({ errorMessage: error.response.data.detail });
+  }
+})
+
+export const updateUserInfo = createAsyncThunk<any,any,{rejectValue: MyErrorType }
+>("user/updateUserInfo", async (data, thunkAPI) => {
+  try {
+    const state = thunkAPI.getState() as User;
+    const {id} = state.user.user;
+    const {access_token} = state.user;
+    const response = await axios.patch(
+      `http://127.0.0.1:8000/users/update/${id}`,
+      data,
+      {headers: {
+        'Authorization': `Bearer ${access_token}`
+      }}
+    );
+
+    return response.data;
+  } catch (error: any) {
+    if(error.response?.data.detail === 'El token de accesso ha expirado'){
+      const tokenRefresh = await storage.get(data.refresh_token);
+      thunkAPI.dispatch(refreshToken({refresh_token: tokenRefresh}));
+    }
+
+    return thunkAPI.rejectWithValue({ errorMessage: error.response.data.detail });
+    
+  }
+});
+
+
 
 export const onLogin = createAsyncThunk<
   any,
@@ -94,11 +152,20 @@ export const onSignUp = createAsyncThunk<
   dataUser,
   { rejectValue: MyErrorType }
 >("user/signUp", async (data, thunkAPI) => {
-  if (data.is_tutor === "true") {
-    data.is_tutor = true;
-  } else {
+  
+  if (data.is_tutor === "false") {
+    data.is_student = true;
     data.is_tutor = false;
+  } else {
+    data.is_tutor = true;
   }
+  
+if (data.is_student === "false"){
+    data.is_student = false;
+  } else {
+    data.is_student = true;
+  }
+
   delete data.passwordConfirmation;
 
   try {
@@ -116,25 +183,20 @@ export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    // login: (state, action: PayloadAction<User>) => {
-    //   return {
-    //     status: action.payload.status,
-    //     access_token: action.payload.access_token,
-    //     refresh_token: action.payload.refresh_token,
-    //     token_type: action.payload.token_type,
-    //     isAuthenticated: true,
-    //     user: action.payload.user,
-    //   };
-    // },
     logOut: (state) => {
       state.status = "";
       state.access_token = "";
       state.refresh_token = "";
       state.token_type = "";
+      state.isLoading = false;
+      state.registerCompleted = true;
       state.errorRegister = false;
       state.errorLogin = false;
       state.isAuthenticated = false;
       state.user = null;
+    },
+    changeRegisterCompleted: (state) => {
+      state.registerCompleted = true;
     },
     changeErrorLogin: (state) => {
       state.errorLogin = false;
@@ -151,11 +213,17 @@ export const userSlice = createSlice({
         state.refresh_token = action.payload.refresh_token;
         state.token_type = action.payload.token_type;
         state.errorMessage = "";
-        state.errorLogin = false;
         state.isAuthenticated = true;
+        state.isLoading = false;
+        state.registerCompleted = true;
+        state.errorLogin = false;
         state.user = action.payload.user;
       })
+      .addCase(onLogin.pending, (state) => {
+        state.isLoading = true;
+      })
       .addCase(onLogin.rejected, (state, action) => {
+        state.isLoading = false;
         state.errorLogin = true;
         state.errorMessage = action.payload?.errorMessage;
       })
@@ -165,11 +233,17 @@ export const userSlice = createSlice({
         state.refresh_token = action.payload.refresh_token;
         state.token_type = action.payload.token_type;
         state.errorMessage = "";
-        state.errorRegister = false;
         state.isAuthenticated = true;
+        state.isLoading = false;
+        state.registerCompleted = false;
+        state.errorRegister = false;
         state.user = action.payload.user;
       })
+      .addCase(onSignUp.pending, (state) => {
+        state.isLoading = true;
+      })
       .addCase(onSignUp.rejected, (state, action) => {
+        state.isLoading = false;
         state.errorRegister = true;
         state.errorMessage = action.payload?.errorMessage;
       })
@@ -179,17 +253,49 @@ export const userSlice = createSlice({
         state.refresh_token = action.payload.refresh_token;
         state.token_type = "bearer";
         state.errorMessage = "";
-        state.errorRegister = false;
         state.isAuthenticated = true;
+        state.isLoading = false;
+        state.registerCompleted = false;
+        state.errorRegister = false;
         state.user = action.payload.user;
-        
+      })
+      .addCase(verify.pending, (state) => {
+        state.isLoading = true;
       })
       .addCase(verify.rejected, (state, action) => {
+        state.isLoading = false;
+        //alert(action.payload?.errorMessage);
+      })
+      .addCase(refreshToken.fulfilled, (state, action) => {
+        state.access_token = action.payload.access_token;
+        state.refresh_token = action.payload.refresh_token;
+        state.token_type = "bearer";
+        state.status = "success";
+        state.errorMessage = "";
+        state.isLoading = false;
+        state.isAuthenticated = true;
+        state.registerCompleted = true;
+        state.errorRegister = false;
+        state.user = action.payload.user;
+      })
+      .addCase(refreshToken.rejected, (state, action) => {
+        console.log(action.payload?.errorMessage);
+        state = initialState;
+        state.errorMessage = action.payload?.errorMessage;
+      })
+      .addCase(updateUserInfo.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.user = action.payload;
+      })
+      .addCase(updateUserInfo.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(updateUserInfo.rejected, (state, action) => {
         alert(action.payload?.errorMessage);
-      });
+      })
   },
 });
 
-export const { changeErrorLogin, changeErrorRegister, logOut } =
+export const { changeErrorLogin, changeErrorRegister, logOut, changeRegisterCompleted } =
   userSlice.actions;
 export default userSlice.reducer;

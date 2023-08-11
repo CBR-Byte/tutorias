@@ -1,6 +1,6 @@
-import React, { RefObject, useEffect, useState } from 'react';
+import React, { RefObject, useEffect } from 'react';
 import './GridHorarios.css'; // Asegúrate de tener el archivo de estilos GridHorarios.css con el CSS proporcionado en el ejemplo anterior.
-import { IonButton, IonButtons, IonCol, IonContent, IonGrid, IonHeader, IonIcon, IonLabel, IonRouterLink, IonRow, IonText, IonTitle, IonToolbar } from '@ionic/react';
+import { IonButton, IonCol, IonContent, IonGrid, IonHeader, IonRow, IonText, IonTitle } from '@ionic/react';
 import {Slot} from '../../pages/UserForm';
 
 interface slotProps {
@@ -22,10 +22,6 @@ const GridHorarios: React.FC<slotProps> = ({estado,actualizar,modal}) => {
       actualizar(estado.filter(slot => !(slot.day === dayIndex && slot.hour === hourIndex)));
     }
   };
-
-  useEffect(() => {
-    console.log(estado);
-  }, [estado]);
 
   return (
     <> 

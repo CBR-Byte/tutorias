@@ -1,22 +1,38 @@
 /** @format */
 
 import { ReactNode } from "react";
-import { Redirect } from "react-router-dom";
+import { Redirect, Route, RouteProps } from "react-router-dom";
 import { useAppSelector } from "../redux/hooks";
-import { useAppDispatch } from "../redux/hooks";
+import Loading from "../Loading";
 
 
+export interface Props extends RouteProps {
+    component: React.ComponentType<any>;
+  }
 
-export const PublicRoute = ({ children }: { children: ReactNode }) => {
-    const isAuth = useAppSelector((state) => state.user.isAuthenticated);
+export const PublicRoute: React.FC<Props> = ({component: Component, ...rest }) => {
+  //const isAuth = useAppSelector((state) => state.user.isAuthenticated);
+  //const isLoad = useAppSelector((state) => state.user.isLoading);
 
-    if(isAuth){
-        //console.log(prueba);
-        
-        return <Redirect to='/inicio' />;
+  const state = useAppSelector((state) => state.user);
+
+    if(state.isLoading) {
+      return <Loading />
     }
     
-    //dispatch(verifyToken(data.token))
-    return children;
+    return (
+        <Route
+            {...rest}
+          render={props =>
+            !state.isAuthenticated ? (
+          <Component {...props} />
+            ) : (
+              <Redirect
+                to="/inicio"
+              />
+            )
+          }
+        />
+      );
 
 };
