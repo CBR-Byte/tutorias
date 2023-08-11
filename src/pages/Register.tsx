@@ -21,7 +21,7 @@ import {
   onSignUp,
   verify,
 } from "../components/redux/states/userSlice";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { storage } from "../components/redux/states/userSlice";
 import { Link } from "react-router-dom";
 
@@ -46,10 +46,11 @@ const validationSchema = Yup.object({
 const Register: React.FC = () => {
   const dispatch = useAppDispatch();
   const stateUser = useAppSelector((state) => state.user);
-  const [alert, setAlert] = useState(false);
+  const alert = useRef<any>(null);
 
   const handleCloseAlert = () => {
     dispatch(changeErrorRegister());
+    alert.current && alert.current.dismiss();
   };
   const verifyToken = async () => {
     const token = await storage.get("data");
@@ -66,13 +67,17 @@ const Register: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    setAlert(stateUser.errorRegister);
+    if(stateUser.errorRegister){
+      setTimeout(() => {
+        alert.current?.present();
+      }, 200);
+    }
   }, [stateUser.errorRegister]);
-  
+
   return (
     <Bg>
       <IonAlert
-        isOpen={alert}
+        ref={alert}
         onDidDismiss={handleCloseAlert}
         header={"Error"}
         message={stateUser.errorMessage}

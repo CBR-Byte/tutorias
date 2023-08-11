@@ -8,14 +8,12 @@ import {
   IonPage,
   IonRow,
   IonTitle,
-  IonRouterLink,
   IonContent,
   IonCol,
   IonImg,
   IonModal,
   IonLabel,
   IonIcon,
-  useIonAlert,
 } from "@ionic/react";
 import "./Login.css";
 import { useEffect, useRef, useState } from "react";
@@ -290,7 +288,7 @@ const PassRecovery: React.FC = () => {
 const Home: React.FC = () => {
   const dispatch = useAppDispatch();
   const stateUser = useAppSelector((state) => state.user);
-  const [alert, setAlert] = useState(false);
+  const alert = useRef<any>(null)
 
   const enviarDatos = (data: loginCredentials) => {
     // Realizar async action con redux para iniciar sesión
@@ -299,6 +297,7 @@ const Home: React.FC = () => {
 
   const handleCloseAlert = () => {
     dispatch(changeErrorLogin());
+    alert.current?.dismiss()
   };
 
   const verifyToken = async () => {
@@ -316,25 +315,29 @@ const Home: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    setAlert(stateUser.errorLogin);
-  }, [stateUser.errorLogin]);
+    if(stateUser.errorLogin){
+      setTimeout(() => {
+        alert.current?.present();
+      }, 200);
+    }
 
+  }, [stateUser.errorLogin]);
   return (
     <IonPage className='page'>
       <IonContent className='content' scrollY={false}>
         <div className='circles' />
         <div className='circle' />
         <IonImg className='logo' src='assets/images/logo.png' />
+        <IonAlert
+          ref={alert}
+          onDidDismiss={handleCloseAlert}
+          header={"Info"}
+          message={stateUser.errorMessage}
+          buttons={["OK"]}
+        />
         <IonGrid className='grid'>
           <IonRow>
             <IonCol>
-              <IonAlert
-                isOpen={alert}
-                onDidDismiss={handleCloseAlert}
-                header={"Error"}
-                message={stateUser.errorMessage}
-                buttons={["OK"]}
-              />
               <IonTitle className='title'>Tutoriaap</IonTitle>
             </IonCol>
           </IonRow>
@@ -348,7 +351,7 @@ const Home: React.FC = () => {
                 validationSchema={validationSchema}
                 onSubmit={(values, { resetForm }) => {
                   enviarDatos(values);
-                  resetForm();
+                  resetForm( { values: { email: values.email, password: "" }});
                 }}
               >
                 {(formikProps) => (
