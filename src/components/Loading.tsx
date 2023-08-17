@@ -1,9 +1,13 @@
 import './Loading.css';
 
-const Loading = () => {
+interface props {
+  message : string;
+}
+const Loading = ({message}:props) => {
   return (
     <div className="loading">
-      <div className="spinner"></div>
+      <img className='spinner' src='/assets/images/logo.png' alt='Logo' />
+      <h1> {message}</h1>
     </div>
   );
 };

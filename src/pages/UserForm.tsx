@@ -53,6 +53,8 @@ import { changeRegisterCompleted} from "../components/redux/states/userSlice";
     const [showModal, setShowModal] = useState(false);
     const [clickedButton, setClickedButton] = useState(false);
 
+    const carreras : string[] = ["Ingeniería de Sistemas","Ingeniería de Alimentos","Administración de Empresas","Contaduría Pública","Trabajo Social","Tecnología en Desarrollo de Software","Construcción","Nutrición y Dietética","Tecnología en Electrónica"]
+
     useEffect(() => {
       if (clickedButton) {
         setShowModal(true);
@@ -98,28 +100,33 @@ import { changeRegisterCompleted} from "../components/redux/states/userSlice";
                   values.avaliability = selectedSlots;
                   actualizarData(values);
                   dispatch(changeRegisterCompleted())
-                  alert(JSON.stringify(values));
                   resetForm();
                   history.push("/inicio");
                 }}
               >
                 {(formikProps) => (
                     <Form>
-                      <Inputlogin
-                        label='Carrera'
-                        type='text'
+                      <label>
+                        Carrera
+                      </label>
+                      <Field
+                        as="select"
                         name='career'
                         placeholder='Carrera'
-                        value={formikProps.values.career}
-                        onChange={formikProps.handleChange}
-                        onBlur={formikProps.handleBlur}
-                      />
+                        className="options"
+                        style={{height: "3vh"}}
+                      >
+                        {carreras.map((carrera) => (
+                          <option className="values" key={carrera} value={carrera}>
+                            {carrera}
+                          </option>
+                        ))}
                       {formikProps.touched.career && formikProps.errors.career ? (
                         <div style={{ color: "red" }}>
                           {formikProps.errors.career}
                         </div>
                       ) : null}
-  
+                      </Field>
                       <Inputlogin
                         label='Semestre'
                         type='number'
@@ -184,20 +191,40 @@ import { changeRegisterCompleted} from "../components/redux/states/userSlice";
                       ) : null}
                       <div className="rol">
                         <IonLabel className="category">Método: </IonLabel>
-                        <Field
-                          className="options"
-                          as='select'
-                          name='method'
-                          multiple={true}
-                        >
-                        <option value="Activo">Aprendizaje activo</option>
-                        <option value="Reflexivo">Aprendizaje reflexivo</option>
-                        <option value="Teórico">Aprendizaje teórico</option>
-                        <option value="Pragmático">Aprendizaje pragmático</option>
-                        <option value="Visual">Aprendizaje visual</option>
-                        <option value="Auditivo">Aprendizaje auditivo</option>
-                        <option value="Kinestésico">Aprendizaje kinestésico</option>
-                        </Field>
+                        <div
+                          className='options long'
+                          role="group"
+                          aria-labelledby="checkbox-group"
+                          >
+                          <label className="values">
+                            <Field type='checkbox' name='method' value='Aprendizaje Activo' />
+                            Aprendizaje Activo
+                          </label>
+                          <label className="values">
+                            <Field type='checkbox' name='method' value='Aprendizaje reflexivo' />
+                            Aprendizaje Reflexivo
+                          </label>
+                          <label className="values">
+                            <Field type='checkbox' name='method' value='Aprendizaje teórico' />
+                            Aprendizaje Teórico
+                          </label>
+                          <label className="values">
+                            <Field type='checkbox' name='method' value='Aprendizaje práctico' />
+                            Aprendizaje Práctico
+                          </label>
+                          <label className="values">
+                            <Field type='checkbox' name='method' value='Aprendizaje visual' />
+                            Aprendizaje Visual
+                          </label>
+                          <label className="values">
+                            <Field type='checkbox' name='method' value='Aprendizaje auditivo' />
+                            Aprendizaje Auditivo
+                          </label>
+                          <label className="values">
+                            <Field type='checkbox' name='method' value='Aprendizaje kinestésico' />
+                            Aprendizaje kinestésico
+                          </label>
+                        </div>
                       </div>
                       {formikProps.touched.method && formikProps.errors.method ? (
                         <div style={{ color: "red" }}>

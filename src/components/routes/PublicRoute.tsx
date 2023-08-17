@@ -1,25 +1,38 @@
 /** @format */
-
-import { ReactNode } from "react";
 import { Redirect, Route, RouteProps } from "react-router-dom";
 import { useAppSelector } from "../redux/hooks";
 import Loading from "../Loading";
-
+import { useEffect, useState } from "react";
+import { Network } from "@capacitor/network";
 
 export interface Props extends RouteProps {
     component: React.ComponentType<any>;
   }
 
 export const PublicRoute: React.FC<Props> = ({component: Component, ...rest }) => {
-  //const isAuth = useAppSelector((state) => state.user.isAuthenticated);
-  //const isLoad = useAppSelector((state) => state.user.isLoading);
+
+  const [isConnected, setIsConnected] = useState(true);
+
+  useEffect(() => {
+    const listener = Network.addListener('networkStatusChange', async () => {
+      const status = await Network.getStatus();
+      setIsConnected(status.connected);
+    });
+    
+    return () => {
+      listener.remove ();
+    };
+  }, []); 
 
   const state = useAppSelector((state) => state.user);
 
-    if(state.isLoading) {
-      return <Loading />
-    }
-    
+  if(!isConnected) {
+    return <Loading message="No hay conexión a internet" /> 
+  }
+  if(state.isLoading) {
+    return <Loading message="Cargando..." />
+  }
+
     return (
         <Route
             {...rest}

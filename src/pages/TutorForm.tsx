@@ -14,11 +14,12 @@ import Inputlogin from "../components/Inputlogin/Inputlogin";
 import GridHorarios from "../components/GridHorarios/GridHorarios";
 import { Field, Form, Formik } from "formik";
 import * as Yup from "yup";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo, memo} from "react";
 import { Slot } from "./UserForm";
 import { useAppDispatch, useAppSelector } from "../components/redux/hooks";
 import { useHistory } from "react-router";
-import { changeRegisterCompleted, updateUserInfo } from "../components/redux/states/userSlice";
+import {  changeRegisterCompleted, updateUserInfo } from "../components/redux/states/userSlice";
+import { getSubjects } from "../components/redux/states/subjectSlice";
 
 
 const validationSchema = Yup.object({
@@ -44,28 +45,41 @@ interface TutorFormData {
 const UserForm: React.FC = () => {
   const modal = useRef<HTMLIonModalElement>(null);
   const state = useAppSelector((state) => state.user);
+  const stateSubjects = useAppSelector((state) => state.subject);
   const [selectedSlots, setSelectedSlots] = useState<Slot[]>(state.user?.avaliability || []);
   const dispatch = useAppDispatch();
   const history = useHistory();
-  
+  const [subjects] = useState<string[]>(stateSubjects.subjects);
   const [showModal, setShowModal] = useState(false);
-    const [clickedButton, setClickedButton] = useState(false);
-    useEffect(() => {
-      if (clickedButton) {
-        setShowModal(true);
-      }
-    }, [clickedButton]);
+  const [clickedButton, setClickedButton] = useState(false);
 
-    const handleButtonClick = () => {
-      setClickedButton(true);
-    };
+  useEffect(() => {
+    
+    if (clickedButton) {
+      setShowModal(true);
+    }
+  }, [clickedButton]);
+
+  useEffect(() => {
+    if (subjects.length === 0 ){
+     subjectsFetch();
+    }
+  }, [stateSubjects.subjects]);
+  
+  const subjectsFetch = async () => {
+    dispatch(getSubjects());
+  }
+
+  const handleButtonClick = () => {
+    setClickedButton(true);
+  };
 
     const closeModal = () => {
       setShowModal(false);
       setClickedButton(false);
     }
 
-    const actualizarData = (values: TutorFormData) => {
+    const actualizarData = (values: TutorFormData) => { 
       dispatch(updateUserInfo(values));
     }
 
@@ -96,7 +110,7 @@ const UserForm: React.FC = () => {
               onSubmit={(values, {resetForm}) => {
                 values.avaliability = selectedSlots;
 
-                if(state.user?.is_student) {
+                if(state.user?.is_student && !state.registerCompleted) {
                   actualizarData(values);
                   history.push("/userForm");
                 }
@@ -178,24 +192,40 @@ const UserForm: React.FC = () => {
 
                     <div className='rol'>
                       <IonLabel className='category'>Método: </IonLabel>
-                      <Field
-                        className='options'
-                        as='select'
-                        name='method_tutor'
-                        multiple={true}
-                      >
-                        <option value='Activo'>Aprendizaje activo</option>
-                        <option value='Reflexivo'>Aprendizaje reflexivo</option>
-                        <option value='Teórico'>Aprendizaje teórico</option>
-                        <option value='Pragmático'>
-                          Aprendizaje pragmático
-                        </option>
-                        <option value='Visual'>Aprendizaje visual</option>
-                        <option value='Auditivo'>Aprendizaje auditivo</option>
-                        <option value='Kinestésico'>
-                          Aprendizaje kinestésico
-                        </option>
-                      </Field>
+                      <div
+                          className='options long'
+                          role="group"
+                          aria-labelledby="checkbox-group"
+                          >
+                          <label>
+                            <Field type='checkbox' name='method_tutor' value='Aprendizaje Activo' />
+                            Aprendizaje Activo
+                          </label>
+                          <label>
+                            <Field type='checkbox' name='method_tutor' value='Aprendizaje reflexivo' />
+                            Aprendizaje Reflexivo
+                          </label>
+                          <label>
+                            <Field type='checkbox' name='method_tutor' value='Aprendizaje teórico' />
+                            Aprendizaje Teórico
+                          </label>
+                          <label>
+                            <Field type='checkbox' name='method_tutor' value='Aprendizaje práctico' />
+                            Aprendizaje Práctico
+                          </label>
+                          <label>
+                            <Field type='checkbox' name='method_tutor' value='Aprendizaje visual' />
+                            Aprendizaje Visual
+                          </label>
+                          <label>
+                            <Field type='checkbox' name='method_tutor' value='Aprendizaje auditivo' />
+                            Aprendizaje Auditivo
+                          </label>
+                          <label>
+                            <Field type='checkbox' name='method_tutor' value='Aprendizaje kinestésico' />
+                            Aprendizaje kinestésico
+                          </label>
+                        </div>
                     </div>
                     {formikProps.touched.method_tutor &&
                     formikProps.errors.method_tutor ? (
@@ -226,36 +256,19 @@ const UserForm: React.FC = () => {
 
                     <div className='rol'>
                       <IonLabel className='category'>Materias: </IonLabel>
-                      <Field
-                        className='options'
-                        as='select'
-                        name='subjects_tutor'
-                        multiple={true}
-                      >
-                        <option value='Matemáticas'>Matemáticas</option>
-                        <option value='Física'>Física</option>
-                        <option value='Química'>Química</option>
-                        <option value='Biología'>Biología</option>
-                        <option value='Lenguaje'>Lenguaje</option>
-                        <option value='Inglés'>Inglés</option>
-                        <option value='Español'>Español</option>
-                        <option value='Filosofía'>Filosofía</option>
-                        <option value='Sociales'>Sociales</option>
-                        <option value='Artes'>Artes</option>
-                        <option value='Deportes'>Deportes</option>
-                        <option value='Programación'>Programación</option>
-                        <option value='Música'>Música</option>
-                        <option value='Dibujo'>Dibujo</option>
-                        <option value='Danza'>Danza</option>
-                        <option value='Teatro'>Teatro</option>
-                        <option value='Historia'>Historia</option>
-                        <option value='Geografía'>Geografía</option>
-                        <option value='Economía'>Economía</option>
-                        <option value='Religión'>Religión</option>
-                        <option value='Ética'>Ética</option>
-                        <option value='Informática'>Informática</option>
-                        <option value='Otra'>Otra</option>
-                      </Field>
+                      <div
+                        className='options long'
+                        role="group"
+                        aria-labelledby="checkbox-group">
+
+                        {subjects.map((subject,index) => (
+                          <label key={index} className="values">
+                            <Field type='checkbox' name='subjects_tutor' value={subject} />
+                            {subject}
+                          </label>
+                        ))
+                      } 
+                      </div>
                     </div>
                     {formikProps.touched.subjects_tutor &&
                     formikProps.errors.subjects_tutor ? (

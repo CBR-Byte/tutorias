@@ -3,10 +3,14 @@
     align-items: right;
     margin-top: 1vh;
     margin-bottom: 1vh;
-    width: 60vw;
+    width: 70vw;
 }
 .category {
     margin-right: 0vw;
+}
+.values {
+    gap: 3px;
+    border-bottom: #465869 2px solid;
 }
 .options {
     border-radius: 20px;
@@ -14,10 +18,17 @@
     background-color: #D9D9D9;
     padding-left: 2vw;
     padding-top:0.3vh;
-    height: 7vh;
+    height: 5vh;
     width: 60vw;
+    display: flex;
+    overflow: scroll;
+    flex-direction: column;
     color: rgb(0, 0, 0);
 } 
+.long {
+    height: 15vh;
+    
+}
 .reg {
     font-size: 30px;
     font-weight: 700;

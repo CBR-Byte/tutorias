@@ -2,14 +2,8 @@
 
 import {
   IonPage,
-  IonCheckbox,
   IonButton,
-  IonInput,
-  IonLabel,
-  IonRow,
-  IonIcon,
   IonContent,
-  IonItem,
   IonTitle,
 } from "@ionic/react";
 import { useAppDispatch, useAppSelector } from "../components/redux/hooks";

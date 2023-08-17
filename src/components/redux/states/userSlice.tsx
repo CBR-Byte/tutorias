@@ -183,6 +183,9 @@ export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
+    changeLoading: (state, action) => {
+      state.isLoading = action.payload.value;
+    },
     logOut: (state) => {
       state.status = "";
       state.access_token = "";
@@ -255,7 +258,7 @@ export const userSlice = createSlice({
         state.errorMessage = "";
         state.isAuthenticated = true;
         state.isLoading = false;
-        state.registerCompleted = false;
+        state.registerCompleted = true;
         state.errorRegister = false;
         state.user = action.payload.user;
       })
@@ -287,15 +290,15 @@ export const userSlice = createSlice({
         state.isLoading = false;
         state.user = action.payload;
       })
-      .addCase(updateUserInfo.pending, (state, action) => {
+      .addCase(updateUserInfo.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(updateUserInfo.rejected, (state, action) => {
-        alert(action.payload?.errorMessage);
+      .addCase(updateUserInfo.rejected, (state) => {
+        state.isLoading = false;
       })
   },
 });
 
-export const { changeErrorLogin, changeErrorRegister, logOut, changeRegisterCompleted } =
+export const { changeErrorLogin, changeErrorRegister, logOut, changeRegisterCompleted, changeLoading } =
   userSlice.actions;
 export default userSlice.reducer;

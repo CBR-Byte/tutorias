@@ -24,13 +24,15 @@ import {
   verify,
 } from "../components/redux/states/userSlice";
 import { useAppDispatch, useAppSelector } from "../components/redux/hooks";
-import { Link, useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import { storage } from "../components/redux/states/userSlice";
 import "../components/Bg/Bg.css";
 import axios from "axios";
 import { arrowBack } from "ionicons/icons";
+import Loading from "../components/Loading";
+import { Network } from '@capacitor/network';
 
 const validationSchema = Yup.object({
   email: Yup.string().email("Invalid email address").required("Email Required"),
@@ -41,7 +43,7 @@ const validationSchema = Yup.object({
 
 const PassRecovery: React.FC = () => {
   const forget = useRef<HTMLIonModalElement>(null);
-
+  const [loading, setLoading] = useState(false);
   const [state, setState] = useState({
     email: true,
     emailError: false,
@@ -79,11 +81,35 @@ const PassRecovery: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    const requestInterceptor = axios.interceptors.request.use(config => {
+      setLoading(true);
+      return config;
+    });
+    
+    const responseInterceptor = axios.interceptors.response.use(
+      response => {
+        setLoading(false);
+        return response;
+      },
+      error => {
+        setLoading(false);
+        throw error;
+      }
+    );
+
+    return () => {
+      // Limpia los interceptores al desmontar el componente
+      axios.interceptors.request.eject(requestInterceptor);
+      axios.interceptors.response.eject(responseInterceptor);
+    };
+  }, [state]);
+
+
   const fetchEmail = async (email: string) => {
     await axios
       .post(`http://localhost:8000/password_reset/${email}`)
       .then((res) => {
-        //actualizar({message: res.data.message})
         setState({
           ...state,
           message: res.data.message,
@@ -132,6 +158,10 @@ const PassRecovery: React.FC = () => {
   return (
     <>
       <IonModal ref={forget} trigger='open-modal' className='page'>
+        {loading&& (
+          <Loading message="Cargando..." />
+        )
+        }
         <IonContent className='grid' scrollY={false}>
           <div className='circle1' />
           <div className='circles2 top' />
@@ -289,7 +319,6 @@ const Home: React.FC = () => {
   const dispatch = useAppDispatch();
   const stateUser = useAppSelector((state) => state.user);
   const alert = useRef<any>(null)
-
   const enviarDatos = (data: loginCredentials) => {
     // Realizar async action con redux para iniciar sesión
     dispatch(onLogin(data));
@@ -320,8 +349,8 @@ const Home: React.FC = () => {
         alert.current?.present();
       }, 200);
     }
-
   }, [stateUser.errorLogin]);
+
   return (
     <IonPage className='page'>
       <IonContent className='content' scrollY={false}>
@@ -351,7 +380,9 @@ const Home: React.FC = () => {
                 validationSchema={validationSchema}
                 onSubmit={(values, { resetForm }) => {
                   enviarDatos(values);
-                  resetForm( { values: { email: values.email, password: "" }});
+                  resetForm({
+                    values: { email: values.email, password: "" },
+                  });
                 }}
               >
                 {(formikProps) => (
@@ -412,12 +443,11 @@ const Home: React.FC = () => {
                   </div>
                 )}
               </Formik>
-              <Link to='/register'>
+              <Link to ='/register'>
                 <IonButton shape='round'>Registrarse</IonButton>
               </Link>
             </IonCol>
           </IonRow>
-
           <PassRecovery />
         </IonGrid>
       </IonContent>

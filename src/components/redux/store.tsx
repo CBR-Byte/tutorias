@@ -1,12 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit'
 import {userSlice} from './states/userSlice'
 import { storage } from "../redux/states/userSlice";
+import {subjectSlice} from './states/subjectSlice';
 
 const storeData = async (value: any) => {
   try {
     await storage.set('data', {token: JSON.stringify(value?.access_token), refresh: JSON.stringify(value?.refresh_token), email: JSON.stringify(value?.user.email)}); // Guardar el valor en el almacenamiento local
     const data = await storage.get('data'); // Recuperar el valor del almacenamiento local
-    console.log(data);
   } catch (e) {
     console.log(e);
   }
@@ -32,7 +32,6 @@ const updateAccessToken = async (value: any) => {
 }
 const loginMiddleware = (store:any) => (next:any) => (action:any) => {
   if (action.type === 'user/login/fulfilled' || action.type === 'user/signUp/fulfilled') {
-    console.log(action.payload)
 
     storeData(action.payload);
   }
@@ -41,8 +40,7 @@ const loginMiddleware = (store:any) => (next:any) => (action:any) => {
 
 const refresh= (store:any) => (next:any) => (action:any) => {
   if (action.type === 'user/tokenRef/fulfilled') {
-    console.log(action.payload);
-    
+
     updateAccessToken(action.payload);
   }
   return next(action);
@@ -58,7 +56,7 @@ const logoutMiddleware = (store:any) => (next:any) => (action:any) => {
 
 
 export const store = configureStore({
-  reducer: {user : userSlice.reducer},
+  reducer: {user : userSlice.reducer, subject : subjectSlice.reducer},
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(loginMiddleware, logoutMiddleware,refresh),
   devTools: true,
 })
