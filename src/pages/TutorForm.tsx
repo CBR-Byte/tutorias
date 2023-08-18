@@ -133,8 +133,8 @@ const UserForm: React.FC = () => {
                         name='format_tutor'
                         multiple={true}
                       >
-                        <option value='Presencial'>Presencial</option>
-                        <option value='Virtual'>Virtual</option>
+                        <option className="values" value='Presencial'>Presencial</option>
+                        <option className="values" value='Virtual'>Virtual</option>
                       </Field>
                     </div>
                     {formikProps.touched.format_tutor &&
@@ -198,7 +198,7 @@ const UserForm: React.FC = () => {
                           aria-labelledby="checkbox-group"
                           >
                           <label>
-                            <Field type='checkbox' name='method_tutor' value='Aprendizaje Activo' />
+                            <Field  type='checkbox' name='method_tutor' value='Aprendizaje Activo' />
                             Aprendizaje Activo
                           </label>
                           <label>
@@ -243,8 +243,8 @@ const UserForm: React.FC = () => {
                         name='type_group_tutor'
                         multiple={true}
                       >
-                        <option value='Individual'>Individual</option>
-                        <option value='Grupal'>Grupal</option>
+                        <option className="values" value='Individual'>Individual</option>
+                        <option className="values" value='Grupal'>Grupal</option>
                       </Field>
                     </div>
                     {formikProps.touched.type_group_tutor &&

@@ -14,13 +14,13 @@ export const PublicRoute: React.FC<Props> = ({component: Component, ...rest }) =
   const [isConnected, setIsConnected] = useState(true);
 
   useEffect(() => {
-    const listener = Network.addListener('networkStatusChange', async () => {
+    Network.addListener('networkStatusChange', async () => {
       const status = await Network.getStatus();
       setIsConnected(status.connected);
     });
     
     return () => {
-      listener.remove ();
+      Network.removeAllListeners();
     };
   }, []); 
 

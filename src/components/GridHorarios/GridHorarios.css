@@ -3,19 +3,22 @@
     grid-template-columns: repeat(6, 1fr);
 }
 .grid-item {
-    border: 1px solid #1F3040;
+    box-shadow: 5px 8px 10px #155B68;
     padding: 1vw;
     text-align: center;
     cursor: pointer;
-    color: #ffff;
+    color: #D2D9E7;
     margin-bottom: 1vh;
 }
 .selected {
-background-color: #87bdbe;
+background-color: #155c68e1;
 }
 .dias {
-    font-size: 4vw;
-    text-decoration-line: underline;
+    font-size: 3.7vw;
+    border-bottom: 2px solid #05938C;
+    color: #155c68e1; 
+    margin-bottom: 1vh;
+    font-weight: 600;
 }
 .titulo {
     margin-top: 1vh;
@@ -32,8 +35,16 @@ background-color: #87bdbe;
 }
 
 .cuadrado {
+    margin-top: 30px;
     background-color: #155B68;
-    height: 50vh;
-    border-radius: 40px;
+    height: 120vw;
+    width: 120vw;
+    left: -10%;
+    position: absolute;
+    border-radius: 50%;
     padding: 1vh;
+}
+.horario {
+    margin-top: 3vh;
+    margin-bottom: 3vh;
 }

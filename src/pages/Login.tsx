@@ -223,8 +223,7 @@ const PassRecovery: React.FC = () => {
                   <IonInput
                     type='email'
                     name='verifyEmail'
-                    input-Mode='md'
-                    fill='outline'
+                    className="inputs"
                     placeholder='Ingrese su email'
                     shape='round'
                     value={state.verifyEmail}
@@ -269,14 +268,12 @@ const PassRecovery: React.FC = () => {
               </IonRow>
               <IonRow className='row'>
                 <IonInput
-                  type='password'
-                  input-Mode='md'
+                  type='password'                 
                   name='password'
                   value={state.password}
                   onIonInput={(e) => handleInputs(e)}
                   placeholder='Ingresa tu nueva contraseña'
-                  shape='round'
-                  fill='outline'
+                  className="inputs"
                 />
               </IonRow>
               <IonRow className='row'>
@@ -292,8 +289,7 @@ const PassRecovery: React.FC = () => {
                   value={state.newPassword}
                   onIonInput={(e) => handleInputs(e)}
                   placeholder='Confirma tu contraseña'
-                  shape='round'
-                  fill='outline'
+                  className="inputs"
                 />
               </IonRow>
               <IonRow className='row'>
@@ -354,9 +350,11 @@ const Home: React.FC = () => {
   return (
     <IonPage className='page'>
       <IonContent className='content' scrollY={false}>
-        <div className='circles' />
-        <div className='circle' />
-        <IonImg className='logo' src='assets/images/logo.png' />
+        <div className="top">
+          <div className='circles' />
+          <div className='circle' />
+          <IonImg className='logo' src='assets/images/logo.png' />
+        </div>
         <IonAlert
           ref={alert}
           onDidDismiss={handleCloseAlert}
@@ -391,13 +389,11 @@ const Home: React.FC = () => {
                       <IonInput
                         type='email'
                         name='email'
-                        input-Mode='md'
-                        fill='outline'
+                        className="inputs"
                         placeholder='Ingrese su email'
                         value={formikProps.values.email}
                         onIonChange={formikProps.handleChange}
                         onIonBlur={formikProps.handleBlur}
-                        shape='round'
                       />
                       {formikProps.touched.email && formikProps.errors.email ? (
                         <div style={{ color: "red" }}>
@@ -407,9 +403,7 @@ const Home: React.FC = () => {
                       <IonInput
                         type='password'
                         name='password'
-                        input-Mode='md'
-                        fill='outline'
-                        shape='round'
+                        className="inputs"
                         placeholder='Ingrese su contraseña'
                         value={formikProps.values.password}
                         onIonChange={formikProps.handleChange}
@@ -425,7 +419,6 @@ const Home: React.FC = () => {
                       <IonButton
                         className='forget'
                         fill='clear'
-                        color={"secondary"}
                         id='open-modal'
                       >
                         {" "}

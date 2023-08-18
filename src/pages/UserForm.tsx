@@ -163,8 +163,8 @@ import { changeRegisterCompleted} from "../components/redux/states/userSlice";
                           name='format'
                           multiple={true}
                         >
-                        <option value="Virtual">Presencial</option>
-                        <option value="Presencial">Virtual</option>
+                        <option className="values" value="Virtual">Presencial</option>
+                        <option className="values" value="Presencial">Virtual</option>
                         </Field>
                       </div>
                       {formikProps.touched.format && formikProps.errors.format ? (
@@ -180,7 +180,7 @@ import { changeRegisterCompleted} from "../components/redux/states/userSlice";
                           name='type_group'
                           multiple={true}
                         >
-                        <option value="Individual">Individual</option>
+                        <option className="values" value="Individual">Individual</option>
                         <option value="Grupal">Grupal</option>
                         </Field>
                       </div>
@@ -192,7 +192,7 @@ import { changeRegisterCompleted} from "../components/redux/states/userSlice";
                       <div className="rol">
                         <IonLabel className="category">Método: </IonLabel>
                         <div
-                          className='options long'
+                          className='options long values'
                           role="group"
                           aria-labelledby="checkbox-group"
                           >

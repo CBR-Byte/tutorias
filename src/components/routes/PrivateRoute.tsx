@@ -13,13 +13,13 @@ export const PrivateRoute: React.FC<Props> = ({component: Component, ...rest}) =
   const state = useAppSelector((state) => state.user);
   
   useEffect(() => {
-    const listener = Network.addListener('networkStatusChange', async () => {
+    Network.addListener('networkStatusChange', async () => {
       const status = await Network.getStatus();
       setIsConnected(status.connected);
     });
     
     return () => {
-      listener.remove();
+      Network.removeAllListeners();
     };
   }, []);
   if(!isConnected) {

@@ -8,7 +8,7 @@
 }
 .grid{
     text-align: center;
-    margin-top: 28vh;
+    margin-top: 35vh;
 }
 .title{
     font-size: 30px;
@@ -25,32 +25,47 @@
 .forget {
     overflow: visible;
     font-size: 10px;
+    color: #fff;
     font-weight: 700;
 }
+.top {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
 .logo {
-    top: 2%;
-    left: 73%;
-    width: 25%;
+    top: 5%;
+    width: 20vh;
     position: absolute;
+}
+.inputs {
+    color: #155B68;
+    font-weight: 600;
+    height: 10px;
+    background-color: #D2D9E7;
+    border-radius: 30px;
+    border: 2px solid #05938C;
+    box-shadow: 1px 10px 30px #155B68;
 }
 .circle {
-    width:65%;
-    height :65vw;
+    width:130vw;
+    height :60vh;
     position: absolute;
-    top: -10vh;
-    left: 60vw;
+    top: -30%;
+    left: -15%;
     border-radius: 50%;
-    background: #c2c0ba;
+    background: #155B68;
 }
 .circles {
-    width:200vw;
+    width:130vw;
     position: absolute;
-    top: 70vh;
-    left: -50vw;background: #155B68;
-    height :200vw;
+    bottom: -30%;
+    left: -15%;
+    background: #155B68;
+    height :60vh;
     border-radius: 50%;
   }
 .log {
-    margin-top:17vh;
+    margin-top:15vh;
     margin-bottom:10px;
 }

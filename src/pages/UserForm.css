@@ -10,24 +10,26 @@
 }
 .values {
     gap: 3px;
-    border-bottom: #465869 2px solid;
+    border-bottom: #05938C 2px solid;
+    font-weight: 600;
 }
 .options {
-    border-radius: 20px;
-    border: 2px solid #465869;
-    background-color: #D9D9D9;
+    border-radius: 30px;
+    border: 2px solid #05938C;;
+    background-color: #D2D9E7;
     padding-left: 2vw;
     padding-top:0.3vh;
+    font-weight: 600;
+    color: #155B68;
+    box-shadow: 1px 10px 30px #155B68;
     height: 5vh;
     width: 60vw;
     display: flex;
     overflow: scroll;
     flex-direction: column;
-    color: rgb(0, 0, 0);
 } 
 .long {
     height: 15vh;
-    
 }
 .reg {
     font-size: 30px;

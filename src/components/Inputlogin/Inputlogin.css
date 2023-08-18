@@ -1,9 +1,12 @@
 .inp {
-    border-radius: 20px;
-    border: 2px solid #465869;
-    background-color: #D9D9D9;
-    height: 35px;
     width: 60vw;
-    color: rgb(0, 0, 0);
-    margin-bottom: 1vh;
+    margin-bottom: 20px;
+    color: #155B68;
+    box-shadow: 1px 10px 30px #155B68;
+    font-weight: 600;
+    height: 10px;
+    background-color: #D2D9E7;
+    border-radius: 30px;
+    border: 2px solid #05938C;
+    
 }
