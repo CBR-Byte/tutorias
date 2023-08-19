@@ -6,7 +6,11 @@ import { Storage } from "@ionic/storage";
 
 
 export const storage = new Storage();
-await storage.create();
+const createStorage = async () =>{
+  await storage.create();
+
+}
+createStorage();
 
 
 export interface User {
@@ -73,7 +77,7 @@ export const verify = createAsyncThunk<
     const email = JSON.parse(data.email);
     
     const response = await axios.get(
-      `http://127.0.0.1:8000/users/${email}`,
+      `https://tutoriapp-7f467dd740dd.herokuapp.com/users/${email}`,
       {headers: {
         'Authorization': `Bearer ${token_access}`
       }}
@@ -91,7 +95,7 @@ export const refreshToken = createAsyncThunk<any,any,{ rejectValue: MyErrorType 
     const refresh = JSON.parse(token.refresh_token);
     
     const response = await axios.post(
-      `http://127.0.0.1:8000/users/refresh`,
+      `https://tutoriapp-7f467dd740dd.herokuapp.com/users/refresh`,
       null,
       {headers: {
         'Authorization': `Bearer ${refresh}`
@@ -110,7 +114,7 @@ export const updateUserInfo = createAsyncThunk<any,any,{rejectValue: MyErrorType
     const {id} = state.user.user;
     const {access_token} = state.user;
     const response = await axios.patch(
-      `http://127.0.0.1:8000/users/update/${id}`,
+      `https://tutoriapp-7f467dd740dd.herokuapp.com/users/update/${id}`,
       data,
       {headers: {
         'Authorization': `Bearer ${access_token}`
@@ -138,7 +142,7 @@ export const onLogin = createAsyncThunk<
 >("user/login", async (credentials, thunkAPI) => {
   try {
     const response = await axios.post(
-      "http://127.0.0.1:8000/users/login",
+      "https://tutoriapp-7f467dd740dd.herokuapp.com/users/login",
       credentials
     );
     return response.data;
@@ -170,7 +174,7 @@ if (data.is_student === "false"){
 
   try {
     const response = await axios.post(
-      "http://127.0.0.1:8000/users/create",
+      "https://tutoriapp-7f467dd740dd.herokuapp.com/users/create",
       data
     );
     return response.data;
