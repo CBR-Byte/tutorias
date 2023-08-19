@@ -60,7 +60,7 @@ const PassRecovery: React.FC = () => {
       const token = state.inputValues.join("");
       const data = { token: token, password: state.password };
       await axios
-        .post(`http://localhost:8000/change_password/`, data)
+        .post(`https://tutoriapp-7f467dd740dd.herokuapp.com/change_password/`, data)
         .then((res) => {
           setState({
             ...state,
@@ -108,7 +108,7 @@ const PassRecovery: React.FC = () => {
 
   const fetchEmail = async (email: string) => {
     await axios
-      .post(`http://localhost:8000/password_reset/${email}`)
+      .post(`https://tutoriapp-7f467dd740dd.herokuapp.com/password_reset/${email}`)
       .then((res) => {
         setState({
           ...state,

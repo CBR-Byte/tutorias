@@ -13,7 +13,7 @@ export const getSubjects = createAsyncThunk<Subject, void, { dispatch: AppDispat
       thunkAPI.dispatch(userSlice.actions.changeLoading({ value: true }));
   
       try {
-        const response = await axios.get("http://localhost:8000/subjects");
+        const response = await axios.get("https://tutoriapp-7f467dd740dd.herokuapp.com/subjects");
         const subjectNames = Object.values(response.data).map((subject: any) => subject.name);
   
         thunkAPI.dispatch(userSlice.actions.changeLoading({ value: false }));
