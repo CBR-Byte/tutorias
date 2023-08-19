@@ -50,7 +50,7 @@ const GridHorarios: React.FC<slotProps> = ({estado,actualizar,modal}) => {
                 </IonRow>
             </IonGrid>
             <div className='cuadrado'>
-                <IonButton shape='round' className='btn' onClick={() => modal.current?.dismiss()}>Confirmar</IonButton>
+              <IonButton shape='round' className='btn' onClick={() => modal.current?.dismiss()}>Confirmar</IonButton>
             </div>
         </IonContent>
     </>

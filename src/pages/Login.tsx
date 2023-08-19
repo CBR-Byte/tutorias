@@ -347,6 +347,8 @@ const Home: React.FC = () => {
     }
   }, [stateUser.errorLogin]);
 
+  const forget = useRef<HTMLIonModalElement>(null);
+  
   return (
     <IonPage className='page'>
       <IonContent className='content' scrollY={false}>
