@@ -353,7 +353,7 @@ const Home: React.FC = () => {
         <div className="top">
           <div className='circles' />
           <div className='circle' />
-          <IonImg className='logo' src='https://i.ibb.co/DWHVDfC/logo.png' />
+          <IonImg className='logo' src='https://i.ibb.co/DWHVDfC/logo.png' alt="TutoriAPP"/>
         </div>
         <IonAlert
           ref={alert}

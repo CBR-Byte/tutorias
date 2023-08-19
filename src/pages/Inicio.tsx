@@ -6,6 +6,7 @@ import {
   IonMenuButton,
   IonInput,
   IonIcon,
+  IonButton,
 } from "@ionic/react";
 import { useAppDispatch, useAppSelector } from "../components/redux/hooks";
 import { useHistory } from "react-router";
@@ -40,6 +41,7 @@ const Inicio: React.FC = () => {
         <div className='headerInicio'>
           <IonMenuButton autoHide={false} className='bot'></IonMenuButton>
           <IonTitle className='inicio'>INICIO</IonTitle>
+          <IonButton onClick={closeSesion}>Cerrar sesión</IonButton>
         </div>
         <div className='contenedor'>
           <div className='buscador'>
