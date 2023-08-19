@@ -1,14 +1,15 @@
 .headerInicio {
     background-color: #155B68;
     height: 8vh;
+    max-height: 8%;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: row;
     color: #2895a5;
-    margin-bottom: 4vh;
 }
 .footerInicio {
+    max-height: 8%;
     background-color: #155B68;
     height: 8vh;
     display: flex;
@@ -62,6 +63,8 @@
     justify-content: center;
     text-align: center;
     flex-direction: column;
+    height: 84vh;
+    max-height: 84vh;
 }
 .recomendados {
     margin-bottom: 5vh;

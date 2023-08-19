@@ -5,39 +5,45 @@ import "./Card.css";
 import React from "react";
 import { star } from "ionicons/icons/";
 
-const Card: React.FC = () => {
+interface ContainerProps {
+  nombre: string;
+  modalidad: string;
+  descripcion: string;
+  calificacion: number;
+  precio: number;
+  numCalificacion: number;
+  imagen: string;
+}
+
+const Card: React.FC<ContainerProps> = ({nombre,modalidad,descripcion,calificacion,precio, numCalificacion,imagen}) => {
   return (
-    <>
       <div className='card'>
         <div className='headerCard'>
           <img
             className='imagen'
-            src='https://www.w3schools.com/howto/img_avatar.png'
+            src={imagen}
             alt='imagen'
           />
           <IonText>
-            <IonTitle className='nombre'>Nombre</IonTitle>
-            <IonText className='cuerpo'>Ingeniero de Sistemas</IonText>
+            <IonTitle className='nombre'>{nombre}</IonTitle>
+            <IonText className='cuerpo'>{modalidad}</IonText>
           </IonText>
         </div>
         <div className='bodyCard'>
           <IonText className='cuerpo'>
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Illum
-            ducimus laboriosam beatae eligendi corrupti reprehenderit dolor
-            minus odio deleniti deserunt?
+            {descripcion}
           </IonText>
         </div>
         <div className='footerCard'>
           <div className='calificacion'>
             <IonIcon className='star' icon={star} />
-            <IonText className='textoFooter'>4.5 (10 calificaciones)</IonText>
+            <IonText className='textoFooter'>{calificacion} ({numCalificacion} calificaciones)</IonText>
           </div>
           <div className="price">
-            <IonText className='textoFooter'>$50000</IonText>
+            <IonText className='textoFooter'>${precio}</IonText>
           </div>
         </div>
       </div>
-    </>
   );
 };
 

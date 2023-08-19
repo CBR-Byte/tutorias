@@ -16,6 +16,16 @@ import { Link } from "react-router-dom";
 import "./Inicio.css";
 import { search, home, person, mail } from "ionicons/icons/";
 import Card from "../components/Card/Card";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import '@ionic/react/css/ionic-swiper.css';
+import 'swiper/css/autoplay';
+import 'swiper/css';
+import 'swiper/css/autoplay';
+import 'swiper/css/keyboard';
+import 'swiper/css/pagination';
+import 'swiper/css/scrollbar';
+import 'swiper/css/zoom';
 
 const Inicio: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -48,11 +58,53 @@ const Inicio: React.FC = () => {
           </div>
           <div className='recomendados'>
             <IonTitle className="textoRec">RECOMENDADOS</IonTitle>
-            <Card />
+            <Swiper navigation={true} pagination={true} autoplay={true} slidesPerView={1} loop={true}>
+              <SwiperSlide>
+                <Card
+                  nombre="Juan Pablo Gómez"
+                  modalidad="Virtual"
+                  descripcion="python, java, c++, cálculo, geometría, física, química"
+                  calificacion={4.5}
+                  precio={10000}
+                  numCalificacion={10}
+                  imagen="https://www.w3schools.com/howto/img_avatar.png"
+                />
+              </SwiperSlide>
+              <SwiperSlide>
+                <Card
+                  nombre="Camila Suarez Gómez"
+                  modalidad="presencial"
+                  descripcion="python, java, c++, cálculo, geometría, física, química,inglés, español"
+                  calificacion={5}
+                  precio={30000}
+                  numCalificacion={41}
+                  imagen="https://www.w3schools.com/w3images/avatar4.png"
+                />
+              </SwiperSlide>
+              <SwiperSlide>
+                <Card
+                  nombre="Jaime Obando Gómez"
+                  modalidad="presencial"
+                  descripcion="python, java, c++, cálculo, geometría, física, química,inglés, español"
+                  calificacion={5}
+                  precio={30000}
+                  numCalificacion={41}
+                  imagen="https://www.w3schools.com/w3images/avatar3.png"
+                />
+              </SwiperSlide>
+            </Swiper>
           </div>
           <div className="resultados">
             <IonTitle className="textoRec">RESULTADOS</IonTitle>
-            <Card />
+            <Card
+                  nombre="Jaime Obando Gómez"
+                  modalidad="presencial"
+                  descripcion="python, java, c++, cálculo, geometría, física, química,inglés, español"
+                  calificacion={5}
+                  precio={30000}
+                  numCalificacion={41}
+                  imagen="https://www.w3schools.com/w3images/avatar3.png"
+                />
           </div>
         </div>
         <div className="footerInicio">
