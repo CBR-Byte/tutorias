@@ -353,7 +353,7 @@ const Home: React.FC = () => {
         <div className="top">
           <div className='circles' />
           <div className='circle' />
-          <IonImg className='logo' src='assets/images/logo.png' />
+          <IonImg className='logo' src='https://i.ibb.co/DWHVDfC/logo.png' />
         </div>
         <IonAlert
           ref={alert}
@@ -437,7 +437,7 @@ const Home: React.FC = () => {
                 )}
               </Formik>
               <Link to ='/register'>
-                <IonButton shape='round'>Registrarse</IonButton>
+                <IonButton shape='round' ion-mode="md">Registrarse</IonButton>
               </Link>
             </IonCol>
           </IonRow>

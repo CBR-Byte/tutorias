@@ -2,9 +2,10 @@
 
 import {
   IonPage,
-  IonButton,
-  IonContent,
   IonTitle,
+  IonMenuButton,
+  IonInput,
+  IonIcon,
 } from "@ionic/react";
 import { useAppDispatch, useAppSelector } from "../components/redux/hooks";
 import { useHistory } from "react-router";
@@ -12,6 +13,9 @@ import { logOut } from "../components/redux/states/userSlice";
 import "./Register.css";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import "./Inicio.css";
+import { search, home, person, mail } from "ionicons/icons/";
+import Card from "../components/Card/Card";
 
 const Inicio: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -20,32 +24,43 @@ const Inicio: React.FC = () => {
 
   const closeSesion = () => {
     dispatch(logOut());
-  }
+  };
 
   useEffect(() => {
-    
-    if(!stateUser.registerCompleted && stateUser.user?.is_tutor){
+    if (!stateUser.registerCompleted && stateUser.user?.is_tutor) {
       history.push("/tutorForm");
-    }else if(!stateUser.registerCompleted && stateUser.user?.is_student){
+    } else if (!stateUser.registerCompleted && stateUser.user?.is_student) {
       history.push("/userForm");
     }
+  }, []);
 
-  }, [])
-  
   return (
     <IonPage>
-      <IonContent>
-        <IonTitle class="ion-text-center">Bienvenido {stateUser.user?.name}</IonTitle>   
-          <Link to="/login">
-            <IonButton color="danger" onClick={closeSesion} shape='round'>Cerrar sesión</IonButton>
-          </Link>
-          <Link to="/userForm">
-            <IonButton  shape='round'>Form</IonButton>
-          </Link>
-          <Link to="/tutorForm">
-          <IonButton  shape='round'>Tutor Form</IonButton>
-          </Link>
-      </IonContent>
+      <div className="cont">
+        <div className='headerInicio'>
+          <IonMenuButton autoHide={false} className='bot'></IonMenuButton>
+          <IonTitle className='inicio'>INICIO</IonTitle>
+        </div>
+        <div className='contenedor'>
+          <div className='buscador'>
+            <IonIcon className='searchIcon' icon={search} />  
+            <IonInput className='inputs2' placeholder='Buscar'/>
+          </div>
+          <div className='recomendados'>
+            <IonTitle className="textoRec">RECOMENDADOS</IonTitle>
+            <Card />
+          </div>
+          <div className="resultados">
+            <IonTitle className="textoRec">RESULTADOS</IonTitle>
+            <Card />
+          </div>
+        </div>
+        <div className="footerInicio">
+        <IonIcon className='iconos' icon={person} /> 
+        <IonIcon className='iconos' icon={home} /> 
+        <IonIcon className='iconos' icon={mail} /> 
+        </div>
+      </div>
     </IonPage>
   );
 };

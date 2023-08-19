@@ -1,0 +1,78 @@
+.card {
+    width: 80vw;
+    height: 25vh;
+    background-color: #D2D9E7;
+    border-radius: 30px;
+    border: 2px solid #2895a5;
+    box-shadow: 1px 10px 30px #155B68;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;    
+}
+.nombre{
+    font-size: 2.5vh;
+    font-weight: 600;
+    text-align: center;
+    color: #0BABA2;
+}
+.cuerpo {
+    font-size: 1.8vh;
+    font-weight: 600;
+    color: #155B68;
+    max-width: 100%;
+    max-height: 100%;
+}
+.headerCard {
+    top:0;
+    display: flex;
+    justify-content: center;
+    max-height: 100%;
+    max-width: 100%;
+    margin-top: 3%;
+}
+.imagen {
+    height: 7vh;
+    border-radius: 50%;
+    margin-right: 30px;
+}
+.bodyCard {
+    top:0;
+    display: flex;
+    justify-content: center;
+    max-height: 100%;
+    max-width: 100%;
+}
+.footerCard {
+    bottom:0;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    padding: 5px;
+    max-height: 20vh;
+}
+.calificacion {
+    max-width: 100%;
+    max-height: 100%;
+    display: flex;
+    align-items: center;
+    width: 70%;
+}
+.star {
+    position: relative;
+    left: 10px;
+    margin-right: 10px;
+    color: #F3A506;
+}
+.textoFooter {
+    font-size: 1.5vh;
+    color: #0BABA2;
+    font-weight: 600;
+}
+.price {
+    max-width: 100%;
+    max-height: 100%;
+    width: 30%;
+    display: flex;
+    justify-content: right;
+    padding: 5px;
+}

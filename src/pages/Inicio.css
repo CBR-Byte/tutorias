@@ -1,0 +1,80 @@
+.headerInicio {
+    background-color: #155B68;
+    height: 8vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    color: #2895a5;
+    margin-bottom: 4vh;
+}
+.footerInicio {
+    background-color: #155B68;
+    height: 8vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    color: #2895a5;
+}
+.cont {
+    height: 100%;
+}
+.inicio {
+    position: fixed ;
+    color: #fff;
+    font-size: 2.5vh;
+    font-weight: 600;
+}
+.bot {
+    position: absolute;
+    left: 0;
+}
+.inputs2 {
+    z-index: 0;
+    color: #9da2ad;
+    text-align: center;
+    font-weight: 600;
+    font-size: 2.5vh;
+    width: 80vw;
+    background-color: #D2D9E7;
+    border-radius: 30px;
+    border: 2px solid #2895a5;
+    box-shadow: 1px 10px 30px #155B68;
+}
+.buscador {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 5vh;
+}
+.searchIcon {
+    position: absolute;
+    z-index: 1;
+    left: 15vw;
+    height: 5vh;
+    width: 8vw;
+    color: #a6acb8;
+}
+.contenedor {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    flex-direction: column;
+}
+.recomendados {
+    margin-bottom: 5vh;
+}
+.textoRec {
+    font-weight: 600;
+    margin-bottom: 2vh;
+}
+.resultados {
+    margin-bottom: 5vh;
+}
+.iconos {
+    position: relative;
+    height: 5vh;
+    width: 34%;
+}

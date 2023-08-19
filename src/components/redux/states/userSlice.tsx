@@ -3,11 +3,15 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { Storage } from "@ionic/storage";
+import { create } from "ionicons/icons";
 
 
 export const storage = new Storage();
-await storage.create();
 
+const createStorage = async () => {
+  await storage.create();
+}
+createStorage();
 
 export interface User {
   status: string;
