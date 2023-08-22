@@ -1,12 +1,6 @@
 /** @format */
 
-import {
-  IonPage,
-  IonTitle,
-  IonInput,
-  IonIcon,
-  IonButton,
-} from "@ionic/react";
+import { IonPage, IonTitle, IonInput, IonIcon, IonButton } from "@ionic/react";
 import { useAppDispatch, useAppSelector } from "../components/redux/hooks";
 import { useHistory } from "react-router";
 import { logOut } from "../components/redux/states/userSlice";
@@ -14,7 +8,7 @@ import "./Register.css";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./Inicio.css";
-import { search, home, person, mail, power } from "ionicons/icons/";
+import { search, home, person, mail, power, filter } from "ionicons/icons/";
 import Card from "../components/Card/Card";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -22,11 +16,14 @@ import "@ionic/react/css/ionic-swiper.css";
 import {
   Pagination,
   Autoplay,
-  EffectCoverflow
+  EffectCoverflow,
+  HashNavigation,
+  Navigation,
 } from "swiper/modules";
-import 'swiper/css';
-import 'swiper/css/effect-coverflow';
-
+import "swiper/css";
+import "swiper/css/effect-coverflow";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
 
 const Inicio: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -50,7 +47,7 @@ const Inicio: React.FC = () => {
       <div className='cont'>
         <div className='headerInicio'>
           <IonTitle className='inicio'>INICIO</IonTitle>
-          <IonButton className='bot' onClick={closeSesion}>
+          <IonButton fill='clear' className='bot' onClick={closeSesion}>
             <IonIcon icon={power} />
           </IonButton>
         </div>
@@ -62,10 +59,17 @@ const Inicio: React.FC = () => {
           <div className='recomendados'>
             <IonTitle className='textoRec'>RECOMENDADOS</IonTitle>
             <Swiper
-              effect={'coverflow'}
+              effect={"coverflow"}
+              hashNavigation={{
+                watchState: true,
+              }}
+              pagination={{
+                clickable: true,
+              }}
+              navigation={true}
               grabCursor={true}
               centeredSlides={true}
-              slidesPerView={'auto'}
+              slidesPerView={"auto"}
               coverflowEffect={{
                 rotate: 20,
                 stretch: 0,
@@ -74,8 +78,13 @@ const Inicio: React.FC = () => {
                 slideShadows: true,
               }}
               autoplay={{ delay: 2500, disableOnInteraction: false }}
-              pagination={true}
-              modules={[EffectCoverflow, Pagination, Autoplay]}
+              modules={[
+                EffectCoverflow,
+                Pagination,
+                Autoplay,
+                Navigation,
+                HashNavigation,
+              ]}
             >
               <SwiperSlide>
                 <Card
@@ -107,28 +116,59 @@ const Inicio: React.FC = () => {
                   calificacion={5}
                   precio={30000}
                   numCalificacion={41}
-                  imagen='https://www.w3schools.com/w3images/avatar3.png'
+                  imagen='https://www.w3schools.com/w3images/avatar5.png'
                 />
               </SwiperSlide>
             </Swiper>
           </div>
           <div className='resultados'>
-            <IonTitle className='textoRec'>RESULTADOS</IonTitle>
-            <Card
-              nombre='Jaime Obando Gómez'
-              modalidad='presencial'
-              descripcion='python, java, c++, cálculo, geometría, física, química,inglés, español'
-              calificacion={5}
-              precio={30000}
-              numCalificacion={41}
-              imagen='https://www.w3schools.com/w3images/avatar3.png'
-            />
+            <div className='resTitle'>
+              <IonTitle className='textoRec'>RESULTADOS</IonTitle>
+              <IonButton className='filter' fill='clear'>
+                <IonIcon icon={filter} className='iconFilter' />
+              </IonButton>
+            </div>
+            <div className='res'>
+              <Card
+                nombre='Jaime Obando Gómez'
+                modalidad='presencial'
+                descripcion='python, java, c++, cálculo, geometría, física, química,inglés, español'
+                calificacion={5}
+                precio={30000}
+                numCalificacion={41}
+                imagen='https://www.w3schools.com/w3images/avatar6.png'
+              />
+              <Card
+                nombre='Jaime Obando Gómez'
+                modalidad='presencial'
+                descripcion='python, java, c++, cálculo, geometría, física, química,inglés, español'
+                calificacion={5}
+                precio={30000}
+                numCalificacion={41}
+                imagen='https://www.w3schools.com/w3images/avatar1.png'
+              />
+              <Card
+                nombre='Jaime Obando Gómez'
+                modalidad='presencial'
+                descripcion='python, java, c++, cálculo, geometría, física, química,inglés, español'
+                calificacion={5}
+                precio={30000}
+                numCalificacion={41}
+                imagen='https://www.w3schools.com/w3images/avatar3.png'
+              />
+            </div>
           </div>
         </div>
         <div className='footerInicio'>
-          <IonIcon className='iconos' icon={person} />
-          <IonIcon className='iconos' icon={home} />
-          <IonIcon className='iconos' icon={mail} />
+          <IonButton className='iconosB' fill="clear">
+            <IonIcon className='iconos' icon={person} />
+          </IonButton>
+          <IonButton className='iconosB' fill="clear">
+            <IonIcon className='iconos active' icon={home} />
+          </IonButton>
+          <IonButton className='iconosB' fill="clear">
+            <IonIcon className="iconos" icon={mail} />
+          </IonButton>
         </div>
       </div>
     </IonPage>

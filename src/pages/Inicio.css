@@ -30,6 +30,7 @@
 .bot {
     position: absolute;
     left: 0;
+    margin-left: 2vh;
 }
 .inputs2 {
     z-index: 0;
@@ -47,7 +48,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 5vh;
+    margin-bottom: 3vh;
 }
 .searchIcon {
     position: absolute;
@@ -67,17 +68,50 @@
     max-height: 84vh;
 }
 .recomendados {
-    margin-bottom: 5vh;
+    margin-bottom: 3vh;
 }
 .textoRec {
     font-weight: 600;
-    margin-bottom: 2vh;
 }
 .resultados {
-    margin-bottom: 5vh;
+    height: 33vh;
+}
+.iconosB {
+    position: relative;
+    width: 34%;
 }
 .iconos {
-    position: relative;
-    height: 5vh;
-    width: 34%;
+    height: 40px;
+    width: 40px;
+    color: #05938C;
+}
+.active {
+    color: #D2D9E7 !important;
+}
+.swiper-pagination-bullet-active {
+    background-color: #2895a5 !important;
+}
+.swiper-pagination-bullet {
+    background-color: #2895a5 !important;
+}
+.res {
+    overflow: scroll;
+    height: 29vh
+}
+.filter {
+    position: absolute  ;
+    margin-right: 4vh;
+    right: 0;
+}
+.resTitle {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2vh;
+    justify-content: center;
+}
+.iconFilter {    
+    height: 4vh;
+    width: 4vh;
+    margin-right: 1vw;
+    color: #05938C;
 }

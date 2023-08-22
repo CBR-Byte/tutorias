@@ -4,7 +4,6 @@
     background-color: #D2D9E7;
     border-radius: 30px;
     border: 2px solid #2895a5;
-    box-shadow: 1px 10px 30px #155B68;
     display: flex;
     flex-direction: column;
     justify-content: center;   
@@ -51,6 +50,7 @@
     align-items: center;
     max-height: 20%;
     height: 20vh;
+    margin-bottom: 8px;
 }
 .calificacion {
     max-width: 100%;
