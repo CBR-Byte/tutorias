@@ -121,12 +121,12 @@ import { changeRegisterCompleted} from "../components/redux/states/userSlice";
                             {carrera}
                           </option>
                         ))}
+                        </Field>
                       {formikProps.touched.career && formikProps.errors.career ? (
                         <div style={{ color: "red" }}>
                           {formikProps.errors.career}
                         </div>
                       ) : null}
-                      </Field>
                       <Inputlogin
                         label='Semestre'
                         type='number'
