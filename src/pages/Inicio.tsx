@@ -8,7 +8,7 @@ import "./Register.css";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./Inicio.css";
-import { search, home, person, mail, power, filter } from "ionicons/icons/";
+import { search, home, person, mail, logOut as out, filter } from "ionicons/icons/";
 import Card from "../components/Card/Card";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -47,8 +47,8 @@ const Inicio: React.FC = () => {
       <div className='cont'>
         <div className='headerInicio'>
           <IonTitle className='inicio'>INICIO</IonTitle>
-          <IonButton fill='clear' className='bot' onClick={closeSesion}>
-            <IonIcon icon={power} />
+          <IonButton fill='outline' className='bot' onClick={closeSesion}>
+            <IonIcon icon={out} />
           </IonButton>
         </div>
         <div className='contenedor'>

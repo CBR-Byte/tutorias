@@ -12,6 +12,7 @@ import Register from "./pages/Register";
 import Inicio from "./pages/Inicio";
 import UserForm from "./pages/UserForm";
 import TutorForm from "./pages/TutorForm";
+import InfoForm from './pages/InfoForm';
 import { PublicRoute } from "./components/routes/PublicRoute";
 import { PrivateRoute } from "./components/routes/PrivateRoute";
 /* Core CSS required for Ionic components to work properly */
@@ -47,6 +48,7 @@ const App: React.FC = () => (
         <PrivateRoute exact path='/inicio' component={Inicio}/>
         <PrivateRoute exact path='/userForm' component={UserForm}/>
         <PrivateRoute exact path='/tutorForm' component={TutorForm}/>
+        <PrivateRoute exact path='/infoForm' component={InfoForm}/>
       </Switch>
     </Router>
   </IonApp>
