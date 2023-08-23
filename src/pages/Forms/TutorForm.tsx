@@ -9,17 +9,17 @@ import {
   IonModal,
 } from "@ionic/react";
 import "./UserForm.css";
-import Bg from "../components/Bg/Bg";
-import Inputlogin from "../components/Inputlogin/Inputlogin";
-import GridHorarios from "../components/GridHorarios/GridHorarios";
+import Bg from "../../components/Bg/Bg";
+import Inputlogin from "../../components/Inputlogin/Inputlogin";
+import GridHorarios from "../../components/GridHorarios/GridHorarios";
 import { Field, Form, Formik } from "formik";
 import * as Yup from "yup";
-import { useEffect, useRef, useState, useMemo, memo} from "react";
+import { useEffect, useRef, useState} from "react";
 import { Slot } from "./UserForm";
-import { useAppDispatch, useAppSelector } from "../components/redux/hooks";
+import { useAppDispatch, useAppSelector } from "../../components/redux/hooks";
 import { useHistory } from "react-router";
-import {  changeRegisterCompleted, updateUserInfo } from "../components/redux/states/userSlice";
-import { getSubjects } from "../components/redux/states/subjectSlice";
+import {  changeRegisterCompleted, updateUserInfo } from "../../components/redux/states/userSlice";
+import { getSubjects } from "../../components/redux/states/subjectSlice";
 
 
 const validationSchema = Yup.object({

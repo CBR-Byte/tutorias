@@ -7,11 +7,13 @@ import {
   Redirect
 } from 'react-router-dom';
 import { IonApp, setupIonicReact } from "@ionic/react";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Inicio from "./pages/Inicio";
-import UserForm from "./pages/UserForm";
-import TutorForm from "./pages/TutorForm";
+import Login from "./pages/Login/Login";
+import Register from "./pages/Register/Register";
+import Inicio from "./pages/Inicio/Inicio";
+import UserForm from "./pages/Forms/UserForm";
+import TutorForm from "./pages/Forms/TutorForm";
+import Profile from './pages/Profile/Profile';
+import Chat from './pages/Chat/Chat';
 import { PublicRoute } from "./components/routes/PublicRoute";
 import { PrivateRoute } from "./components/routes/PrivateRoute";
 /* Core CSS required for Ionic components to work properly */
@@ -43,9 +45,11 @@ const App: React.FC = () => (
         <Route exact path='/'>
           <Redirect to='/login' />
         </Route>
+        <PrivateRoute exact path='/profile' component={Profile}/>
         <PublicRoute exact path='/register' component={Register}/>
         <PrivateRoute exact path='/inicio' component={Inicio}/>
         <PrivateRoute exact path='/userForm' component={UserForm}/>
+        <PrivateRoute exact path='/chat' component={Chat}/>
         <PrivateRoute exact path='/tutorForm' component={TutorForm}/>
       </Switch>
     </Router>

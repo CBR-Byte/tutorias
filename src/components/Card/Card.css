@@ -8,12 +8,14 @@
     flex-direction: column;
     justify-content: center;   
     padding: 5px; 
+    box-shadow: 5px 10px 10px #155B68;
 }
 .nombre{
     font-size: 2vh;
     font-weight: 600;
     text-align: center;
     color: #0BABA2;
+    padding: 10px;
 }
 .cuerpo {
     font-size: 3vw;

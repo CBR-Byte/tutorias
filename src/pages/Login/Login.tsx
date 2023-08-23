@@ -17,21 +17,21 @@ import {
 } from "@ionic/react";
 import "./Login.css";
 import { useEffect, useRef, useState } from "react";
-import { loginCredentials } from "../components/redux/states/userSlice";
+import { loginCredentials } from "../../components/redux/states/userSlice";
 import {
   onLogin,
   changeErrorLogin,
   verify,
-} from "../components/redux/states/userSlice";
-import { useAppDispatch, useAppSelector } from "../components/redux/hooks";
+} from "../../components/redux/states/userSlice";
+import { useAppDispatch, useAppSelector } from "../../components/redux/hooks";
 import { Link } from "react-router-dom";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
-import { storage } from "../components/redux/states/userSlice";
-import "../components/Bg/Bg.css";
+import { storage } from "../../components/redux/states/userSlice";
+import "../../components/Bg/Bg.css";
 import axios from "axios";
 import { arrowBack } from "ionicons/icons";
-import Loading from "../components/Loading";
+import Loading from "../../components/Loading";
 import { Network } from '@capacitor/network';
 
 const validationSchema = Yup.object({

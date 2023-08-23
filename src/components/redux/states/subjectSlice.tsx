@@ -17,7 +17,7 @@ export const getSubjects = createAsyncThunk<Subject, void, { dispatch: AppDispat
         const subjectNames = Object.values(response.data).map((subject: any) => subject.name);
   
         thunkAPI.dispatch(userSlice.actions.changeLoading({ value: false }));
-        return { subjects: subjectNames };
+        return { subjects: subjectNames.sort() };
       } catch (err) {
         console.log(err);
         thunkAPI.dispatch(userSlice.actions.changeLoading({ value: false }));

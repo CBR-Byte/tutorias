@@ -1,38 +1,37 @@
 /** @format */
 
 import { IonPage, IonTitle, IonInput, IonIcon, IonButton } from "@ionic/react";
-import { useAppDispatch, useAppSelector } from "../components/redux/hooks";
+import { useAppDispatch, useAppSelector } from "../../components/redux/hooks";
 import { useHistory } from "react-router";
-import { logOut } from "../components/redux/states/userSlice";
-import "./Register.css";
+import "../Register/Register.css";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./Inicio.css";
-import { search, home, person, mail, power, filter } from "ionicons/icons/";
-import Card from "../components/Card/Card";
+import { search, filter} from "ionicons/icons/";
+import Card from "../../components/Card/Card";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "@ionic/react/css/ionic-swiper.css";
+import Header from "../../components/Header/Header";
 import {
   Pagination,
   Autoplay,
-  EffectCoverflow,
+  EffectCards,
   HashNavigation,
   Navigation,
 } from "swiper/modules";
 import "swiper/css";
-import "swiper/css/effect-coverflow";
+import "swiper/css/effect-cards";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
+import Footer from "../../components/Footer/Footer";
 
 const Inicio: React.FC = () => {
   const dispatch = useAppDispatch();
   const stateUser = useAppSelector((state) => state.user);
   const history = useHistory();
 
-  const closeSesion = () => {
-    dispatch(logOut());
-  };
+  
 
   useEffect(() => {
     if (!stateUser.registerCompleted && stateUser.user?.is_tutor) {
@@ -45,12 +44,7 @@ const Inicio: React.FC = () => {
   return (
     <IonPage>
       <div className='cont'>
-        <div className='headerInicio'>
-          <IonTitle className='inicio'>INICIO</IonTitle>
-          <IonButton fill='clear' className='bot' onClick={closeSesion}>
-            <IonIcon icon={power} />
-          </IonButton>
-        </div>
+        <Header />
         <div className='contenedor'>
           <div className='buscador'>
             <IonIcon className='searchIcon' icon={search} />
@@ -59,7 +53,7 @@ const Inicio: React.FC = () => {
           <div className='recomendados'>
             <IonTitle className='textoRec'>RECOMENDADOS</IonTitle>
             <Swiper
-              effect={"coverflow"}
+              effect={"cards"}
               hashNavigation={{
                 watchState: true,
               }}
@@ -70,20 +64,14 @@ const Inicio: React.FC = () => {
               grabCursor={true}
               centeredSlides={true}
               slidesPerView={"auto"}
-              coverflowEffect={{
-                rotate: 20,
-                stretch: 0,
-                depth: 50,
-                modifier: 1,
-                slideShadows: true,
-              }}
+              cardsEffect={{slideShadows: false}}
               autoplay={{ delay: 2500, disableOnInteraction: false }}
               modules={[
-                EffectCoverflow,
+                EffectCards,
                 Pagination,
                 Autoplay,
                 Navigation,
-                HashNavigation,
+                HashNavigation,         
               ]}
             >
               <SwiperSlide>
@@ -159,17 +147,7 @@ const Inicio: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className='footerInicio'>
-          <IonButton className='iconosB' fill="clear">
-            <IonIcon className='iconos' icon={person} />
-          </IonButton>
-          <IonButton className='iconosB' fill="clear">
-            <IonIcon className='iconos active' icon={home} />
-          </IonButton>
-          <IonButton className='iconosB' fill="clear">
-            <IonIcon className="iconos" icon={mail} />
-          </IonButton>
-        </div>
+        <Footer active="inicio" />
       </div>
     </IonPage>
   );

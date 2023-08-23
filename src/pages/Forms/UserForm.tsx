@@ -9,16 +9,16 @@ import {
     IonModal,
   } from "@ionic/react";
   import "./UserForm.css";
-  import Bg from "../components/Bg/Bg";
-  import Inputlogin from "../components/Inputlogin/Inputlogin";
-  import GridHorarios from "../components/GridHorarios/GridHorarios";
+  import Bg from "../../components/Bg/Bg";
+  import Inputlogin from "../../components/Inputlogin/Inputlogin";
+  import GridHorarios from "../../components/GridHorarios/GridHorarios";
   import { Field, Form, Formik } from "formik";
   import * as Yup from "yup";
 import { useEffect, useRef, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../components/redux/hooks";
+import { useAppDispatch, useAppSelector } from "../../components/redux/hooks";
 import { useHistory } from "react-router";
-import { updateUserInfo } from "../components/redux/states/userSlice";
-import { changeRegisterCompleted} from "../components/redux/states/userSlice";
+import { updateUserInfo } from "../../components/redux/states/userSlice";
+import { changeRegisterCompleted} from "../../components/redux/states/userSlice";
   
   const validationSchema = Yup.object({
     career: Yup.string().required("Carrera requerida"),

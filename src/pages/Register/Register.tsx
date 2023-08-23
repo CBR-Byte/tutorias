@@ -11,18 +11,18 @@ import {
 } from "@ionic/react";
 import { arrowBack } from "ionicons/icons/";
 import "./Register.css";
-import Bg from "../components/Bg/Bg";
-import Inputlogin from "../components/Inputlogin/Inputlogin";
+import Bg from "../../components/Bg/Bg";
+import Inputlogin from "../../components/Inputlogin/Inputlogin";
 import { Field, Form, Formik } from "formik";
 import * as Yup from "yup";
-import { useAppDispatch, useAppSelector } from "../components/redux/hooks";
+import { useAppDispatch, useAppSelector } from "../../components/redux/hooks";
 import {
   changeErrorRegister,
   onSignUp,
   verify,
-} from "../components/redux/states/userSlice";
+} from "../../components/redux/states/userSlice";
 import { useEffect, useRef, useState } from "react";
-import { storage } from "../components/redux/states/userSlice";
+import { storage } from "../../components/redux/states/userSlice";
 import { Link } from "react-router-dom";
 
 const validationSchema = Yup.object({

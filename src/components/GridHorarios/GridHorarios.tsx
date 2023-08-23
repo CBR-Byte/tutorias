@@ -1,7 +1,7 @@
 import React, { RefObject, useEffect } from 'react';
 import './GridHorarios.css'; // Asegúrate de tener el archivo de estilos GridHorarios.css con el CSS proporcionado en el ejemplo anterior.
 import { IonButton, IonCol, IonContent, IonGrid, IonHeader, IonRow, IonText, IonTitle } from '@ionic/react';
-import {Slot} from '../../pages/UserForm';
+import {Slot} from '../../pages/Forms/UserForm';
 
 interface slotProps {
     estado: Slot[];
