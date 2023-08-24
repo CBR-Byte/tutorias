@@ -13,6 +13,7 @@ import Inicio from "./pages/Inicio/Inicio";
 import UserForm from "./pages/Forms/UserForm";
 import TutorForm from "./pages/Forms/TutorForm";
 import Profile from './pages/Profile/Profile';
+import InfoForm from './pages/Forms/InfoForm';
 import Chat from './pages/Chat/Chat';
 import { PublicRoute } from "./components/routes/PublicRoute";
 import { PrivateRoute } from "./components/routes/PrivateRoute";
@@ -51,6 +52,7 @@ const App: React.FC = () => (
         <PrivateRoute exact path='/userForm' component={UserForm}/>
         <PrivateRoute exact path='/chat' component={Chat}/>
         <PrivateRoute exact path='/tutorForm' component={TutorForm}/>
+        <PrivateRoute exact path='/infoForm' component={InfoForm}/>
       </Switch>
     </Router>
   </IonApp>

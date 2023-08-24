@@ -1,6 +1,5 @@
 .inp {
     width: 60vw;
-    margin-bottom: 20px;
     color: #155B68;
     box-shadow: 1px 10px 30px #155B68;
     font-weight: 600;
@@ -8,5 +7,17 @@
     background-color: #D2D9E7;
     border-radius: 30px;
     border: 2px solid #05938C;
-    
+    bottom: 0px;
+    position: absolute;
+}
+.label {
+    position: absolute;
+    left: 5vw;
+}
+.contInput {
+    height: 10vh;
+    position: relative;
+    margin-bottom: 2vh;
+    display: flex;
+    justify-content: center;
 }

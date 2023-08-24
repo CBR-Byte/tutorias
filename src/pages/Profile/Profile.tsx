@@ -21,7 +21,7 @@ const Profile: React.FC = () => {
                     <Link to="/userForm">
                     <IonButton>Editar formulario de usuario</IonButton>
                     </Link>
-                    <Link to="">
+                    <Link to="/infoForm">
                     <IonButton>Editar información personal</IonButton>
                     </Link>
                     <IonButton color="danger">Eliminar cuenta</IonButton>

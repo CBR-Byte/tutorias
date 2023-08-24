@@ -14,8 +14,8 @@ interface InputloginProps {
 
 const Inputlogin: React.FC<InputloginProps>= ({ value, label, name, type, placeholder, onChange, onBlur }) => {
   return (
-    <>
-        <IonLabel> {label} </IonLabel>
+    <div className='contInput'>
+        <IonLabel className='label'> {label} </IonLabel>
         <IonInput
           className='inp'
           value={value}
@@ -24,7 +24,7 @@ const Inputlogin: React.FC<InputloginProps>= ({ value, label, name, type, placeh
           name={name}
           onIonBlur={onBlur}
           placeholder= {" Ingrese su " + placeholder.toLowerCase()} />
-    </>
+    </div>
     
   );
 };
