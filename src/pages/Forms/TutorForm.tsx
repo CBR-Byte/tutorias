@@ -110,7 +110,10 @@ const UserForm: React.FC = () => {
               onSubmit={(values, {resetForm}) => {
                 values.avaliability = selectedSlots;
 
-                if(state.user?.is_student && !state.registerCompleted) {
+                if(state.registerCompleted) {
+                  actualizarData(values);
+                  history.push("/userSettings");
+                }else if(state.user?.is_student && !state.registerCompleted) {
                   actualizarData(values);
                   history.push("/userForm");
                 }

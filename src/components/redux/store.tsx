@@ -48,7 +48,7 @@ const refresh= (store:any) => (next:any) => (action:any) => {
 
 
 const logoutMiddleware = (store:any) => (next:any) => (action:any) => {
-  if (userSlice.actions.logOut.match(action) || action.type === 'user/tokenRef/rejected') {
+  if (userSlice.actions.logOut.match(action) || action.type === 'user/tokenRef/rejected' || action.type === 'user/deleteAccount/fulfilled') {
     deleteData();
   }
   return next(action);

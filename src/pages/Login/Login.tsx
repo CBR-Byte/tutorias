@@ -32,7 +32,7 @@ import "../../components/Bg/Bg.css";
 import axios from "axios";
 import { arrowBack } from "ionicons/icons";
 import Loading from "../../components/Loading";
-import { Network } from '@capacitor/network';
+import { Network } from "@capacitor/network";
 
 const validationSchema = Yup.object({
   email: Yup.string().email("Invalid email address").required("Email Required"),
@@ -60,7 +60,10 @@ const PassRecovery: React.FC = () => {
       const token = state.inputValues.join("");
       const data = { token: token, password: state.password };
       await axios
-        .post(`https://tutoriapp-7f467dd740dd.herokuapp.com/change_password/`, data)
+        .post(
+          `https://tutoriapp-7f467dd740dd.herokuapp.com/change_password/`,
+          data
+        )
         .then((res) => {
           setState({
             ...state,
@@ -82,17 +85,17 @@ const PassRecovery: React.FC = () => {
   };
 
   useEffect(() => {
-    const requestInterceptor = axios.interceptors.request.use(config => {
+    const requestInterceptor = axios.interceptors.request.use((config) => {
       setLoading(true);
       return config;
     });
-    
+
     const responseInterceptor = axios.interceptors.response.use(
-      response => {
+      (response) => {
         setLoading(false);
         return response;
       },
-      error => {
+      (error) => {
         setLoading(false);
         throw error;
       }
@@ -105,10 +108,11 @@ const PassRecovery: React.FC = () => {
     };
   }, [state]);
 
-
   const fetchEmail = async (email: string) => {
     await axios
-      .post(`https://tutoriapp-7f467dd740dd.herokuapp.com/password_reset/${email}`)
+      .post(
+        `https://tutoriapp-7f467dd740dd.herokuapp.com/password_reset/${email}`
+      )
       .then((res) => {
         setState({
           ...state,
@@ -158,10 +162,7 @@ const PassRecovery: React.FC = () => {
   return (
     <>
       <IonModal ref={forget} trigger='open-modal' className='page'>
-        {loading&& (
-          <Loading message="Cargando..." />
-        )
-        }
+        {loading && <Loading message='Cargando...' />}
         <IonContent className='grid' scrollY={false}>
           <div className='circle1' />
           <div className='circles2 top' />
@@ -174,7 +175,12 @@ const PassRecovery: React.FC = () => {
             onDidDismiss={handleCloseAlertEmail}
             header={"Atención"}
             message={state.message}
-            buttons={["OK"]}
+            buttons={[
+              {
+                text: "OK",
+                cssClass: "alert-button-cancel",
+              },
+            ]}
             animated={true}
           />
           {state.email && (
@@ -223,7 +229,7 @@ const PassRecovery: React.FC = () => {
                   <IonInput
                     type='email'
                     name='verifyEmail'
-                    className="inputs"
+                    className='inputs'
                     placeholder='Ingrese su email'
                     shape='round'
                     value={state.verifyEmail}
@@ -268,12 +274,12 @@ const PassRecovery: React.FC = () => {
               </IonRow>
               <IonRow className='row'>
                 <IonInput
-                  type='password'                 
+                  type='password'
                   name='password'
                   value={state.password}
                   onIonInput={(e) => handleInputs(e)}
                   placeholder='Ingresa tu nueva contraseña'
-                  className="inputs"
+                  className='inputs'
                 />
               </IonRow>
               <IonRow className='row'>
@@ -289,7 +295,7 @@ const PassRecovery: React.FC = () => {
                   value={state.newPassword}
                   onIonInput={(e) => handleInputs(e)}
                   placeholder='Confirma tu contraseña'
-                  className="inputs"
+                  className='inputs'
                 />
               </IonRow>
               <IonRow className='row'>
@@ -311,10 +317,10 @@ const PassRecovery: React.FC = () => {
   );
 };
 
-const Home: React.FC = () => {
+const Login: React.FC = () => {
   const dispatch = useAppDispatch();
   const stateUser = useAppSelector((state) => state.user);
-  const alert = useRef<any>(null)
+  const alert = useRef<any>(null);
   const enviarDatos = (data: loginCredentials) => {
     // Realizar async action con redux para iniciar sesión
     dispatch(onLogin(data));
@@ -322,7 +328,7 @@ const Home: React.FC = () => {
 
   const handleCloseAlert = () => {
     dispatch(changeErrorLogin());
-    alert.current?.dismiss()
+    alert.current?.dismiss();
   };
 
   const verifyToken = async () => {
@@ -340,29 +346,36 @@ const Home: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if(stateUser.errorLogin){
+    if (stateUser.errorLogin) {
       setTimeout(() => {
         alert.current?.present();
       }, 200);
     }
   }, [stateUser.errorLogin]);
 
-  const forget = useRef<HTMLIonModalElement>(null);
-  
   return (
     <IonPage className='page'>
       <IonContent className='content' scrollY={false}>
-        <div className="top">
+        <div className='top'>
           <div className='circles' />
           <div className='circle' />
-          <IonImg className='logo' src='https://i.ibb.co/DWHVDfC/logo.png' alt="TutoriAPP"/>
+          <IonImg
+            className='logo'
+            src='https://i.ibb.co/DWHVDfC/logo.png'
+            alt='TutoriAPP'
+          />
         </div>
         <IonAlert
           ref={alert}
           onDidDismiss={handleCloseAlert}
           header={"Info"}
           message={stateUser.errorMessage}
-          buttons={["OK"]}
+          buttons={[
+            {
+              text: "OK",
+              cssClass: "alert-button-cancel",
+            },
+          ]}
         />
         <IonGrid className='grid'>
           <IonRow>
@@ -391,7 +404,7 @@ const Home: React.FC = () => {
                       <IonInput
                         type='email'
                         name='email'
-                        className="inputs"
+                        className='inputs'
                         placeholder='Ingrese su email'
                         value={formikProps.values.email}
                         onIonChange={formikProps.handleChange}
@@ -405,7 +418,7 @@ const Home: React.FC = () => {
                       <IonInput
                         type='password'
                         name='password'
-                        className="inputs"
+                        className='inputs'
                         placeholder='Ingrese su contraseña'
                         value={formikProps.values.password}
                         onIonChange={formikProps.handleChange}
@@ -438,8 +451,10 @@ const Home: React.FC = () => {
                   </div>
                 )}
               </Formik>
-              <Link to ='/register'>
-                <IonButton shape='round' ion-mode="md">Registrarse</IonButton>
+              <Link to='/register'>
+                <IonButton shape='round' ion-mode='md'>
+                  Registrarse
+                </IonButton>
               </Link>
             </IonCol>
           </IonRow>
@@ -450,4 +465,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home;
+export default Login;

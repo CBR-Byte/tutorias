@@ -1,0 +1,45 @@
+.cont {
+    height: 100%;
+}
+.contenedor {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    flex-direction: column;
+    height: 84vh;
+    max-height: 84vh;
+}
+.topProfile{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    height: 35vh;
+    max-height: 40vh;   
+}
+.titleProfile{
+    font-size: 4vh;
+    font-weight: 700;
+    height: 5vh;
+}
+.imgProfile{
+    width: 20vh;
+    height: 20vh;
+    border-radius: 50%;
+    border: 2px solid #155B68;
+    margin-bottom: 10px;
+    margin-top: 2vh;
+}
+.btnsProfile{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    flex-direction: column;
+    gap: 1vh;
+    width: 80vw;
+}
+.btnProfile {
+    width: 100%;
+    height: 5vh;
+}

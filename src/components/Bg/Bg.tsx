@@ -7,8 +7,7 @@ interface BgProps {
 
 const Bg: React.FC<BgProps> = ({ children }) => {
   return (
-    <IonPage >
-        <IonContent scrollY={false}>
+        <div>
         
           <div className="circle1"/>
           <div className="circles2 top"/>
@@ -19,8 +18,7 @@ const Bg: React.FC<BgProps> = ({ children }) => {
           
           {children}
           
-        </IonContent>
-  </IonPage>
+        </div>
   );
 };
 

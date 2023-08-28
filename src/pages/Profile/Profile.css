@@ -1,13 +1,107 @@
-.cont {
-    height: 100%;
+.contPerfil{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
 }
-
-.contenedor {
+.topPerfil {
     display: flex;
     align-items: center;
-    justify-content: center;
-    text-align: center;
     flex-direction: column;
-    height: 84vh;
-    max-height: 84vh;
+    height: 30vh;   
+    margin-bottom: 5px;
+    gap: 5px;
+}
+.nombrePerfil {
+    font-weight: 700;
+    font-size: 6vw;
+}
+.cardCont {
+    height: 35vh;
+    width: 90vw;
+    margin-bottom: 15px;
+}
+.cardPerfil {
+    width: 100%;
+    height: 100%;
+    background-color: #D2D9E7;
+    border-radius: 30px;
+    border: 2px solid #2895a5;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 5px;
+    box-shadow: 5px 10px 10px #155B68;
+}
+
+.datosCard {
+    max-width: 100vw;
+    height: 16vh;
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    font-weight: 700;
+    font-size: 1.8vh;
+}
+.leftCard {
+    width: 50vw;
+    color: #0BABA2;
+}
+.rightCard {
+    text-align: right;
+    width: 50vw;
+    color: #155B68;
+}
+.disponibilidad {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 90vw;
+    height: 70vh;
+    gap:5px;
+    margin-bottom: 15px;
+}
+.opiniones {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 90vw;
+    height: 70vh;
+    gap: 5px;
+    padding-bottom: 20px;
+}
+.contOpiniones {
+    width: 90%;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    border-bottom: #155B68 2px solid;
+}
+.leftOpinion {
+    max-width: 40%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    color: #0BABA2;
+}
+.perfilOpinion {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 50%;
+}
+.starPerfil {
+    color: #F3A506;
+    margin-left: 15px;
+}
+.calificacionPerfil {
+    font-size: 4vw;
+    font-weight: 700;
+    margin-bottom: 17px;
+}
+.rightOpinion {
+    max-width: 60%;
+    color: #155B68;
+    padding: 10px  0px 10px 0px;
 }

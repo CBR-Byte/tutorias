@@ -69,3 +69,6 @@
     margin-top:15vh;
     margin-bottom:10px;
 }
+button.alert-button.alert-button-cancel {
+    color: #fff;
+}

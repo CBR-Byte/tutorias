@@ -3,14 +3,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { Storage } from "@ionic/storage";
-import { create } from "ionicons/icons";
-
 
 export const storage = new Storage();
 
 const createStorage = async () => {
   await storage.create();
-}
+};
 createStorage();
 
 export interface User {
@@ -65,75 +63,159 @@ export type token = {
   email: string;
 };
 
+export const uploadImage = createAsyncThunk<
+  any,
+  any,
+  { rejectValue: MyErrorType }
+>("user/uploadImage", async (data, thunkAPI) => {
+  const token = storage.get("access_token");
+  const email = storage.get("email");
+  const img = data.image;
+  console.log(data);
+  // try {
+  //   const response = await axios.post(
+  //     `https://tutoriapp-7f467dd740dd.herokuapp.com/blobs/upload/${email}`)
+  // } catch (error: any) {
+  //   return thunkAPI.rejectWithValue({
+  //     errorMessage: error.response.data.detail,
+  //   });
+  // }
+});
+
+
 export const verify = createAsyncThunk<
   any,
   token,
   { rejectValue: MyErrorType }
 >("user/verify", async (data, thunkAPI) => {
   try {
-    
     const token_access = JSON.parse(data.token);
     const token_refresh = JSON.parse(data.refresh);
     const email = JSON.parse(data.email);
-    
+
     const response = await axios.get(
       `https://tutoriapp-7f467dd740dd.herokuapp.com/users/${email}`,
-      {headers: {
-        'Authorization': `Bearer ${token_access}`
-      }}
+      {
+        headers: {
+          Authorization: `Bearer ${token_access}`,
+        },
+      }
     );
-    return {access_token: token_access, refresh_token: token_refresh, status: "success",user:response.data};
+    return {
+      access_token: token_access,
+      refresh_token: token_refresh,
+      status: "success",
+      user: response.data,
+    };
   } catch (err: any) {
-    thunkAPI.dispatch(refreshToken({refresh_token: data.refresh}));
+    thunkAPI.dispatch(refreshToken({ refresh_token: data.refresh }));
     //return thunkAPI.rejectWithValue({ errorMessage: err.response.data.detail });
   }
 });
 
-export const refreshToken = createAsyncThunk<any,any,{ rejectValue: MyErrorType }
+export const changePassword = createAsyncThunk<
+  any,
+  any,
+  { rejectValue: MyErrorType }
+>("user/changePassword", async (data, thunkAPI) => {
+  try {
+    const state = thunkAPI.getState() as User;
+    const token = state.user.access_token;
+    const email = state.user.user.email;
+    const response = await axios.post(
+      `https://tutoriapp-7f467dd740dd.herokuapp.com/change_password/auth/${email}`,
+      data,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    return response.data;
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue({
+      errorMessage: error.response.data.detail,
+    });
+  }
+});
+
+export const deleteAccount = createAsyncThunk(
+  "user/deleteAccount",
+  async (_, thunkAPI) => {
+    try {
+      const state = thunkAPI.getState() as User;
+      const token = state.user.access_token;
+      const id = state.user.user.id;
+      const response = await axios.delete(
+        `https://tutoriapp-7f467dd740dd.herokuapp.com/users/delete/${id}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      return response.data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue({
+        errorMessage: error.response.data.detail,
+      });
+    }
+  }
+);
+
+export const refreshToken = createAsyncThunk<
+  any,
+  any,
+  { rejectValue: MyErrorType }
 >("user/tokenRef", async (token, thunkAPI) => {
   try {
     const refresh = JSON.parse(token.refresh_token);
-    
+
     const response = await axios.post(
       `https://tutoriapp-7f467dd740dd.herokuapp.com/users/refresh`,
       null,
-      {headers: {
-        'Authorization': `Bearer ${refresh}`
-      }}
+      {
+        headers: {
+          Authorization: `Bearer ${refresh}`,
+        },
+      }
     );
-      return {refresh_token: refresh, access_token: response.data.access_token, user: response.data.user};
+    return {
+      refresh_token: refresh,
+      access_token: response.data.access_token,
+      user: response.data.user,
+    };
   } catch (error: any) {
-    return thunkAPI.rejectWithValue({ errorMessage: error.response.data.detail });
+    return thunkAPI.rejectWithValue({
+      errorMessage: error.response.data.detail,
+    });
   }
-})
+});
 
-export const updateUserInfo = createAsyncThunk<any,any,{rejectValue: MyErrorType }
+export const updateUserInfo = createAsyncThunk<
+  any,
+  any,
+  { rejectValue: MyErrorType }
 >("user/updateUserInfo", async (data, thunkAPI) => {
   try {
     const state = thunkAPI.getState() as User;
-    const {id} = state.user.user;
-    const {access_token} = state.user;
+    const { id } = state.user.user;
+    const { access_token } = state.user;
+    console.log(data);
     const response = await axios.patch(
       `https://tutoriapp-7f467dd740dd.herokuapp.com/users/update/${id}`,
       data,
-      {headers: {
-        'Authorization': `Bearer ${access_token}`
-      }}
+      {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      }
     );
 
     return response.data;
   } catch (error: any) {
-    if(error.response?.data.detail === 'El token de accesso ha expirado'){
+    if (error.response?.data.detail === "El token de accesso ha expirado") {
       const tokenRefresh = await storage.get(data.refresh_token);
-      thunkAPI.dispatch(refreshToken({refresh_token: tokenRefresh}));
+      thunkAPI.dispatch(refreshToken({ refresh_token: tokenRefresh }));
     }
 
-    return thunkAPI.rejectWithValue({ errorMessage: error.response.data.detail });
-    
+    return thunkAPI.rejectWithValue({
+      errorMessage: error.response.data.detail,
+    });
   }
 });
-
-
 
 export const onLogin = createAsyncThunk<
   any,
@@ -156,15 +238,14 @@ export const onSignUp = createAsyncThunk<
   dataUser,
   { rejectValue: MyErrorType }
 >("user/signUp", async (data, thunkAPI) => {
-  
   if (data.is_tutor === "false") {
     data.is_student = true;
     data.is_tutor = false;
   } else {
     data.is_tutor = true;
   }
-  
-if (data.is_student === "false"){
+
+  if (data.is_student === "false") {
     data.is_student = false;
   } else {
     data.is_student = true;
@@ -293,6 +374,8 @@ export const userSlice = createSlice({
       .addCase(updateUserInfo.fulfilled, (state, action) => {
         state.isLoading = false;
         state.user = action.payload;
+        state.errorRegister = true;
+        state.errorMessage = "Datos actualizados correctamente";
       })
       .addCase(updateUserInfo.pending, (state) => {
         state.isLoading = true;
@@ -300,9 +383,39 @@ export const userSlice = createSlice({
       .addCase(updateUserInfo.rejected, (state) => {
         state.isLoading = false;
       })
+      .addCase(changePassword.fulfilled, (state, action) => {
+        state.errorMessage = action.payload?.message;
+        state.isLoading = false;
+        state.errorRegister = true;
+      })
+      .addCase(changePassword.rejected, (state, action) => {
+        state.isLoading = false;
+        state.errorMessage = action.payload?.errorMessage;
+        state.errorRegister = true;
+      })
+      .addCase(changePassword.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(deleteAccount.fulfilled, (state) => {
+        state.status = "";
+        state.access_token = "";
+        state.refresh_token = "";
+        state.token_type = "";
+        state.isLoading = false;
+        state.registerCompleted = true;
+        state.errorRegister = false;
+        state.errorLogin = false;
+        state.isAuthenticated = false;
+        state.user = null;
+      });
   },
 });
 
-export const { changeErrorLogin, changeErrorRegister, logOut, changeRegisterCompleted, changeLoading } =
-  userSlice.actions;
+export const {
+  changeErrorLogin,
+  changeErrorRegister,
+  logOut,
+  changeRegisterCompleted,
+  changeLoading,
+} = userSlice.actions;
 export default userSlice.reducer;

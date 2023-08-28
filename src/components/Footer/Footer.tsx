@@ -14,7 +14,7 @@ const Footer: React.FC<FooterProps> = ({active}) => {
     <>
       <div className='footerInicio'>
         <IonButton
-          onClick={() => history.push("/profile")}
+          onClick={() => history.push("/UserSettings")}
           className='iconosB'
           fill='clear'
         >

@@ -7,6 +7,7 @@
     justify-content: center;
     flex-direction: row;
     color: #2895a5;
+    z-index: 1;
 }
 .footerInicio {
     max-height: 8%;
@@ -17,6 +18,7 @@
     justify-content: center;
     flex-direction: row;
     color: #2895a5;
+    z-index: 1;
 }
 .cont {
     height: 100%;

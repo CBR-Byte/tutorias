@@ -81,7 +81,12 @@ const Register: React.FC = () => {
         onDidDismiss={handleCloseAlert}
         header={"Error"}
         message={stateUser.errorMessage}
-        buttons={["OK"]}
+        buttons={[
+          {
+            text: "OK",
+            cssClass: "alert-button-cancel",
+          },
+        ]}
       />
       <IonGrid>
         <IonRow>

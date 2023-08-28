@@ -11,14 +11,12 @@ const dispatch = useAppDispatch();
         dispatch(logOut());
       };
     return (
-        <>
             <div className='headerInicio'>
             <IonTitle className='inicio'>TutoriApp</IonTitle>
             <IonButton fill="outline" className='bot' onClick={closeSesion}>
                 <IonIcon icon={out} />
             </IonButton>
             </div>
-        </>
     )
 }
 
