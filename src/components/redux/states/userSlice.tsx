@@ -3,6 +3,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { Storage } from "@ionic/storage";
+import { stat } from "fs";
 
 export const storage = new Storage();
 
@@ -68,18 +69,29 @@ export const uploadImage = createAsyncThunk<
   any,
   { rejectValue: MyErrorType }
 >("user/uploadImage", async (data, thunkAPI) => {
-  const token = storage.get("access_token");
-  const email = storage.get("email");
-  const img = data.image;
-  console.log(data);
-  // try {
-  //   const response = await axios.post(
-  //     `https://tutoriapp-7f467dd740dd.herokuapp.com/blobs/upload/${email}`)
-  // } catch (error: any) {
-  //   return thunkAPI.rejectWithValue({
-  //     errorMessage: error.response.data.detail,
-  //   });
-  // }
+  const stor = await storage.get("data");
+  const token = JSON.parse(stor.token);
+  const email = JSON.parse(stor.email);
+ 
+  try {
+    const response = await axios.post(
+      `https://tutoriapp-7f467dd740dd.herokuapp.com/blobs/upload/${email}`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        
+      }
+      )
+
+    return response.data
+  } catch (error: any) {
+    alert(JSON.stringify(error.response.data.detail))
+    return thunkAPI.rejectWithValue({
+      errorMessage: error.response.data.detail,
+    });
+  }
 });
 
 
@@ -193,7 +205,6 @@ export const updateUserInfo = createAsyncThunk<
     const state = thunkAPI.getState() as User;
     const { id } = state.user.user;
     const { access_token } = state.user;
-    console.log(data);
     const response = await axios.patch(
       `https://tutoriapp-7f467dd740dd.herokuapp.com/users/update/${id}`,
       data,
@@ -367,7 +378,6 @@ export const userSlice = createSlice({
         state.user = action.payload.user;
       })
       .addCase(refreshToken.rejected, (state, action) => {
-        console.log(action.payload?.errorMessage);
         state = initialState;
         state.errorMessage = action.payload?.errorMessage;
       })
@@ -407,7 +417,18 @@ export const userSlice = createSlice({
         state.errorLogin = false;
         state.isAuthenticated = false;
         state.user = null;
-      });
+      })
+      .addCase(uploadImage.rejected, (state, action) => {
+        state.isLoading = false;
+        state.errorMessage = action.payload?.errorMessage;
+      })
+      .addCase(uploadImage.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(uploadImage.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.user.image_url = action.payload.url;
+      })
   },
 });
 

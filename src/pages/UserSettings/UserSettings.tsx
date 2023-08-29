@@ -10,26 +10,30 @@ import { useState } from "react";
 import { deleteAccount } from "../../components/redux/states/userSlice";
 import { useAppDispatch } from "../../components/redux/hooks";
 import { Camera, CameraResultType } from "@capacitor/camera";
+import { uploadImage } from "../../components/redux/states/userSlice";
 
 const UserSettings: React.FC = () => {
   const history = useHistory();
   const dispatch = useAppDispatch();
   const stateUser = useAppSelector((state) => state.user);
   const [showAlert, setShowAlert] = useState(false);
+  
 
-  const uploadImage = async () => {
+  const getPath = async () => {
     const image = await Camera.getPhoto({
-      quality: 90,
-      allowEditing: true,
-      resultType: CameraResultType.Base64,
+      quality: 100,
+      allowEditing: false,
+      resultType: CameraResultType.DataUrl,
+      saveToGallery: true,
     });
+
+    dispatch(uploadImage(image));
   };
 
   const handleDelete = (option: boolean) => {
     if (option) {
       dispatch(deleteAccount());
       setShowAlert(false);
-      console.log("Eliminando cuenta");
     } else {
       setShowAlert(false);
     }
@@ -82,7 +86,7 @@ const UserSettings: React.FC = () => {
               alt='Profile image'
             />
             <IonButton
-              onClick={() => uploadImage()}
+              onClick={() => getPath()}
               className='btnProfile'
               shape='round'
             >
