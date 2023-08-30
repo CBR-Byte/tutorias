@@ -9,16 +9,46 @@ import {
   IonRow,
   IonText,
 } from "@ionic/react";
-import { arrowBack, star } from "ionicons/icons";
-import React from "react";
+import { arrowBack, star, chatbubbleEllipses } from "ionicons/icons";
+import React, { useEffect, useState } from "react";
 import "./Profile.css";
-import { useHistory } from "react-router";
+import { useHistory} from "react-router";
+import { useParams } from "react-router";
 import { useAppSelector } from "../../components/redux/hooks";
-import { Slot } from "../Forms/UserForm";
+
+interface UserInfo {
+  id: string;
+  name: string;
+  career: string;
+  semester: number;
+  avaliability: {
+    day: number;
+    hour: number;
+  }[];
+  format: string[];
+  format_tutor: string[];
+  is_tutor: boolean;
+  is_student: boolean;
+  cost_tutor: number;
+  type_tutor: string;
+  password: string;
+  email: string;
+  budget: number;
+  method: string[];
+  method_tutor: string[];
+  type_group: string[];
+  type_group_tutor: string[];
+  tutor_opinions: null | any; // You can replace any with a proper type for tutor opinions
+  subjects_tutor: string[];
+  keywords: null | any; // You can replace any with a proper type for keywords
+  calification: null | any; // You can replace any with a proper type for calification
+  clicks: null | any; // You can replace any with a proper type for clicks
+  image_url: string;
+}
 
 const Profile: React.FC = () => {
   const state = useAppSelector((state) => state.user);
-  const estado: Slot[] = state.user?.avaliability || [];
+  const [dataProfile, setDataProfile] = useState<UserInfo>();
   const days = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
   const hours = [
     "8am",
@@ -36,7 +66,18 @@ const Profile: React.FC = () => {
     "8pm",
   ];
   const history = useHistory();
-
+  const {id} = useParams<{id:string}>();
+  
+  useEffect(() => {
+    if(id === state.user?.id){
+      setDataProfile(state.user);
+    }
+    // else{
+    //   setDataProfile(state.tutors.find((tutor) => tutor.id === id));
+    // }
+    
+  }, [])
+  
   return (
     <IonPage>
       <div style={{ zIndex: "-1" }} className='circle1' />
@@ -46,52 +87,69 @@ const Profile: React.FC = () => {
       <div style={{ zIndex: "-1" }} className='circles3 bottom2' />
       <div style={{ zIndex: "-1" }} className='circles3 bottom3' />
       <div style={{ overflow: "scroll" }}>
-        <IonButton
-          style={{
-            marginTop: "25px",
-            marginLeft: "15px",
-            marginBottom: "25px",
-          }}
-          shape='round'
-          onClick={() => history.push("/userSettings")}
-        >
-          <IonIcon icon={arrowBack} />
-          Regresar
-        </IonButton>
+        <div style={{position: "fixed", zIndex:"1000", display: "flex", flexDirection: "row", width: "100%"}}>
+          <IonButton
+            style={{
+              marginTop: "25px",
+              marginLeft: "15px",
+              marginBottom: "25px",
+              width: "50%",
+            }}
+            shape='round'
+            onClick={() => history.goBack()}
+          >
+            <IonIcon icon={arrowBack} />
+            Regresar
+          </IonButton>
+          <IonButton
+            
+            style={{
+              marginTop: "25px",
+              marginLeft: "15px",
+              marginBottom: "25px",
+              
+              width: "50%",
+            }}
+            color="tertiary"
+            shape='round'
+          >
+            <IonIcon style={{height: "50px", right: "0", position: "relative"}} icon={chatbubbleEllipses} />
+          </IonButton>
+        </div> 
         <div className='contPerfil'>
           <div className='topPerfil'>
             <img
               className='imgProfile'
-              src='https://profilephotos2.blob.core.windows.net/tutoriapp/1@1.com..png'
+              src={dataProfile?.image_url? dataProfile?.image_url : "https://profilephotos2.blob.core.windows.net/tutoriapp/image_default.png"}
               alt='Profile image'
             />
-            <IonText className='nombrePerfil'>Nombre de usuario</IonText>
+            <IonText className='nombrePerfil'>{dataProfile?.name}</IonText>
           </div>
           <div className='cardCont'>
             <div className='cardPerfil'>
               <div className='datosCard'>
                 <div className='leftCard'>Precio por hora:</div>
-                <div className='rightCard'>$30000</div>
+                <div className='rightCard'>${dataProfile?.cost_tutor}</div>
               </div>
               <div className='datosCard'>
                 <div className='leftCard'>Modalidad de las clases:</div>
-                <div className='rightCard'>Webcam</div>
+                <div className='rightCard'>{dataProfile?.format_tutor.join(", ")}</div>
               </div>
               <div className='datosCard'>
                 <div className='leftCard'>Formato de clase:</div>
-                <div className='rightCard'>Individual y grupal</div>
+                <div className='rightCard'>{dataProfile?.type_group_tutor.join(", ")}</div>
               </div>
               <div className='datosCard'>
                 <div className='leftCard'>Materias:</div>
-                <div className='rightCard'>Matemáticas, Física, Química</div>
+                <div className='rightCard'>{dataProfile?.subjects_tutor.join(", ")}</div>
               </div>
               <div className='datosCard'>
                 <div className='leftCard'>Tipo de tutor:</div>
-                <div className='rightCard'>Estudiante de pregrado</div>
+                <div className='rightCard'>{dataProfile?.type_tutor}</div>
               </div>
               <div className='datosCard'>
                 <div className='leftCard'>Métodos de enseñanza</div>
-                <div className='rightCard'>Clases teóricas y prácticas</div>
+                <div className='rightCard'>{dataProfile?.method_tutor.join(", ")}</div>
               </div>
             </div>
           </div>
@@ -111,7 +169,7 @@ const Profile: React.FC = () => {
                       <IonCol
                         key={hourIndex}
                         className={`grid-item ${
-                          estado.some(
+                          dataProfile?.avaliability.some(
                             (slot) =>
                               slot.day === dayIndex && slot.hour === hourIndex
                           )

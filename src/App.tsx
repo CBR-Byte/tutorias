@@ -53,7 +53,7 @@ const App: React.FC = () => (
         <PrivateRoute exact path='/chat' component={Chat}/>
         <PrivateRoute exact path='/tutorForm' component={TutorForm}/>
         <PrivateRoute exact path='/infoForm' component={InfoForm}/>
-        <PrivateRoute exact path='/profile' component={Profile}/>
+        <PrivateRoute path='/profile/:id'  component={Profile}/>
       </Switch>
     </Router>
   </IonApp>

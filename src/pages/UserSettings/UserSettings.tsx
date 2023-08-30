@@ -97,7 +97,7 @@ const UserSettings: React.FC = () => {
             {stateUser.user?.is_tutor ? (
               <>
                 <IonButton
-                  onClick={() => history.push("/profile")}
+                  onClick={() => history.push(`profile/${stateUser.user?.id}`)}
                   className='btnProfile'
                   shape='round'
                 >
