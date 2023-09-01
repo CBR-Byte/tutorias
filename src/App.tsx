@@ -50,13 +50,12 @@ const App: React.FC = () => (
         <PublicRoute exact path='/register' component={Register}/>
         <PrivateRoute exact path='/inicio' component={Inicio}/>
         <PrivateRoute exact path='/userForm' component={UserForm}/>
-        <PrivateRoute exact path='/chat' component={Chat}/>
+        <PrivateRoute exact path='/chat/:id?' component={Chat}/>
         <PrivateRoute exact path='/tutorForm' component={TutorForm}/>
         <PrivateRoute exact path='/infoForm' component={InfoForm}/>
         <PrivateRoute path='/profile/:id'  component={Profile}/>
       </Switch>
     </Router>
-  </IonApp>
-);
+  </IonApp>);
 
 export default App;

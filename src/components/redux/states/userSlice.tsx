@@ -72,7 +72,7 @@ export const uploadImage = createAsyncThunk<
   const stor = await storage.get("data");
   const token = JSON.parse(stor.token);
   const email = JSON.parse(stor.email);
- 
+
   try {
     const response = await axios.post(
       `https://tutoriapp-7f467dd740dd.herokuapp.com/blobs/upload/${email}`,
@@ -81,19 +81,34 @@ export const uploadImage = createAsyncThunk<
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        
       }
-      )
+    );
 
-    return response.data
+    return response.data;
   } catch (error: any) {
-    alert(JSON.stringify(error.response.data.detail))
+    alert(JSON.stringify(error.response.data.detail));
     return thunkAPI.rejectWithValue({
       errorMessage: error.response.data.detail,
     });
   }
 });
 
+export const getListUsers = createAsyncThunk<
+  any,
+  any,
+  { rejectValue: MyErrorType }
+>("user/getListUsers", async (ids, thunkAPI) => {
+  try {
+    const idsQuery = ids.join("&ids=");
+    const response = await axios.get(`http://localhost:8000/users/usersList/?ids=${idsQuery}`);
+    const users = await response.data;
+    return {users: users};
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue({
+      errorMessage: error.response.data.detail,
+    });
+  }
+});
 
 export const verify = createAsyncThunk<
   any,
@@ -196,6 +211,42 @@ export const refreshToken = createAsyncThunk<
   }
 });
 
+export const getConversation = createAsyncThunk(
+  "user/getConversation",
+  async (_, thunkAPI) => {
+    try {
+      const state = thunkAPI.getState() as User;
+      const id = state.user.user.id;
+      const response = await axios.get(`http://localhost:8000/messages/${id}`);
+      const messages = await response.data;
+      return messages;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue({
+        errorMessage: error.response.data.detail,
+      });
+    }
+  }
+);
+
+export const getMessages = createAsyncThunk<
+  any,
+  any,
+  { rejectValue: MyErrorType }
+>("user/fetchMessages", async (recieverEmail, thunkAPI) => {
+  try {
+    const state = thunkAPI.getState() as User;
+    const { id } = state.user.user;
+    const response = await axios.get(
+      `http://localhost:8000/chat/${id}/${recieverEmail}`
+    );
+    const messages = await response.data;
+    return messages;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+});
+
 export const updateUserInfo = createAsyncThunk<
   any,
   any,
@@ -235,7 +286,7 @@ export const onLogin = createAsyncThunk<
 >("user/login", async (credentials, thunkAPI) => {
   try {
     const response = await axios.post(
-      "https://tutoriapp-7f467dd740dd.herokuapp.com/users/login",
+      "http://localhost:8000/users/login",
       credentials
     );
     return response.data;
@@ -429,6 +480,15 @@ export const userSlice = createSlice({
         state.isLoading = false;
         state.user.image_url = action.payload.url;
       })
+      // .addCase(getConversation.fulfilled, (state, action) => {
+      //   state.isLoading = false;
+      // })
+      // .addCase(getConversation.rejected, (state, action) => {
+      //   state.isLoading = false;
+      // })
+      // .addCase(getConversation.pending, (state) => {
+      //   state.isLoading = true;
+      // });
   },
 });
 

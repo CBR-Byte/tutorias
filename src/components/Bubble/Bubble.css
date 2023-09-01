@@ -1,0 +1,14 @@
+.bubbleCont{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 5px
+}
+.bubbleImg {
+    border-radius: 50%;
+}
+.bubbleText {
+    color: #D2D9E7;
+    font-size: 3.5vw;
+}
