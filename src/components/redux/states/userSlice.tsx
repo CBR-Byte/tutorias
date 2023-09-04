@@ -3,7 +3,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { Storage } from "@ionic/storage";
-import { stat } from "fs";
 
 export const storage = new Storage();
 
@@ -90,6 +89,20 @@ export const uploadImage = createAsyncThunk<
     return thunkAPI.rejectWithValue({
       errorMessage: error.response.data.detail,
     });
+  }
+});
+
+export const getListUsers = createAsyncThunk<
+  any,
+  any,
+  { rejectValue: MyErrorType }
+>("user/getListUsers", async (id) => {
+  try {
+    const response = await axios.get(`https://tutoriapp-7f467dd740dd.herokuapp.com/users/userName/${id}`);
+    const user = await response.data;
+    return user.name
+  } catch (error: any) {
+    console.log(error);
   }
 });
 
@@ -204,7 +217,7 @@ void,
     try {
       const state = thunkAPI.getState() as User;
       const id = state.user.user.id;
-      const response = await axios.get(`http://localhost:8000/messages/${id}`);
+      const response = await axios.get(`https://tutoriapp-7f467dd740dd.herokuapp.com/messages/${id}`);
       const messages = await response.data;
       return messages;
     } catch (error: any) {
@@ -447,16 +460,7 @@ export const userSlice = createSlice({
       .addCase(uploadImage.fulfilled, (state, action) => {
         state.isLoading = false;
         state.user.image_url = action.payload.url;
-      })
-      // .addCase(getConversation.fulfilled, (state) => {
-      //   state.isLoading = false;
-      // })
-      // .addCase(getConversation.rejected, (state) => {
-      //   state.isLoading = false;
-      // })
-      // .addCase(getConversation.pending, (state) => {
-      //   state.isLoading = true;
-      // });
+      });
   },
 });
 

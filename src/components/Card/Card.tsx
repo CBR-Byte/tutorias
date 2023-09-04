@@ -13,11 +13,12 @@ interface ContainerProps {
   precio: number;
   numCalificacion: number;
   imagen: string;
+  onClick: () => void;
 }
 
-const Card: React.FC<ContainerProps> = ({nombre,modalidad,descripcion,calificacion,precio, numCalificacion,imagen}) => {
+const Card: React.FC<ContainerProps> = ({nombre,modalidad,descripcion,calificacion,precio, numCalificacion,imagen, onClick}) => {
   return (
-      <div className='card'>
+      <div onClick={onClick} className='card'>
         <div className='headerCard'>
           <img
             className='imagen'

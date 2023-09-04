@@ -48,6 +48,7 @@ interface UserInfo {
 
 const Profile: React.FC = () => {
   const state = useAppSelector((state) => state.user);
+  const tutors = useAppSelector((state) => state.tutor);
   const [dataProfile, setDataProfile] = useState<UserInfo>();
   const days = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
   const hours = [
@@ -72,9 +73,10 @@ const Profile: React.FC = () => {
     if(id === state.user?.id){
       setDataProfile(state.user);
     }
-    // else{
-    //   setDataProfile(state.tutors.find((tutor) => tutor.id === id));
-    // }
+    else{
+      const tutorParam = tutors.tutors?.find((tutor : any) => tutor.id === id);
+      setDataProfile(tutorParam);
+    }
     
   }, [])
   
@@ -93,7 +95,7 @@ const Profile: React.FC = () => {
               marginTop: "25px",
               marginLeft: "15px",
               marginBottom: "25px",
-              width: "50%",
+              width: "38%",
             }}
             shape='round'
             onClick={() => history.goBack()}
@@ -102,18 +104,18 @@ const Profile: React.FC = () => {
             Regresar
           </IonButton>
           <IonButton
-            
+            onClick={() => history.push(`/chat/${dataProfile?.id}`)}
+            fill="clear"
+            color={"tetriary"}
             style={{
               marginTop: "25px",
-              marginLeft: "15px",
+              marginLeft: "40vw",
               marginBottom: "25px",
-              
-              width: "50%",
+              width: "30%",
             }}
-            color="tertiary"
             shape='round'
           >
-            <IonIcon style={{height: "50px", right: "0", position: "relative"}} icon={chatbubbleEllipses} />
+            <IonIcon style={{fontSize: "40px", right: "10px", position: "relative"}} icon={chatbubbleEllipses} />
           </IonButton>
         </div> 
         <div className='contPerfil'>

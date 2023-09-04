@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import {userSlice} from './states/userSlice'
 import { storage } from "../redux/states/userSlice";
 import {subjectSlice} from './states/subjectSlice';
+import { tutorSlice } from './states/tutorSlice';
 
 const storeData = async (value: any) => {
   try {
@@ -56,7 +57,7 @@ const logoutMiddleware = (store:any) => (next:any) => (action:any) => {
 
 
 export const store = configureStore({
-  reducer: {user : userSlice.reducer, subject : subjectSlice.reducer},
+  reducer: {user : userSlice.reducer, subject : subjectSlice.reducer, tutor : tutorSlice.reducer},
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(loginMiddleware, logoutMiddleware,refresh),
   devTools: true,
 })

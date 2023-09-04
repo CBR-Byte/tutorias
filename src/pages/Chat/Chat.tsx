@@ -10,7 +10,8 @@ import { send, caretDown } from "ionicons/icons/";
 import { useHistory, useParams } from "react-router";
 import { useAppDispatch, useAppSelector } from "../../components/redux/hooks";
 import {
-  getConversation
+  getConversation,
+  getListUsers,
 } from "../../components/redux/states/userSlice";
 import Bubble from "../../components/Bubble/Bubble";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -38,6 +39,8 @@ const Chat: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState<string>("");
   const dispatch = useAppDispatch();
+  const [idReceiver, setIdReceiver] = useState<string>("");
+  const [idBuuble, setIdBuuble] = useState<string>("");
   const userId = useAppSelector((state) => state.user.user?.id);
   let { id } = useParams<{ id: string }>();
   const [nameConversation, setNameConversation] = useState<string>("");
@@ -54,58 +57,60 @@ const Chat: React.FC = () => {
 
   useEffect(() => {
     // Configurar la conexión al servidor WebSocket
-    
+
     newSocket.on("chat", (data: any) => {
       console.log(data);
-      
+
       const message = data.message;
       setMessages((prevMessages) => [...prevMessages, message]);
     });
-    
+
     newSocket.on("get_conversations", (data: any) => {
       console.log(data);
-      
+
       const chats = data.conversations;
       setConversations(chats);
     });
-    
+
     newSocket.on("disconnect", () => {
       newSocket.close();
     });
 
     newSocket.on("connect", () => {
       console.log(userId);
-      
+
       //newSocket.emit("get_conversations", { idUser: userId });
-      if (id) {
-        newSocket.emit("messages", { idUser: userId, idReceiver: id });
+      if (userId) {
+        newSocket.emit("messages", { idUser: userId, idReceiver: idReceiver });
       }
     });
 
     newSocket.on("messages", (data: any) => {
-      //console.log(data);
+      console.log(data);
       setMessages(data.messages);
     });
   }, []);
 
   useEffect(() => {
-    dispatch(getConversation()).then((res) =>
-     { const usersData = res.payload.map((user: any) => ({
+    dispatch(getConversation()).then((res) => {
+      const usersData = res.payload.map((user: any) => ({
         id: user.id,
         name: user.name,
         image_url: user.image_url,
       }));
       setConversations(usersData);
-    }
-    );
+    });
 
-    // if (id) {
-    //   const userParamFetch = dispatch(getListUsers(id));
-    //   userParamFetch.then((res) =>
-    //     setNameConversation(res.payload.users[0].name)
-    //   );
-
-    // }
+    const fetchData = async () => {
+      if (id) {
+        setIdBuuble(id);
+        const disp = (await dispatch(getListUsers(id))).payload;
+        setNameConversation(disp);
+        setIdReceiver(id);
+        newSocket.emit("messages", { idUser: userId, idReceiver: id });
+      }
+    };
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -147,6 +152,7 @@ const Chat: React.FC = () => {
   };
 
   const handleBubbleClick = (idHandler: string, nameHandler: string) => {
+    setIdBuuble(idHandler);
     setNameConversation(nameHandler);
     newSocket.emit("messages", { idUser: userId, idReceiver: idHandler });
   };
@@ -204,16 +210,20 @@ const Chat: React.FC = () => {
             </SwiperSlide>
           </Swiper>
         </div>
-        {
-          conversations.length === 0 && (
-            <Loading message="Cargando tus chats..."/>
-          )
-        }
-        {id && (
+        {conversations.length === 0 && (
+          <Loading message='Cargando tus chats...' />
+        )}
+        {idBuuble && (
           <>
             <div className='chat'>
               <div className='topChat'>
-                <IonText>{nameConversation}</IonText>
+                <IonText
+                  onClick={() => {
+                    history.push(`/profile/${idReceiver}`);
+                  }}
+                >
+                  {nameConversation}
+                </IonText>
               </div>
               <div id='chatDiv' style={{ marginTop: "5vh" }} className='chat'>
                 {messages.map((message, index) => (
