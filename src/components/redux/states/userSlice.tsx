@@ -93,23 +93,6 @@ export const uploadImage = createAsyncThunk<
   }
 });
 
-export const getListUsers = createAsyncThunk<
-  any,
-  any,
-  { rejectValue: MyErrorType }
->("user/getListUsers", async (ids, thunkAPI) => {
-  try {
-    const idsQuery = ids.join("&ids=");
-    const response = await axios.get(`http://localhost:8000/users/usersList/?ids=${idsQuery}`);
-    const users = await response.data;
-    return {users: users};
-  } catch (error: any) {
-    return thunkAPI.rejectWithValue({
-      errorMessage: error.response.data.detail,
-    });
-  }
-});
-
 export const verify = createAsyncThunk<
   any,
   token,
@@ -211,7 +194,11 @@ export const refreshToken = createAsyncThunk<
   }
 });
 
-export const getConversation = createAsyncThunk(
+export const getConversation = createAsyncThunk<
+any,
+void,
+{ rejectValue: MyErrorType }
+>(
   "user/getConversation",
   async (_, thunkAPI) => {
     try {
@@ -227,25 +214,6 @@ export const getConversation = createAsyncThunk(
     }
   }
 );
-
-export const getMessages = createAsyncThunk<
-  any,
-  any,
-  { rejectValue: MyErrorType }
->("user/fetchMessages", async (recieverEmail, thunkAPI) => {
-  try {
-    const state = thunkAPI.getState() as User;
-    const { id } = state.user.user;
-    const response = await axios.get(
-      `http://localhost:8000/chat/${id}/${recieverEmail}`
-    );
-    const messages = await response.data;
-    return messages;
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
-});
 
 export const updateUserInfo = createAsyncThunk<
   any,
@@ -286,7 +254,7 @@ export const onLogin = createAsyncThunk<
 >("user/login", async (credentials, thunkAPI) => {
   try {
     const response = await axios.post(
-      "http://localhost:8000/users/login",
+      "https://tutoriapp-7f467dd740dd.herokuapp.com/users/login",
       credentials
     );
     return response.data;
@@ -480,10 +448,10 @@ export const userSlice = createSlice({
         state.isLoading = false;
         state.user.image_url = action.payload.url;
       })
-      // .addCase(getConversation.fulfilled, (state, action) => {
+      // .addCase(getConversation.fulfilled, (state) => {
       //   state.isLoading = false;
       // })
-      // .addCase(getConversation.rejected, (state, action) => {
+      // .addCase(getConversation.rejected, (state) => {
       //   state.isLoading = false;
       // })
       // .addCase(getConversation.pending, (state) => {

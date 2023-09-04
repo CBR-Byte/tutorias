@@ -5,14 +5,12 @@ import Footer from "../../components/Footer/Footer";
 import "./Chat.css";
 import React, { useEffect, useState, useRef } from "react";
 import { IonButton, IonIcon, IonPage, IonText } from "@ionic/react";
-import ReconnectingWebSocket from "reconnecting-websocket";
+import { io } from "socket.io-client";
 import { send, caretDown } from "ionicons/icons/";
-import { useParams } from "react-router";
+import { useHistory, useParams } from "react-router";
 import { useAppDispatch, useAppSelector } from "../../components/redux/hooks";
 import {
-  getMessages,
-  getConversation,
-  getListUsers,
+  getConversation
 } from "../../components/redux/states/userSlice";
 import Bubble from "../../components/Bubble/Bubble";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -20,6 +18,7 @@ import "swiper/css";
 import "swiper/css/effect-cards";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
+import Loading from "../../components/Loading";
 
 interface Message {
   message: string;
@@ -32,7 +31,7 @@ interface Message {
 interface ConversationsProfiles {
   id: string;
   name: string;
-  img: string;
+  image_url: string;
 }
 
 const Chat: React.FC = () => {
@@ -40,49 +39,73 @@ const Chat: React.FC = () => {
   const [inputMessage, setInputMessage] = useState<string>("");
   const dispatch = useAppDispatch();
   const userId = useAppSelector((state) => state.user.user?.id);
-  const [idReceiver, setIdReceiver] = useState<string>("");
-  const [socket, setSocket] = useState<any>(null);
   let { id } = useParams<{ id: string }>();
-  const [idBubble, setIdBuuble] = useState<string>(id);
   const [nameConversation, setNameConversation] = useState<string>("");
   const scroll = useRef<HTMLDivElement>(null);
   const [isButtonVisible, setIsButtonVisible] = useState(false);
   const [conversations, setConversations] = useState<ConversationsProfiles[]>(
     []
   );
+
+  const newSocket = io("http://localhost:8000", {
+    path: "/sockets",
+  });
+  const history = useHistory();
+
   useEffect(() => {
     // Configurar la conexión al servidor WebSocket
-    const newSocket = new ReconnectingWebSocket("ws://localhost:8000/ws/chat");
-    setSocket(newSocket);
-
-    // Limpiar la conexión cuando el componente se desmonta
-    return () => {
+    
+    newSocket.on("chat", (data: any) => {
+      console.log(data);
+      
+      const message = data.message;
+      setMessages((prevMessages) => [...prevMessages, message]);
+    });
+    
+    newSocket.on("get_conversations", (data: any) => {
+      console.log(data);
+      
+      const chats = data.conversations;
+      setConversations(chats);
+    });
+    
+    newSocket.on("disconnect", () => {
       newSocket.close();
-    };
+    });
+
+    newSocket.on("connect", () => {
+      console.log(userId);
+      
+      //newSocket.emit("get_conversations", { idUser: userId });
+      if (id) {
+        newSocket.emit("messages", { idUser: userId, idReceiver: id });
+      }
+    });
+
+    newSocket.on("messages", (data: any) => {
+      //console.log(data);
+      setMessages(data.messages);
+    });
   }, []);
 
   useEffect(() => {
-    dispatch(getConversation()).then((res) => 
+    dispatch(getConversation()).then((res) =>
      { const usersData = res.payload.map((user: any) => ({
         id: user.id,
         name: user.name,
-        img: user.image_url,
+        image_url: user.image_url,
       }));
       setConversations(usersData);
     }
     );
 
-    if (id) {
-      const userParamFetch = dispatch(getListUsers(id));
-      userParamFetch.then((res) =>
-        setNameConversation(res.payload.users[0].name)
-      );
-      let messagesFetch = dispatch(getMessages(id));
-      messagesFetch.then((res) => setMessages(res.payload));
-      return () => {
-        socket.close();
-      };
-    }
+    // if (id) {
+    //   const userParamFetch = dispatch(getListUsers(id));
+    //   userParamFetch.then((res) =>
+    //     setNameConversation(res.payload.users[0].name)
+    //   );
+
+    // }
   }, []);
 
   useEffect(() => {
@@ -90,7 +113,7 @@ const Chat: React.FC = () => {
       scroll.current.scrollIntoView({
         behavior: "smooth",
         block: "end",
-        inline: "nearest", 
+        inline: "nearest",
       });
     }
   }, [messages]);
@@ -117,21 +140,15 @@ const Chat: React.FC = () => {
         date: dateFormatted,
         time: timeFormatted,
       };
-      socket.send(JSON.stringify(message));
-      setMessages((prevMessages) => [...prevMessages, message]);
+
+      newSocket.emit("chat", message);
       setInputMessage("");
     }
   };
 
   const handleBubbleClick = (idHandler: string, nameHandler: string) => {
-    setIdReceiver(idHandler);
-    let messagesFetchHandler = dispatch(getMessages(idHandler));
-    messagesFetchHandler.then((res) => setMessages(res.payload));
-    setIdBuuble(idHandler);
     setNameConversation(nameHandler);
-    return () => {
-      socket.close();
-    };
+    newSocket.emit("messages", { idUser: userId, idReceiver: idHandler });
   };
 
   const handleScroll = () => {
@@ -176,17 +193,23 @@ const Chat: React.FC = () => {
               {conversations.map((conversation) => (
                 <Bubble
                   name={conversation.name}
-                  img={conversation.img}
+                  img={conversation.image_url}
                   key={conversation.id}
-                  onClick={() =>
-                    handleBubbleClick(conversation.id, conversation.name)
-                  }
+                  onClick={() => {
+                    handleBubbleClick(conversation.id, conversation.name);
+                    history.push("/chat/" + conversation.id);
+                  }}
                 />
               ))}
             </SwiperSlide>
           </Swiper>
         </div>
-        {idBubble && (
+        {
+          conversations.length === 0 && (
+            <Loading message="Cargando tus chats..."/>
+          )
+        }
+        {id && (
           <>
             <div className='chat'>
               <div className='topChat'>
@@ -240,7 +263,7 @@ const Chat: React.FC = () => {
               <IonButton
                 className='btnEnviar'
                 fill='clear'
-                onClick={() => sendMessage(idReceiver)}
+                onClick={() => sendMessage(id)}
               >
                 <IonIcon icon={send} className='iconEnviar' />
               </IonButton>
