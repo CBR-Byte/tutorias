@@ -50,7 +50,7 @@ const Chat: React.FC = () => {
     []
   );
 
-  const newSocket = io("http://localhost:8000", {
+  const newSocket = io("https://tutoriapp-7f467dd740dd.herokuapp.com", {
     path: "/sockets",
   });
   const history = useHistory();
@@ -77,9 +77,6 @@ const Chat: React.FC = () => {
     });
 
     newSocket.on("connect", () => {
-      console.log(userId);
-
-      //newSocket.emit("get_conversations", { idUser: userId });
       if (userId) {
         newSocket.emit("messages", { idUser: userId, idReceiver: idReceiver });
       }
@@ -99,6 +96,7 @@ const Chat: React.FC = () => {
         image_url: user.image_url,
       }));
       setConversations(usersData);
+      console.log(usersData);
     });
 
     const fetchData = async () => {
@@ -191,11 +189,11 @@ const Chat: React.FC = () => {
             grabCursor={true}
             centeredSlides={false}
             slidesPerView={"auto"}
-            spaceBetween={10}
+            spaceBetween={1}
             initialSlide={0}
             width={conversations.length * 69}
           >
-            <SwiperSlide style={{ width: "17%" }}>
+            <SwiperSlide>
               {conversations.map((conversation) => (
                 <Bubble
                   name={conversation.name}

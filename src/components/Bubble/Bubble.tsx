@@ -11,10 +11,14 @@ const Bubble: React.FC<Data> = ( {img, name, onClick}) => {
 
     return (
         <div className="bubbleCont" onClick={onClick}>
-            <img className="bubbleImg" src={img}/>
-            <IonText className="bubbleText">
-                {name}
-            </IonText>
+            <div className="topBubble">
+                <img className="bubbleImg" src={img}/>
+            </div>
+            <div className="bottomBubble">
+                <IonText className="bubbleText">
+                    {name}
+                </IonText>
+            </div>
         </div>
     );
 }
