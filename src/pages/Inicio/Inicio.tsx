@@ -150,6 +150,7 @@ const Inicio: React.FC = () => {
               <div className='res'>
                 {tutores.map((tutor) => (
                   <Card
+                    key={tutor.id}
                     onClick={() => history.push(`/profile/${tutor.id}`)}  
                     nombre= {tutor.name}
                     modalidad= {tutor.format_tutor}
