@@ -6,8 +6,8 @@ import Footer from "../../components/Footer/Footer";
 import { useHistory } from "react-router";
 import { useAppSelector } from "../../components/redux/hooks";
 import "./UserSettings.css";
-import { useState } from "react";
-import { deleteAccount } from "../../components/redux/states/userSlice";
+import { useEffect, useState } from "react";
+import { deleteAccount, getConversation } from "../../components/redux/states/userSlice";
 import { useAppDispatch } from "../../components/redux/hooks";
 import { Camera, CameraResultType } from "@capacitor/camera";
 import { uploadImage } from "../../components/redux/states/userSlice";
@@ -17,7 +17,7 @@ const UserSettings: React.FC = () => {
   const dispatch = useAppDispatch();
   const stateUser = useAppSelector((state) => state.user);
   const [showAlert, setShowAlert] = useState(false);
-  
+  const [conversations, setConversations] = useState<any[]>([]);
 
   const getPath = async () => {
     const image = await Camera.getPhoto({
@@ -38,6 +38,18 @@ const UserSettings: React.FC = () => {
       setShowAlert(false);
     }
   };
+
+  useEffect(() => {
+    dispatch(getConversation()).then((res) => {
+      const usersData = res.payload.map((user: any) => ({
+        _id: user._id,
+        name: user.name,
+        image_url: user.image_url,
+        read: user.read,
+      }));
+      setConversations(usersData);
+    });
+  }, []);
 
   return (
     <IonPage>
@@ -138,7 +150,14 @@ const UserSettings: React.FC = () => {
             </IonButton>
           </div>
         </div>
-        <Footer active='profile' />
+        <Footer
+          active='profile'
+          notification={
+            conversations.find((conversation) => !conversation.read)
+              ? true
+              : false
+          }
+        />
       </div>
     </IonPage>
   );

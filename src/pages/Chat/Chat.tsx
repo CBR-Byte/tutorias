@@ -4,7 +4,7 @@ import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import "./Chat.css";
 import React, { useEffect, useState, useRef } from "react";
-import { IonButton, IonIcon, IonPage, IonText } from "@ionic/react";
+import { IonButton, IonIcon, IonPage, IonText, IonTitle } from "@ionic/react";
 import { io } from "socket.io-client";
 import { send, caretDown } from "ionicons/icons/";
 import { useHistory, useParams } from "react-router";
@@ -20,6 +20,7 @@ import "swiper/css/effect-cards";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import Loading from "../../components/Loading";
+import { join } from "path";
 
 interface Message {
   message: string;
@@ -30,19 +31,21 @@ interface Message {
 }
 
 interface ConversationsProfiles {
-  id: string;
+  _id: string;
   name: string;
   image_url: string;
+  read: boolean;
 }
 
 const Chat: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
+  var { id } = useParams<{ id: string }>();
   const [inputMessage, setInputMessage] = useState<string>("");
   const dispatch = useAppDispatch();
-  const [idReceiver, setIdReceiver] = useState<string>("");
+  const [idReceiver, setIdReceiver] = useState<string>(id);
   const [idBuuble, setIdBuuble] = useState<string>("");
   const userId = useAppSelector((state) => state.user.user?.id);
-  let { id } = useParams<{ id: string }>();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [nameConversation, setNameConversation] = useState<string>("");
   const scroll = useRef<HTMLDivElement>(null);
   const [isButtonVisible, setIsButtonVisible] = useState(false);
@@ -55,61 +58,60 @@ const Chat: React.FC = () => {
   });
   const history = useHistory();
 
-  useEffect(() => {
-    // Configurar la conexión al servidor WebSocket
-
-    newSocket.on("chat", (data: any) => {
-      console.log(data);
-
-      const message = data.message;
-      setMessages((prevMessages) => [...prevMessages, message]);
-    });
-
-    newSocket.on("get_conversations", (data: any) => {
-      console.log(data);
-
-      const chats = data.conversations;
-      setConversations(chats);
-    });
-
-    newSocket.on("disconnect", () => {
-      newSocket.close();
-    });
-
-    newSocket.on("connect", () => {
-      if (userId) {
-        newSocket.emit("messages", { idUser: userId, idReceiver: idReceiver });
-      }
-    });
-
-    newSocket.on("messages", (data: any) => {
-      console.log(data);
-      setMessages(data.messages);
-    });
-  }, []);
+  const handleBubbleClick = async (idHandler: string) => {
+    setIdReceiver(idHandler);
+    setIdBuuble(idHandler);
+  };
+  const fetchData = async () => {
+      setIdBuuble(id);
+      const disp = (await dispatch(getListUsers(id))).payload;
+      setNameConversation(disp);
+      setIdReceiver(id);
+      newSocket.emit("join_room", { idUser: userId, idReceiver: id});
+  };
 
   useEffect(() => {
     dispatch(getConversation()).then((res) => {
       const usersData = res.payload.map((user: any) => ({
-        id: user.id,
+        _id: user._id,
         name: user.name,
         image_url: user.image_url,
+        read: user.read,
       }));
       setConversations(usersData);
-      console.log(usersData);
     });
+    if(id){
+      fetchData();
+    }
+  }, [id]);
 
-    const fetchData = async () => {
-      if (id) {
-        setIdBuuble(id);
-        const disp = (await dispatch(getListUsers(id))).payload;
-        setNameConversation(disp);
-        setIdReceiver(id);
-        newSocket.emit("messages", { idUser: userId, idReceiver: id });
+  useEffect(() => {
+    // Configurar la conexión al servidor WebSocket
+    
+      newSocket.on("chat", (data: any) => {
+        const message = data.message;
+        if(message === messages[messages.length - 1]){
+        }else setMessages((prevMessages) => [...prevMessages, message]);
+        
+      });
+  
+      newSocket.on("disconnect", () => {
+        newSocket.close();
+      });
+
+      newSocket.on("join_room", (data: any) => {
+        newSocket.emit("messages", { idUser: userId, idReceiver: idReceiver});
+      });
+  
+      newSocket.on("messages", (data: any) => {
+        setMessages(data.messages);
+      });
+
+      return () => {
+        newSocket.disconnect();
       }
-    };
-    fetchData();
-  }, []);
+  }, [id]);
+
 
   useEffect(() => {
     if (scroll.current) {
@@ -138,21 +140,14 @@ const Chat: React.FC = () => {
       }); // Format: hh:mm
       const message: Message = {
         message: inputMessage,
-        sender: userId, // Replace with actual sender
-        receiver: destinatario, // Replace with actual receiver
+        sender: userId,
+        receiver: destinatario,
         date: dateFormatted,
         time: timeFormatted,
       };
-
       newSocket.emit("chat", message);
       setInputMessage("");
     }
-  };
-
-  const handleBubbleClick = (idHandler: string, nameHandler: string) => {
-    setIdBuuble(idHandler);
-    setNameConversation(nameHandler);
-    newSocket.emit("messages", { idUser: userId, idReceiver: idHandler });
   };
 
   const handleScroll = () => {
@@ -175,111 +170,150 @@ const Chat: React.FC = () => {
   }, [messages]);
 
   const scrollToBottom = () => {
-    const chatDiv = document.getElementById("chatDiv"); // Cambia "chatDiv" al id de tu div de chat
+    const chatDiv = document.getElementById("chatDiv");
     if (chatDiv) {
       chatDiv.scrollTop = chatDiv.scrollHeight;
     }
   };
+
+  setTimeout(() => {
+    setIsLoading(false);
+  }, 500);
+  
+  const [firsTime, setFirsTime] = useState<Boolean>(true);
+  const firstTimeFunction = () => {
+    if(id && conversations.length === 0 ){
+      setFirsTime(false);
+    }else if(id || conversations.length > 0){
+      setFirsTime(false);
+    }
+  }
+
+  useEffect(() => {
+    firstTimeFunction();
+  });
+  
   return (
     <IonPage>
-      <Header />
-      <div className='contChat'>
-        <div className='slides'>
-          <Swiper
-            grabCursor={true}
-            centeredSlides={false}
-            slidesPerView={"auto"}
-            spaceBetween={1}
-            initialSlide={0}
-            width={conversations.length * 69}
-          >
-            <SwiperSlide>
-              {conversations.map((conversation) => (
-                <Bubble
-                  name={conversation.name}
-                  img={conversation.image_url}
-                  key={conversation.id}
-                  onClick={() => {
-                    handleBubbleClick(conversation.id, conversation.name);
-                    history.push("/chat/" + conversation.id);
-                  }}
-                />
-              ))}
-            </SwiperSlide>
-          </Swiper>
-        </div>
-        {conversations.length === 0 && (
-          <Loading message='Cargando tus chats...' />
-        )}
-        {idBuuble && (
-          <>
-            <div className='chat'>
-              <div className='topChat'>
-                <IonText
-                  onClick={() => {
-                    history.push(`/profile/${idReceiver}`);
-                  }}
+      {isLoading ? (
+        <Loading message='Cargando conversaciones...' />
+      ) : (
+        <>
+          <Header />
+          {  firsTime? (
+              <IonTitle style={{textAlign: "center"}} >No tienes conversaciones</IonTitle>
+          ) : (
+            <div className='contChat'>
+              <div className='slides'>
+                <Swiper
+                  grabCursor={true}
+                  centeredSlides={false}
+                  slidesPerView={"auto"}
+                  spaceBetween={1}
+                  initialSlide={0}
+                  width={conversations.length * 69}
                 >
-                  {nameConversation}
-                </IonText>
+                  <SwiperSlide>
+                    {conversations.map((conversation) => (
+                      <div key={conversation._id}>
+                      <Bubble
+                        name={conversation.name}
+                        img={conversation.image_url}
+                        read={conversation.read}
+                        onClick={() => {
+                          handleBubbleClick(conversation._id);
+                          setIdReceiver(conversation._id);
+                          setNameConversation(conversation.name);
+                          history.push(`/chat/${conversation._id}`);
+                        }}
+                      />
+                      </div>
+                    ))}
+                  </SwiperSlide>
+                </Swiper>
               </div>
-              <div id='chatDiv' style={{ marginTop: "5vh" }} className='chat'>
-                {messages.map((message, index) => (
-                  <div
-                    ref={scroll}
-                    className={
-                      userId == message.sender
-                        ? "mensajesChat user"
-                        : "mensajesChat client"
-                    }
-                    key={index}
-                  >
-                    <div>
-                      <IonText className='textoChat'>{message.message}</IonText>
-                    </div>
-                    <div
-                      className={
-                        userId == message.sender
-                          ? "fechaChatUser"
-                          : "fechaChatClient"
-                      }
-                    >
-                      <IonText>
-                        {message.date}
-                        {" " + message.time}
+              {idBuuble && (
+                <>
+                  <div className='chat'>
+                    <div className='topChat'>
+                      <IonText
+                        onClick={() => {
+                          history.push(`/profile/${id}`);
+                        }}
+                      >
+                        {nameConversation}
                       </IonText>
                     </div>
+                    <div
+                      id='chatDiv'
+                      style={{ marginTop: "5vh" }}
+                      className='chat'
+                    >
+                      {messages.map((message, index) => (
+                        <div
+                          ref={scroll}
+                          className={
+                            userId == message.sender
+                              ? "mensajesChat user"
+                              : "mensajesChat client"
+                          }
+                          key={index}
+                        >
+                          <div>
+                            <IonText className='textoChat'>
+                              {message.message}
+                            </IonText>
+                          </div>
+                          <div
+                            className={
+                              userId == message.sender
+                                ? "fechaChatUser"
+                                : "fechaChatClient"
+                            }
+                          >
+                            <IonText>
+                              {message.date}
+                              {" " + message.time}
+                            </IonText>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    {isButtonVisible && (
+                      <div className='bajarChat'>
+                        <IonButton onClick={scrollToBottom}>
+                          <IonIcon icon={caretDown} className='iconBajar' />
+                        </IonButton>
+                      </div>
+                    )}
                   </div>
-                ))}
-              </div>
-              {isButtonVisible && (
-                <div className='bajarChat'>
-                  <IonButton onClick={scrollToBottom}>
-                    <IonIcon icon={caretDown} className='iconBajar' />
-                  </IonButton>
-                </div>
+                  <div className='enviar'>
+                    <input
+                      className='inputEnviar'
+                      type='text'
+                      placeholder='Type your message'
+                      value={inputMessage}
+                      onChange={(e) => setInputMessage(e.target.value)}
+                    />
+                    <IonButton
+                      className='btnEnviar'
+                      fill='clear'
+                      onClick={() => sendMessage(id)}
+                    >
+                      <IonIcon icon={send} className='iconEnviar' />
+                    </IonButton>
+                  </div>
+                </>
               )}
             </div>
-            <div className='enviar'>
-              <input
-                className='inputEnviar'
-                type='text'
-                placeholder='Type your message'
-                value={inputMessage}
-                onChange={(e) => setInputMessage(e.target.value)}
-              />
-              <IonButton
-                className='btnEnviar'
-                fill='clear'
-                onClick={() => sendMessage(id)}
-              >
-                <IonIcon icon={send} className='iconEnviar' />
-              </IonButton>
-            </div>
-          </>
-        )}
-      </div>
-      <Footer active='chat' />
+          ) }
+          <Footer 
+            active="chat"
+            notification= {
+            conversations.find( conversation => !conversation.read) ? true : false
+            } />
+        </>
+      )}
     </IonPage>
   );
 };

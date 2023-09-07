@@ -25,6 +25,7 @@ import "swiper/css/effect-cards";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import Footer from "../../components/Footer/Footer";
+import { getConversation } from "../../components/redux/states/userSlice";
 
 const Inicio: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -33,6 +34,7 @@ const Inicio: React.FC = () => {
   const [IsSearch, setIsSearch] = useState<boolean>(false);
   const inputRef = useRef<HTMLIonInputElement>(null);
   const [tutores, setTutores] = useState<any[]>([]);
+  const [conversations, setConversations] = useState<any[]>([]);
 
   useEffect(() => {
     if (!stateUser.registerCompleted && stateUser.user?.is_tutor) {
@@ -40,6 +42,18 @@ const Inicio: React.FC = () => {
     } else if (!stateUser.registerCompleted && stateUser.user?.is_student) {
       history.push("/userForm");
     }
+  }, []);
+
+  useEffect(() => {
+    dispatch(getConversation()).then((res) => {
+      const usersData = res.payload.map((user: any) => ({
+        _id: user._id,
+        name: user.name,
+        image_url: user.image_url,
+        read: user.read,
+      }));
+      setConversations(usersData);
+    });
   }, []);
 
   const handleInput = (event: React.KeyboardEvent<HTMLIonInputElement>) => {
@@ -60,7 +74,7 @@ const Inicio: React.FC = () => {
     } else {
       return 0;
     }
-  }
+  };
 
   return (
     <IonPage>
@@ -150,13 +164,16 @@ const Inicio: React.FC = () => {
               <div className='res'>
                 {tutores.map((tutor) => (
                   <Card
-                    onClick={() => history.push(`/profile/${tutor.id}`)}  
-                    nombre= {tutor.name}
-                    modalidad= {tutor.format_tutor}
+                    key={tutor.id}
+                    onClick={() => history.push(`/profile/${tutor.id}`)}
+                    nombre={tutor.name}
+                    modalidad={tutor.format_tutor}
                     descripcion={tutor.subjects_tutor.join(", ")}
                     calificacion={califications(tutor.calification)}
                     precio={tutor.cost_tutor}
-                    numCalificacion={tutor.calification != null ? tutor.calification.length : 0}
+                    numCalificacion={
+                      tutor.calification != null ? tutor.calification.length : 0
+                    }
                     imagen={tutor.image_url}
                   />
                 ))}
@@ -164,7 +181,14 @@ const Inicio: React.FC = () => {
             </div>
           )}
         </div>
-        <Footer active='inicio' />
+        <Footer
+          active='inicio'
+          notification={
+            conversations.find((conversation) => !conversation.read)
+              ? true
+              : false
+          }
+        />
       </div>
     </IonPage>
   );
