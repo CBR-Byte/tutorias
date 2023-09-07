@@ -31,9 +31,10 @@ interface Message {
 }
 
 interface ConversationsProfiles {
-  id: string;
+  _id: string;
   name: string;
   image_url: string;
+  read: boolean;
 }
 
 const Chat: React.FC = () => {
@@ -53,16 +54,16 @@ const Chat: React.FC = () => {
     []
   );
 
-  const newSocket = io("http://localhost:8000", {
+  const newSocket = io("https://tutoriapp-7f467dd740dd.herokuapp.com", {
     path: "/sockets",
   });
   const history = useHistory();
 
   const handleBubbleClick = async (idHandler: string) => {
     console.log("click");
-    console.log(idReceiver);
+    console.log(idHandler);
     setIdReceiver(idHandler);
-    // setIdBuuble(idHandler);
+    setIdBuuble(idHandler);
     // setNameConversation(nameHandler);
     // const sorted = [userId, idHandler].sort();
     // setRoom(sorted);
@@ -70,76 +71,81 @@ const Chat: React.FC = () => {
     // newSocket.emit("join_room", { idUser: userId, idReceiver: idHandler});
     // newSocket.emit("messages", { idUser: userId, idReceiver: idHandler });
   };
+  const fetchData = async () => {
+      setIdBuuble(id);
+      const disp = (await dispatch(getListUsers(id))).payload;
+      setNameConversation(disp);
+      setIdReceiver(id);
+      console.log("encontré id: "+id)
+      newSocket.emit("join_room", { idUser: userId, idReceiver: id});
+      // newSocket.emit("messages", { idUser: userId, idReceiver: id});
+  };
 
   useEffect(() => {
     dispatch(getConversation()).then((res) => {
       const usersData = res.payload.map((user: any) => ({
-        id: user.id,
+        _id: user._id,
         name: user.name,
         image_url: user.image_url,
+        read: user.read,
       }));
       setConversations(usersData);
       console.log(usersData);
     });
-
-    const fetchData = async () => {
-      if (id) {
-        setIdBuuble(id);
-        const disp = (await dispatch(getListUsers(id))).payload;
-        setNameConversation(disp);
-        // setIdReceiver(id);
-        const sorted = [userId, id].sort();
-        setRoom(sorted);
-        console.log("encontré id")
-        console.log(sorted);
-        newSocket.emit("join_room", { idUser: userId, idReceiver: idReceiver});
-        // newSocket.emit("messages", { idUser: userId, idReceiver: id});
-      }
-    };
-    fetchData();
+    if(id){
+      fetchData();
+    }
   }, [id]);
 
   useEffect(() => {
     // Configurar la conexión al servidor WebSocket
+    
+      newSocket.on("chat", (data: any) => {
+        console.log(data);
+        
+        const message = data.message;
+        if(message === messages[messages.length - 1]){
+          console.log("no se agrega");
+        }else setMessages((prevMessages) => [...prevMessages, message]);
+        
+      });
+  
+      // newSocket.on("get_conversations", (data: any) => {
+      //   console.log(data);
+  
+      //   const chats = data.conversations;
+      //   setConversations(chats);
+      // });
+  
+      newSocket.on("disconnect", () => {
+        newSocket.close();
+      });
+  
+      // newSocket.on("connect", () => {
+      //   if (id) {
+      //     newSocket.emit("messages", { idUser: userId, idReceiver: id });
+      //   }
+      // });
+  
+      newSocket.on("join_room", (data: any) => {
+        console.log("entré a un room");
+        console.log(data.room);
+        console.log(idReceiver);
+        // setMessages([]);
+        console.log("room: "+userId+" "+ idReceiver);
+        newSocket.emit("messages", { idUser: userId, idReceiver: idReceiver});
+      });
+  
+      newSocket.on("messages", (data: any) => {
+        console.log("entre a mensajes: "+ data);
+        console.log(JSON.stringify(data));
+        setMessages(data.messages);
+      });
 
-    newSocket.on("chat", (data: any) => {
-      console.log(data);
-
-      const message = data.message;
-      setMessages((prevMessages) => [...prevMessages, message]);
-    });
-
-    // newSocket.on("get_conversations", (data: any) => {
-    //   console.log(data);
-
-    //   const chats = data.conversations;
-    //   setConversations(chats);
-    // });
-
-    newSocket.on("disconnect", () => {
-      newSocket.close();
-    });
-
-    // newSocket.on("connect", () => {
-    //   if (id) {
-    //     newSocket.emit("messages", { idUser: userId, idReceiver: id });
-    //   }
-    // });
-
-    newSocket.on("join_room", (data: any) => {
-      console.log("entré a un room");
-      console.log(data.room);
-      // setMessages([]);
-      console.log(userId+" "+ idReceiver);
-      newSocket.emit("messages", { idUser: userId, idReceiver: idReceiver});
-    });
-
-    newSocket.on("messages", (data: any) => {
-      console.log("entre a mensajes");
-      console.log(data);
-      setMessages(data.messages);
-    });
-  }, []);
+      return () => {
+        newSocket.disconnect();
+      }
+  }, [id]);
 
 
   useEffect(() => {
@@ -174,7 +180,7 @@ const Chat: React.FC = () => {
         date: dateFormatted,
         time: timeFormatted,
       };
-      newSocket.emit("chat", message, room);
+      newSocket.emit("chat", message);
       setInputMessage("");
     }
   };
@@ -209,6 +215,19 @@ const Chat: React.FC = () => {
     setIsLoading(false);
   }, 500);
   
+  const [firsTime, setFirsTime] = useState<Boolean>(true);
+  const firstTimeFunction = () => {
+    if(id && conversations.length === 0 ){
+      setFirsTime(false);
+    }else if(id || conversations.length > 0){
+      setFirsTime(false);
+    }
+  }
+
+  useEffect(() => {
+    firstTimeFunction();
+  });
+  
   return (
     <IonPage>
       {isLoading ? (
@@ -216,8 +235,8 @@ const Chat: React.FC = () => {
       ) : (
         <>
           <Header />
-          { conversations.length == 0 ? (
-            <IonTitle style={{textAlign: "center"}} >No tienes conversaciones</IonTitle>
+          {  firsTime? (
+              <IonTitle style={{textAlign: "center"}} >No tienes conversaciones</IonTitle>
           ) : (
             <div className='contChat'>
               <div className='slides'>
@@ -231,17 +250,21 @@ const Chat: React.FC = () => {
                 >
                   <SwiperSlide>
                     {conversations.map((conversation) => (
+                      <div key={conversation._id}>
                       <Bubble
                         name={conversation.name}
                         img={conversation.image_url}
-                        key={conversation.id}
+                        read={conversation.read}
                         onClick={() => {
-                          handleBubbleClick(conversation.id);
-                          setIdReceiver(conversation.id);
+                          handleBubbleClick(conversation._id);
+                          setIdReceiver(conversation._id);
                           setNameConversation(conversation.name);
-                          history.push(`/chat/${conversation.id}`);
+                          console.log("bubble_id: " +conversation._id);
+                          
+                          history.push(`/chat/${conversation._id}`);
                         }}
                       />
+                      </div>
                     ))}
                   </SwiperSlide>
                 </Swiper>
@@ -252,7 +275,7 @@ const Chat: React.FC = () => {
                     <div className='topChat'>
                       <IonText
                         onClick={() => {
-                          history.push(`/profile/${idReceiver}`);
+                          history.push(`/profile/${id}`);
                         }}
                       >
                         {nameConversation}

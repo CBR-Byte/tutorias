@@ -5,9 +5,10 @@ import React from "react";
 interface Data {
     img: string;
     name: string;
+    read: boolean;
     onClick: () => void;
 }
-const Bubble: React.FC<Data> = ( {img, name, onClick}) => {
+const Bubble: React.FC<Data> = ( {img, name, onClick, read}) => {
 
     return (
         <div className="bubbleCont" onClick={onClick}>
@@ -15,7 +16,7 @@ const Bubble: React.FC<Data> = ( {img, name, onClick}) => {
                 <img className="bubbleImg" src={img}/>
             </div>
             <div className="bottomBubble">
-                <IonText className="bubbleText">
+                <IonText style={{color: !read ? "red": null}} className="bubbleText">
                     {name}
                 </IonText>
             </div>

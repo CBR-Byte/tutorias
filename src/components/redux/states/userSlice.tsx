@@ -218,8 +218,7 @@ void,
       const state = thunkAPI.getState() as User;
       const id = state.user.user.id;
       const response = await axios.get(`https://tutoriapp-7f467dd740dd.herokuapp.com/messages/${id}`);
-      const messages = await response.data;
-      return messages;
+      return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue({
         errorMessage: error.response.data.detail,
