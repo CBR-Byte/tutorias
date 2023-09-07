@@ -45,7 +45,6 @@ const Chat: React.FC = () => {
   const [idReceiver, setIdReceiver] = useState<string>(id);
   const [idBuuble, setIdBuuble] = useState<string>("");
   const userId = useAppSelector((state) => state.user.user?.id);
-  const [room, setRoom] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [nameConversation, setNameConversation] = useState<string>("");
   const scroll = useRef<HTMLDivElement>(null);
@@ -60,25 +59,15 @@ const Chat: React.FC = () => {
   const history = useHistory();
 
   const handleBubbleClick = async (idHandler: string) => {
-    console.log("click");
-    console.log(idHandler);
     setIdReceiver(idHandler);
     setIdBuuble(idHandler);
-    // setNameConversation(nameHandler);
-    // const sorted = [userId, idHandler].sort();
-    // setRoom(sorted);
-    // console.log("buble");
-    // newSocket.emit("join_room", { idUser: userId, idReceiver: idHandler});
-    // newSocket.emit("messages", { idUser: userId, idReceiver: idHandler });
   };
   const fetchData = async () => {
       setIdBuuble(id);
       const disp = (await dispatch(getListUsers(id))).payload;
       setNameConversation(disp);
       setIdReceiver(id);
-      console.log("encontré id: "+id)
       newSocket.emit("join_room", { idUser: userId, idReceiver: id});
-      // newSocket.emit("messages", { idUser: userId, idReceiver: id});
   };
 
   useEffect(() => {
@@ -90,7 +79,6 @@ const Chat: React.FC = () => {
         read: user.read,
       }));
       setConversations(usersData);
-      console.log(usersData);
     });
     if(id){
       fetchData();
@@ -101,44 +89,21 @@ const Chat: React.FC = () => {
     // Configurar la conexión al servidor WebSocket
     
       newSocket.on("chat", (data: any) => {
-        console.log(data);
-        
         const message = data.message;
         if(message === messages[messages.length - 1]){
-          console.log("no se agrega");
         }else setMessages((prevMessages) => [...prevMessages, message]);
         
       });
   
-      // newSocket.on("get_conversations", (data: any) => {
-      //   console.log(data);
-  
-      //   const chats = data.conversations;
-      //   setConversations(chats);
-      // });
-  
       newSocket.on("disconnect", () => {
         newSocket.close();
       });
-  
-      // newSocket.on("connect", () => {
-      //   if (id) {
-      //     newSocket.emit("messages", { idUser: userId, idReceiver: id });
-      //   }
-      // });
-  
+
       newSocket.on("join_room", (data: any) => {
-        console.log("entré a un room");
-        console.log(data.room);
-        console.log(idReceiver);
-        // setMessages([]);
-        console.log("room: "+userId+" "+ idReceiver);
         newSocket.emit("messages", { idUser: userId, idReceiver: idReceiver});
       });
   
       newSocket.on("messages", (data: any) => {
-        console.log("entre a mensajes: "+ data);
-        console.log(JSON.stringify(data));
         setMessages(data.messages);
       });
 
@@ -175,8 +140,8 @@ const Chat: React.FC = () => {
       }); // Format: hh:mm
       const message: Message = {
         message: inputMessage,
-        sender: userId, // Replace with actual sender
-        receiver: destinatario, // Replace with actual receiver
+        sender: userId,
+        receiver: destinatario,
         date: dateFormatted,
         time: timeFormatted,
       };
@@ -205,7 +170,7 @@ const Chat: React.FC = () => {
   }, [messages]);
 
   const scrollToBottom = () => {
-    const chatDiv = document.getElementById("chatDiv"); // Cambia "chatDiv" al id de tu div de chat
+    const chatDiv = document.getElementById("chatDiv");
     if (chatDiv) {
       chatDiv.scrollTop = chatDiv.scrollHeight;
     }
@@ -259,8 +224,6 @@ const Chat: React.FC = () => {
                           handleBubbleClick(conversation._id);
                           setIdReceiver(conversation._id);
                           setNameConversation(conversation.name);
-                          console.log("bubble_id: " +conversation._id);
-                          
                           history.push(`/chat/${conversation._id}`);
                         }}
                       />
@@ -344,7 +307,11 @@ const Chat: React.FC = () => {
               )}
             </div>
           ) }
-          <Footer active='chat' />
+          <Footer 
+            active="chat"
+            notification= {
+            conversations.find( conversation => !conversation.read) ? true : false
+            } />
         </>
       )}
     </IonPage>
