@@ -16,35 +16,44 @@ interface ContainerProps {
   onClick: () => void;
 }
 
-const Card: React.FC<ContainerProps> = ({nombre,modalidad,descripcion,calificacion,precio, numCalificacion,imagen, onClick}) => {
+const Card: React.FC<ContainerProps> = ({
+  nombre,
+  modalidad,
+  descripcion,
+  calificacion,
+  precio,
+  numCalificacion,
+  imagen,
+  onClick,
+}) => {
   return (
-      <div onClick={onClick} className='card'>
-        <div className='headerCard'>
-          <img
-            className='imagen'
-            src={imagen}
-            alt='imagen'
-          />
-          <IonText>
-            <IonTitle className='nombre'>{nombre}</IonTitle>
-            <IonText className='cuerpo'>{modalidad}</IonText>
-          </IonText>
-        </div>
-        <div className='bodyCard'>
+    <div onClick={onClick} className='card'>
+      <div className='headerCard'>
+        <img className='imagen' src={imagen} alt='imagen' />
+        <IonText>
+          <IonTitle className='nombre'>{nombre}</IonTitle>
           <IonText className='cuerpo'>
-            {descripcion}
+            {modalidad.length === 2
+              ? modalidad[0] + " y " + modalidad[1]
+              : modalidad}
+          </IonText>
+        </IonText>
+      </div>
+      <div className='bodyCard'>
+        <IonText className='cuerpo'>{descripcion}</IonText>
+      </div>
+      <div className='footerCard'>
+        <div className='calificacion'>
+          <IonIcon className='star' icon={star} />
+          <IonText className='textoFooter'>
+            {calificacion} ({numCalificacion} calificaciones)
           </IonText>
         </div>
-        <div className='footerCard'>
-          <div className='calificacion'>
-            <IonIcon className='star' icon={star} />
-            <IonText className='textoFooter'>{calificacion} ({numCalificacion} calificaciones)</IonText>
-          </div>
-          <div className="price">
-            <IonText className='textoFooter'>${precio}</IonText>
-          </div>
+        <div className='price'>
+          <IonText className='textoFooter'>${precio}</IonText>
         </div>
       </div>
+    </div>
   );
 };
 

@@ -215,7 +215,7 @@ const Chat: React.FC = () => {
                 >
                   <SwiperSlide>
                     {conversations.map((conversation) => (
-                      <div key={conversation._id}>
+                      <div style={{height:"100%"}} key={conversation._id}>
                       <Bubble
                         name={conversation.name}
                         img={conversation.image_url}

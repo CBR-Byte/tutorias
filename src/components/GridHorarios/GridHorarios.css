@@ -1,24 +1,30 @@
 .grid-container {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
+    text-align: center;
 }
 .grid-item {
     box-shadow: 5px 8px 10px #155B68;
     padding: 1vw;
-    text-align: center;
     cursor: pointer;
     color: #D2D9E7;
     background: #05938C;
     margin-bottom: 1vh;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    max-height: 4vh;
+    max-width: 16vw;
 }
 .selected {
 background-color: #155c68e1;
 }
 .dias {
-    font-size: 85%;
+    font-size: 3.7vh;
     border-bottom: 2px solid #05938C;
     color: #155c68e1; 
     margin-bottom: 1vh;
+    width: 16vw;
     font-weight: 600;
 }
 .titulo {
@@ -32,20 +38,25 @@ background-color: #155c68e1;
 .header {
     text-align: center;
     font-size: 4vw;
-    margin-bottom: 5vh;
+    height: 7vh;
 }
-
+.seleccione {
+    height: 3vh;
+    font-size: 5vw;
+    text-align: center;
+}
 .cuadrado {
-    margin-top: 30px;
     background-color: #155B68;
-    height: 120vw;
+    height: 20vh;
     width: 120vw;
     left: -10%;
+    display: flex;
+    justify-content: center;
     position: absolute;
-    border-radius: 50%;
+    border-radius: 30%;
     padding: 1vh;
 }
 .horario {
-    margin-top: 3vh;
-    margin-bottom: 3vh;
+    height: 70vh;
+    margin-bottom: 1vh;
 }

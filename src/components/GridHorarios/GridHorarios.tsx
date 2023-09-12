@@ -10,7 +10,7 @@ interface slotProps {
 }
 
 const GridHorarios: React.FC<slotProps> = ({estado,actualizar,modal}) => {
-  const days = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+  const days = ['L', 'M', 'X', 'J', 'V', 'S'];
   const hours = ['8am', '9am', '10am', '11am', '12pm', '1pm', '2pm', '3pm', '4pm', '5pm', '6pm', '7pm', '8pm'];
 
 
@@ -28,12 +28,12 @@ const GridHorarios: React.FC<slotProps> = ({estado,actualizar,modal}) => {
         <IonHeader className='header'>
             <IonTitle className='titulo'>Horarios</IonTitle>
         </IonHeader>
-        <IonContent scrollY={false} className='header'>
-            <IonText>
+        <IonContent scrollY={false}>
+            <h1 className='seleccione'>
                 Seleccione su horario de disponibilidad
-            </IonText>
-            <IonGrid className='horario'>
-                <IonRow className='grid-container'>
+            </h1>
+            <IonGrid>
+                <IonRow className='grid-container horario'>
                     {days.map((day, dayIndex) => (
                             <IonRow key={dayIndex}>
                                 <IonCol className="dias">{day}</IonCol>
@@ -42,7 +42,9 @@ const GridHorarios: React.FC<slotProps> = ({estado,actualizar,modal}) => {
                                         key={hourIndex}  
                                         className={`grid-item ${estado.some(slot => slot.day === dayIndex && slot.hour === hourIndex) ? 'selected' : ''}`}
                                         onClick={() => toggleSelection(dayIndex, hourIndex)}>
-                                        {hour}
+                                        <div>
+                                          {hour}
+                                        </div>
                                     </IonCol>
                                 ))}
                             </IonRow>

@@ -1,34 +1,28 @@
 .bubbleCont{
     display: flex;
     flex-direction: column;
-    gap: 5px;
-    height: 14vh;
-    width: 22vw;
+    height: 15vh;
+    width: 25vw;
     margin: 5px;
 }
 .topBubble {
-    height: 78%;
+    height: 80%;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 .bottomBubble {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     height: 20%;
 }
 .bubbleImg {
-    height: 90px !important;
-    position: absolute;
-    top: 10px;
-    width: 90px !important;
+    height: 100% !important;
+    width: 100% !important;
     border-radius: 50%;
     z-index: 0;
 }
 .bubbleText {
     color: #D2D9E7;
-    font-size: 3vw;
+    font-size: 1.5vh;
 }
 .bubbleDot {
     position:relative;

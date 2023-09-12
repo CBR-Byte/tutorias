@@ -50,7 +50,7 @@ const Profile: React.FC = () => {
   const state = useAppSelector((state) => state.user);
   const tutors = useAppSelector((state) => state.tutor);
   const [dataProfile, setDataProfile] = useState<UserInfo>();
-  const days = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+  const days = ["L", "M", "X", "J", "V", "S"];
   const hours = [
     "8am",
     "9am",
@@ -135,7 +135,7 @@ const Profile: React.FC = () => {
               </div>
               <div className='datosCard'>
                 <div className='leftCard'>Modalidad de las clases:</div>
-                <div className='rightCard'>{dataProfile?.format_tutor.join(", ")}</div>
+                <div className='rightCard'>{dataProfile?.format_tutor.join(" y ")}</div>
               </div>
               <div className='datosCard'>
                 <div className='leftCard'>Formato de clase:</div>

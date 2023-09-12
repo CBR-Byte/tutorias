@@ -168,7 +168,7 @@ const Inicio: React.FC = () => {
                     onClick={() => history.push(`/profile/${tutor.id}`)}
                     nombre={tutor.name}
                     modalidad={tutor.format_tutor}
-                    descripcion={tutor.subjects_tutor.join(", ")}
+                    descripcion={tutor.subjects_tutor}
                     calificacion={califications(tutor.calification)}
                     precio={tutor.cost_tutor}
                     numCalificacion={
