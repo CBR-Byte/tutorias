@@ -129,7 +129,7 @@ const UserForm: React.FC = () => {
                 <div>
                   <Form>
                     <div className='rol'>
-                      <IonLabel className='category'>Formato: </IonLabel>
+                      <IonLabel className='category'>Formato </IonLabel>
                       <Field
                         className='options'
                         as='select'
@@ -165,26 +165,28 @@ const UserForm: React.FC = () => {
 
                     <div className='rol'>
                       <IonLabel className='category'>
-                        Que tipo de tutor eres?:{""}
+                        Que tipo de tutor eres?{""}
                       </IonLabel>
-                      <label>
-                        <Field
-                          type='radio'
-                          name='type_tutor'
-                          value='Estudiante'
-                          style={{ marginLeft: "5px" }}
-                        />
-                        Estudiante
-                      </label>
-                      <label>
-                        <Field
-                          type='radio'
-                          name='type_tutor'
-                          value='Profesor'
-                          style={{ marginLeft: "5px" }}
-                        />
-                        Profesor
-                      </label>
+                      <div className="options1" >
+                        <label>
+                          <Field
+                            type='radio'
+                            name='type_tutor'
+                            value='Estudiante'
+                            style={{ marginLeft: "5px" }}
+                          />
+                          Estudiante
+                        </label>
+                        <label>
+                          <Field
+                            type='radio'
+                            name='type_tutor'
+                            value='Profesor'
+                            style={{ marginLeft: "5px" }}
+                          />
+                          Profesor
+                        </label>
+                      </div>
                     </div>
                     {formikProps.touched.type_tutor &&
                     formikProps.errors.type_tutor ? (
@@ -194,11 +196,12 @@ const UserForm: React.FC = () => {
                     ) : null}
 
                     <div className='rol'>
-                      <IonLabel className='category'>Método: </IonLabel>
+                      <IonLabel className='category'>Método</IonLabel>
                       <div
                           className='options long'
                           role="group"
                           aria-labelledby="checkbox-group"
+                          style={{padding: "5px 12px"}}
                           >
                           <label>
                             <Field  type='checkbox' name='method_tutor' value='Aprendizaje Activo' />
@@ -238,13 +241,14 @@ const UserForm: React.FC = () => {
                     ) : null}
                     <div className='rol'>
                       <IonLabel className='category'>
-                        Tipo de Grupo(s):{" "}
+                        Tipo de Grupo(s){" "}
                       </IonLabel>
                       <Field
                         className='options'
                         as='select'
                         name='type_group_tutor'
                         multiple={true}
+                        style={{padding: "5px 12px"}}
                       >
                         <option className="values" value='Individual'>Individual</option>
                         <option className="values" value='Grupal'>Grupal</option>
@@ -258,9 +262,10 @@ const UserForm: React.FC = () => {
                     ) : null}
 
                     <div className='rol'>
-                      <IonLabel className='category'>Materias: </IonLabel>
+                      <IonLabel className='category'>Materias </IonLabel>
                       <div
                         className='options long'
+                        style={{padding: "5px 12px"}}
                         role="group"
                         aria-labelledby="checkbox-group">
 

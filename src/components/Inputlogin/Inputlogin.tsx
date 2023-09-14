@@ -16,7 +16,7 @@ interface InputloginProps {
 const Inputlogin: React.FC<InputloginProps>= ({ value, label, name, type, placeholder, onChange, onBlur, tipo }) => {
   return (
     <div className='contInput'>
-        <IonLabel className={(tipo === "info") ? 'label' : (tipo === "reset") ? 'label3' : 'label'}> {label} </IonLabel>
+        <IonLabel className="label"> {label} </IonLabel>
         <IonInput
           className='inp'
           value={value}

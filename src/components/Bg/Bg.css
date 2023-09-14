@@ -1,26 +1,30 @@
 .circle1 {
     width: 75vw;
     height: 75vw;
-    position: absolute;
+    position: fixed;
     top: 33vh;
     left: 60vw;
     border-radius: 50%;
     background: #05938C;
+    z-index: -1;
 }
 .circles2 {   
     width: 100vw;
     height: 100vw;
-    position: absolute;
+    position: fixed;
     border-radius: 50%;
+    z-index: -1;
     background: #155B68;
 }
-.top {
+.top1 {
     top: -15vh;
     left: -25vw;
+    position: fixed;
 }
-.bottom {
+.bottom1 {
     top: 70vh;
     left: -25vw;
+    position: fixed;
 }
 .circles3 {
     width: 50vw;
@@ -29,20 +33,28 @@
     border-radius: 50%;
     border: solid 10px #0BABA2;
     fill: none;
+    z-index: -1;
+    position: fixed;
 }
 .top2 {
     top: -7.5vh;
     left: -12.5vw;
+    position: fixed;
 }
 .bottom2 {
     top: 85vh;
     left: -12.5vw;
+    position: fixed;
 }   
 .bottom3 {
     top: 39vh;
     left: 80vw;
+    position: fixed;
 }
-
+.main {
+    overflow: scroll;
+    height: 100vh;
+}
 .box {
     width: 35px;
     height: 35px;

@@ -1,10 +1,10 @@
 .page {
     display: flex;
     align-items: center;
+    position: fixed;
 }
 .content {
     flex-grow: 1;
-    position: relative;
 }
 .grid{
     text-align: center;
@@ -18,9 +18,6 @@
 }
 .row {
     margin-top: 5vh;
-    margin-left: 20%;
-    margin-right: 20%;
-    max-height: 40px;
 }
 .forget {
     overflow: visible;

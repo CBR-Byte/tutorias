@@ -123,25 +123,31 @@ const UserForm: React.FC = () => {
             >
               {(formikProps) => (
                 <Form>
-                  <label>Carrera</label>
-                  <Field
-                    as='select'
-                    name='career'
-                    placeholder='Carrera'
-                    className='options'
-                    style={{ height: "3vh" }}
-                  >
-                    {carreras.map((carrera) => (
-                      <option className='values' key={carrera} value={carrera}>
-                        {carrera}
-                      </option>
-                    ))}
-                  </Field>
-                  {formikProps.touched.career && formikProps.errors.career ? (
-                    <div style={{ color: "red" }}>
-                      {formikProps.errors.career}
-                    </div>
-                  ) : null}
+                  <div style={{marginBottom:"10px"}}>
+                    <IonLabel>Carrera</IonLabel>
+                    <Field
+                      as='select'
+                      name='career'
+                      placeholder='Carrera'
+                      className='options'
+                      style={{ paddingTop: "15px" }}
+                    >
+                      {carreras.map((carrera) => (
+                        <option
+                          className='values'
+                          key={carrera}
+                          value={carrera}
+                        >
+                          {carrera}
+                        </option>
+                      ))}
+                    </Field>
+                    {formikProps.touched.career && formikProps.errors.career ? (
+                      <div style={{ color: "red" }}>
+                        {formikProps.errors.career}
+                      </div>
+                    ) : null}
+                  </div>
                   <Inputlogin
                     label='Semestre'
                     type='number'
@@ -172,12 +178,13 @@ const UserForm: React.FC = () => {
                     </div>
                   ) : null}
                   <div className='rol'>
-                    <IonLabel className='category'>Formato: </IonLabel>
+                    <IonLabel className="category">Formato</IonLabel>
                     <Field
                       className='options'
                       as='select'
                       name='format'
                       multiple={true}
+                      style={{padding: "5px 12px"}}
                     >
                       <option className='values' value='Virtual'>
                         Presencial
@@ -193,17 +200,18 @@ const UserForm: React.FC = () => {
                     </div>
                   ) : null}
                   <div className='rol'>
-                    <IonLabel className='category'>Grupo: </IonLabel>
+                    <IonLabel className="category">Grupo</IonLabel>
                     <Field
                       className='options'
                       as='select'
                       name='type_group'
                       multiple={true}
+                      style={{padding: "5px 12px"}}
                     >
                       <option className='values' value='Individual'>
                         Individual
                       </option>
-                      <option value='Grupal'>Grupal</option>
+                      <option className='values' value='Grupal'>Grupal</option>
                     </Field>
                   </div>
                   {formikProps.touched.type_group &&
@@ -213,10 +221,11 @@ const UserForm: React.FC = () => {
                     </div>
                   ) : null}
                   <div className='rol'>
-                    <IonLabel className='category'>Método: </IonLabel>
+                    <IonLabel className="category">Método</IonLabel>
                     <div
                       className='options long values'
                       role='group'
+                      style={{padding: "5px 12px"}}
                       aria-labelledby='checkbox-group'
                     >
                       <label className='values'>
@@ -282,7 +291,7 @@ const UserForm: React.FC = () => {
                       {formikProps.errors.method}
                     </div>
                   ) : null}
-                  {!state.user?.is_tutor && (
+                  {(!state.user?.is_tutor || state.registerCompleted) && (
                     <div className='btn'>
                       <IonButton onClick={handleButtonClick}>
                         Disponibilidad

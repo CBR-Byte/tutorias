@@ -80,8 +80,8 @@ const UserSettings: React.FC = () => {
         />
         <Header />
         <div style={{ zIndex: "-1" }} className='circle1' />
-        <div style={{ zIndex: "-1" }} className='circles2 top' />
-        <div style={{ zIndex: "-1" }} className='circles2 bottom' />
+        <div style={{ zIndex: "-1" }} className='circles2 top1' />
+        <div style={{ zIndex: "-1" }} className='circles2 bottom1' />
         <div style={{ zIndex: "-1" }} className='circles3 top2' />
         <div style={{ zIndex: "-1" }} className='circles3 bottom2' />
         <div style={{ zIndex: "-1" }} className='circles3 bottom3' />

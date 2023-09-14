@@ -127,7 +127,7 @@ const InfoForm: React.FC = () => {
           >
             {(formikProps) => (
               <div className='contModal'>
-                <Form>
+                <Form className='formInfo'>
                   <IonTitle className='titleModal'>Cambiar contraseña</IonTitle>
                   <Inputlogin
                     tipo='reset'
@@ -178,11 +178,7 @@ const InfoForm: React.FC = () => {
                     </div>
                   ) : null}
                   <div className='btnInfo'>
-                    <IonButton
-                      shape='round'
-                      type='submit'
-                      style={{ marginTop: "5vh" }}
-                    >
+                    <IonButton shape='round' type='submit'>
                       Cambiar
                     </IonButton>
                   </div>
@@ -213,7 +209,6 @@ const InfoForm: React.FC = () => {
           {(formikProps) => (
             <Form>
               <Inputlogin
-                tipo='info'
                 label='Usuario'
                 type='text'
                 name='name'
@@ -229,7 +224,6 @@ const InfoForm: React.FC = () => {
               ) : null}
 
               <Inputlogin
-                tipo='info'
                 label='Correo'
                 type='email'
                 name='email'
@@ -247,26 +241,28 @@ const InfoForm: React.FC = () => {
               {!stateUser.user?.is_tutor && stateUser.user?.is_student ? (
                 <div className='rol divTutor'>
                   <IonLabel className='selectTutor'>
-                    ¿Quieres ser tutor ahora?:{""}
+                    ¿Quieres ser tutor ahora?{""}
                   </IonLabel>
-                  <label className='selectTutor'>
-                    <Field
-                      type='radio'
-                      name='is_tutor'
-                      value='true'
-                      style={{ marginLeft: "5px" }}
-                    />
-                    Sí
-                  </label>
-                  <label className='selectTutor'>
-                    <Field
-                      type='radio'
-                      name='is_tutor'
-                      value='false'
-                      style={{ marginLeft: "5px" }}
-                    />
-                    No
-                  </label>
+                  <div className="options1">
+                    <label className='selectTutor'>
+                      <Field
+                        type='radio'
+                        name='is_tutor'
+                        value='true'
+                        style={{ marginLeft: "5px" }}
+                      />
+                      Sí
+                    </label>
+                    <label className='selectTutor'>
+                      <Field
+                        type='radio'
+                        name='is_tutor'
+                        value='false'
+                        style={{ marginLeft: "5px" }}
+                      />
+                      No
+                    </label>
+                  </div>
                 </div>
               ) : stateUser.user?.is_tutor && !stateUser.user?.is_student ? (
                 <div className='rol'>

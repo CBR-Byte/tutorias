@@ -355,7 +355,7 @@ const Login: React.FC = () => {
 
   return (
     <IonPage className='page'>
-      <IonContent className='content' scrollY={false}>
+      <div className='content'>
         <div className='top'>
           <div className='circles' />
           <div className='circle' />
@@ -460,7 +460,7 @@ const Login: React.FC = () => {
           </IonRow>
           <PassRecovery />
         </IonGrid>
-      </IonContent>
+      </div>
     </IonPage>
   );
 };

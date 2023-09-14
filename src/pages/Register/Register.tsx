@@ -189,6 +189,7 @@ const Register: React.FC = () => {
                       <IonLabel className='category'>
                         Vas a ser tutor?:{""}
                       </IonLabel>
+                      <div className="options1">
                       <label>
                         <Field
                           type='radio'
@@ -207,6 +208,7 @@ const Register: React.FC = () => {
                         />
                         No
                       </label>
+                      </div>
                     </div>
                     {formikProps.touched.is_tutor &&
                     formikProps.errors.is_tutor ? (
