@@ -56,13 +56,19 @@ const Inicio: React.FC = () => {
     });
   }, []);
 
-  const handleInput = (event: React.KeyboardEvent<HTMLIonInputElement>) => {
-    if (event.key === "Enter") {
+  const searchTutors = () => {
+    const keyWords = inputRef.current?.value?.toString().split(" ");
+    if (inputRef.current?.value !== '') {
       setIsSearch(true);
-      const keyWords = inputRef.current?.value?.toString().split(" ");
       dispatch(getTutors(keyWords)).then((res) => {
         setTutores(res.payload);
       });
+    }
+  };
+
+  const handleInput = (event: React.KeyboardEvent<HTMLIonInputElement>) => {
+    if (event.key === "Enter") {
+      searchTutors();
     }
   };
 
@@ -82,7 +88,11 @@ const Inicio: React.FC = () => {
         <Header />
         <div className='contenedor'>
           <div className='buscador'>
-            <IonIcon className='searchIcon' icon={search} />
+            <IonIcon
+              onClick={() => searchTutors()}
+              className='searchIcon'
+              icon={search}
+            />
             <IonInput
               type='text'
               ref={inputRef}

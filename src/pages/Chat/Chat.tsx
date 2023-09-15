@@ -20,7 +20,6 @@ import "swiper/css/effect-cards";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import Loading from "../../components/Loading";
-import { join } from "path";
 
 interface Message {
   message: string;
@@ -48,6 +47,7 @@ const Chat: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [nameConversation, setNameConversation] = useState<string>("");
   const scroll = useRef<HTMLDivElement>(null);
+  const messageRef = useRef<HTMLInputElement>(null);
   const [isButtonVisible, setIsButtonVisible] = useState(false);
   const [conversations, setConversations] = useState<ConversationsProfiles[]>(
     []
@@ -63,11 +63,11 @@ const Chat: React.FC = () => {
     setIdBuuble(idHandler);
   };
   const fetchData = async () => {
-      setIdBuuble(id);
-      const disp = (await dispatch(getListUsers(id))).payload;
-      setNameConversation(disp);
-      setIdReceiver(id);
-      newSocket.emit("join_room", { idUser: userId, idReceiver: id});
+    setIdBuuble(id);
+    const disp = (await dispatch(getListUsers(id))).payload;
+    setNameConversation(disp);
+    setIdReceiver(id);
+    newSocket.emit("join_room", { idUser: userId, idReceiver: id });
   };
 
   useEffect(() => {
@@ -80,38 +80,36 @@ const Chat: React.FC = () => {
       }));
       setConversations(usersData);
     });
-    if(id){
+    if (id) {
       fetchData();
     }
   }, [id]);
 
   useEffect(() => {
     // Configurar la conexión al servidor WebSocket
-    
-      newSocket.on("chat", (data: any) => {
-        const message = data.message;
-        if(message === messages[messages.length - 1]){
-        }else setMessages((prevMessages) => [...prevMessages, message]);
-        
-      });
-  
-      newSocket.on("disconnect", () => {
-        newSocket.close();
-      });
 
-      newSocket.on("join_room", (data: any) => {
-        newSocket.emit("messages", { idUser: userId, idReceiver: idReceiver});
-      });
-  
-      newSocket.on("messages", (data: any) => {
-        setMessages(data.messages);
-      });
+    newSocket.on("chat", (data: any) => {
+      const message = data.message;
+      if (message === messages[messages.length - 1]) {
+      } else setMessages((prevMessages) => [...prevMessages, message]);
+    });
 
-      return () => {
-        newSocket.disconnect();
-      }
+    newSocket.on("disconnect", () => {
+      newSocket.close();
+    });
+
+    newSocket.on("join_room", (data: any) => {
+      newSocket.emit("messages", { idUser: userId, idReceiver: idReceiver });
+    });
+
+    newSocket.on("messages", (data: any) => {
+      setMessages(data.messages);
+    });
+
+    return () => {
+      newSocket.disconnect();
+    };
   }, [id]);
-
 
   useEffect(() => {
     if (scroll.current) {
@@ -179,29 +177,31 @@ const Chat: React.FC = () => {
   setTimeout(() => {
     setIsLoading(false);
   }, 500);
-  
+
   const [firsTime, setFirsTime] = useState<Boolean>(true);
   const firstTimeFunction = () => {
-    if(id && conversations.length === 0 ){
+    if (id && conversations.length === 0) {
       setFirsTime(false);
-    }else if(id || conversations.length > 0){
+    } else if (id || conversations.length > 0) {
       setFirsTime(false);
     }
-  }
+  };
 
   useEffect(() => {
     firstTimeFunction();
   });
-  
+
   return (
     <IonPage>
       {isLoading ? (
-        <Loading message='Cargando conversaciones...' />
+        <Loading message='Cargando chats...' />
       ) : (
         <>
           <Header />
-          {  firsTime? (
-              <IonTitle style={{textAlign: "center"}} >No tienes conversaciones</IonTitle>
+          {firsTime ? (
+            <IonTitle style={{ textAlign: "center" }}>
+              No tienes conversaciones
+            </IonTitle>
           ) : (
             <div className='contChat'>
               <div className='slides'>
@@ -215,18 +215,18 @@ const Chat: React.FC = () => {
                 >
                   <SwiperSlide>
                     {conversations.map((conversation) => (
-                      <div style={{height:"100%"}} key={conversation._id}>
-                      <Bubble
-                        name={conversation.name}
-                        img={conversation.image_url}
-                        read={conversation.read}
-                        onClick={() => {
-                          handleBubbleClick(conversation._id);
-                          setIdReceiver(conversation._id);
-                          setNameConversation(conversation.name);
-                          history.push(`/chat/${conversation._id}`);
-                        }}
-                      />
+                      <div style={{ height: "100%" }} key={conversation._id}>
+                        <Bubble
+                          name={conversation.name}
+                          img={conversation.image_url}
+                          read={conversation.read}
+                          onClick={() => {
+                            handleBubbleClick(conversation._id);
+                            setIdReceiver(conversation._id);
+                            setNameConversation(conversation.name);
+                            history.push(`/chat/${conversation._id}`);
+                          }}
+                        />
                       </div>
                     ))}
                   </SwiperSlide>
@@ -289,11 +289,19 @@ const Chat: React.FC = () => {
                   </div>
                   <div className='enviar'>
                     <input
+                      ref={messageRef}
                       className='inputEnviar'
                       type='text'
                       placeholder='Type your message'
                       value={inputMessage}
                       onChange={(e) => setInputMessage(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          if (messageRef.current?.value !== "") {
+                            sendMessage(id);
+                          }
+                        }
+                      }}
                     />
                     <IonButton
                       className='btnEnviar'
@@ -306,12 +314,15 @@ const Chat: React.FC = () => {
                 </>
               )}
             </div>
-          ) }
-          <Footer 
-            active="chat"
-            notification= {
-            conversations.find( conversation => !conversation.read) ? true : false
-            } />
+          )}
+          <Footer
+            active='chat'
+            notification={
+              conversations.find((conversation) => !conversation.read)
+                ? true
+                : false
+            }
+          />
         </>
       )}
     </IonPage>

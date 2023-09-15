@@ -1,3 +1,4 @@
+
 /** @format */
 
 import {
@@ -123,14 +124,14 @@ const UserForm: React.FC = () => {
             >
               {(formikProps) => (
                 <Form>
-                  <div style={{marginBottom:"10px"}}>
+                  <div style={{ marginBottom: "10px" }}>
                     <IonLabel>Carrera</IonLabel>
                     <Field
                       as='select'
                       name='career'
                       placeholder='Carrera'
                       className='options'
-                      style={{ paddingTop: "15px" }}
+                      style={{ paddingTop: "15px", marginTop: "5px" }}
                     >
                       {carreras.map((carrera) => (
                         <option
@@ -178,13 +179,13 @@ const UserForm: React.FC = () => {
                     </div>
                   ) : null}
                   <div className='rol'>
-                    <IonLabel className="category">Formato</IonLabel>
+                    <IonLabel className='category'>Formato</IonLabel>
                     <Field
                       className='options'
                       as='select'
                       name='format'
                       multiple={true}
-                      style={{padding: "5px 12px"}}
+                      style={{ padding: "5px 12px" }}
                     >
                       <option className='values' value='Virtual'>
                         Presencial
@@ -200,18 +201,20 @@ const UserForm: React.FC = () => {
                     </div>
                   ) : null}
                   <div className='rol'>
-                    <IonLabel className="category">Grupo</IonLabel>
+                    <IonLabel className='category'>Grupo</IonLabel>
                     <Field
                       className='options'
                       as='select'
                       name='type_group'
                       multiple={true}
-                      style={{padding: "5px 12px"}}
+                      style={{ padding: "5px 10px" }}
                     >
                       <option className='values' value='Individual'>
                         Individual
                       </option>
-                      <option className='values' value='Grupal'>Grupal</option>
+                      <option className='values' value='Grupal'>
+                        Grupal
+                      </option>
                     </Field>
                   </div>
                   {formikProps.touched.type_group &&
@@ -221,11 +224,11 @@ const UserForm: React.FC = () => {
                     </div>
                   ) : null}
                   <div className='rol'>
-                    <IonLabel className="category">Método</IonLabel>
+                    <IonLabel className='category'>Método</IonLabel>
                     <div
                       className='options long values'
                       role='group'
-                      style={{padding: "5px 12px"}}
+                      style={{ padding: "5px 12px" }}
                       aria-labelledby='checkbox-group'
                     >
                       <label className='values'>
@@ -293,7 +296,11 @@ const UserForm: React.FC = () => {
                   ) : null}
                   {(!state.user?.is_tutor || state.registerCompleted) && (
                     <div className='btn'>
-                      <IonButton onClick={handleButtonClick}>
+                      <IonButton
+                        style={{ width: "60vw" }}
+                        shape='round'
+                        onClick={handleButtonClick}
+                      >
                         Disponibilidad
                       </IonButton>
                       <IonModal
@@ -315,7 +322,11 @@ const UserForm: React.FC = () => {
                     </div>
                   ) : null}
                   <div className='btn'>
-                    <IonButton shape='round' type='submit'>
+                    <IonButton
+                      style={{ width: "60vw", marginBottom: "3vh" }}
+                      shape='round'
+                      type='submit'
+                    >
                       Enviar
                     </IonButton>
                   </div>
