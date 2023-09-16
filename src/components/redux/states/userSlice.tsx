@@ -119,7 +119,7 @@ export const verify = createAsyncThunk<
     const email = JSON.parse(data.email);
 
     const response = await axios.get(
-      `http://localhost:8000/users/${email}`,
+      `https://tutoriapp-7f467dd740dd.herokuapp.com/users/${email}`,
       {
         headers: {
           Authorization: `Bearer ${token_access}`,
