@@ -21,7 +21,7 @@ interface UserInfo {
   name: string;
   career: string;
   semester: number;
-  avaliability: {
+  availability: {
     day: number;
     hour: number;
   }[];
@@ -171,7 +171,7 @@ const Profile: React.FC = () => {
                       <IonCol
                         key={hourIndex}
                         className={`grid-item ${
-                          dataProfile?.avaliability.some(
+                          dataProfile?.availability.some(
                             (slot) =>
                               slot.day === dayIndex && slot.hour === hourIndex
                           )
