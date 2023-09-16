@@ -87,16 +87,18 @@ const Chat: React.FC = () => {
 
   useEffect(() => {
     // Configurar la conexión al servidor WebSocket
-
-    newSocket.on("chat", (data: any) => {
-      const message = data.message;
-      if (message === messages[messages.length - 1]) {
-      } else setMessages((prevMessages) => [...prevMessages, message]);
-    });
-
-    newSocket.on("disconnect", () => {
-      newSocket.close();
-    });
+    
+      newSocket.on("chat", (data: any) => {
+        const message = data.message;
+        // if(message === messages[messages.length - 1]){
+        //   console.log("mismo mensaje")
+        // }else setMessages((prevMessages) => [...prevMessages, message]);
+        setMessages((prevMessages) => [...prevMessages, message]);
+      });
+  
+      newSocket.on("disconnect", () => {
+        newSocket.close();
+      });
 
     newSocket.on("join_room", (data: any) => {
       newSocket.emit("messages", { idUser: userId, idReceiver: idReceiver });

@@ -4,7 +4,6 @@ import "./InfoForm.css";
 import {
   IonAlert,
   IonButton,
-  IonContent,
   IonLabel,
   IonModal,
   IonTitle,
@@ -15,6 +14,8 @@ import Inputlogin from "../../components/Inputlogin/Inputlogin";
 import Bg from "../../components/Bg/Bg";
 import { useAppDispatch, useAppSelector } from "../../components/redux/hooks";
 import {
+  changeAlertUpdateFalse,
+  changeAlertUpdateTrue,
   changeErrorRegister,
   changePassword,
   updateUserInfo,
@@ -31,10 +32,10 @@ const validationSchema = Yup.object({
 const validationSchema2 = Yup.object({
   actualPassword: Yup.string().required("Contraseña actual requerida"),
   newPassword: Yup.string()
-    .min(4, "Must be 4 characters or more")
-    .required("No password provided."),
+    .min(4, "El número de caracteres debe ser mayor o igual a 4")
+    .required("Debes ingresar tu contraseña nueva."),
   passwordConfirmation: Yup.string().test(
-    "La contraseña coincide",
+    "",
     "La contraseña debe coincidir",
     function (value) {
       return this.parent.newPassword === value;
@@ -60,18 +61,18 @@ const InfoForm: React.FC = () => {
   };
 
   const handleCloseAlert = () => {
-    dispatch(changeErrorRegister());
+    dispatch(changeAlertUpdateFalse()); //puede ser el error de que salga el alert
     setAlert(false);
   };
 
   useEffect(() => {
     setAlert(false);
-    if (stateUser.errorRegister) {
+    if(stateUser.alertUpdate){
       setTimeout(() => {
-        setAlert(true);
+        setAlert(stateUser.alertUpdate);
       }, 200);
     }
-  }, [stateUser.errorRegister]);
+  }, [stateUser.alertUpdate]);
 
   const updateInfo = (values: any) => {
     if (stateUser.user?.is_tutor && stateUser.user?.is_student) {
@@ -202,7 +203,7 @@ const InfoForm: React.FC = () => {
           validationSchema={validationSchema}
           onSubmit={(values, { resetForm }) => {
             updateInfo(values);
-            setAlert(true);
+            dispatch(changeAlertUpdateTrue());
             resetForm();
           }}
         >

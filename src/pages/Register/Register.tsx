@@ -21,20 +21,20 @@ import {
   onSignUp,
   verify,
 } from "../../components/redux/states/userSlice";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { storage } from "../../components/redux/states/userSlice";
 import { Link } from "react-router-dom";
 
 const validationSchema = Yup.object({
   name: Yup.string().required("Nombre Requerido"),
   email: Yup.string()
-    .email("Correo electronico inválido")
+    .email("Email inválido")
     .required("Email Requerido"),
   password: Yup.string()
-    .min(4, "Must be 4 characters or more")
-    .required("No password provided."),
+    .min(4, "La contraseña debe tener al menos 4 caracteres")
+    .required("Contraseña requerida"),
   passwordConfirmation: Yup.string().test(
-    "La contraseña coincide",
+    "",
     "La contraseña debe coincidir",
     function (value) {
       return this.parent.password === value;

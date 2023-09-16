@@ -20,6 +20,7 @@ export interface User {
   registerCompleted: boolean;
   errorMessage?: string;
   errorRegister: boolean;
+  alertUpdate: boolean;
   errorLogin: boolean;
   isAuthenticated: boolean;
   user?: any;
@@ -48,6 +49,7 @@ const initialState: User = {
   errorMessage: "",
   errorLogin: false,
   errorRegister: false,
+  alertUpdate: false,
   isAuthenticated: false,
   user: null,
 };
@@ -117,18 +119,19 @@ export const verify = createAsyncThunk<
     const email = JSON.parse(data.email);
 
     const response = await axios.get(
-      `https://tutoriapp-7f467dd740dd.herokuapp.com/users/${email}`,
+      `http://localhost:8000/users/${email}`,
       {
         headers: {
           Authorization: `Bearer ${token_access}`,
         },
       }
     );
+
     return {
       access_token: token_access,
       refresh_token: token_refresh,
       status: "success",
-      user: response.data,
+      user: response.data.userData,
     };
   } catch (err: any) {
     thunkAPI.dispatch(refreshToken({ refresh_token: data.refresh }));
@@ -334,6 +337,12 @@ export const userSlice = createSlice({
     changeErrorRegister: (state) => {
       state.errorRegister = false;
     },
+    changeAlertUpdateFalse: (state) => {
+      state.alertUpdate = false;
+    },
+    changeAlertUpdateTrue: (state) => {
+      state.alertUpdate = true;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -415,7 +424,7 @@ export const userSlice = createSlice({
       .addCase(updateUserInfo.fulfilled, (state, action) => {
         state.isLoading = false;
         state.user = action.payload;
-        state.errorRegister = true;
+        //state.errorRegister = true;
         state.errorMessage = "Datos actualizados correctamente";
       })
       .addCase(updateUserInfo.pending, (state) => {
@@ -469,5 +478,7 @@ export const {
   logOut,
   changeRegisterCompleted,
   changeLoading,
+  changeAlertUpdateFalse,
+  changeAlertUpdateTrue,
 } = userSlice.actions;
 export default userSlice.reducer;

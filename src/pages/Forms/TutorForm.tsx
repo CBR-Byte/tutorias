@@ -7,6 +7,7 @@ import {
   IonGrid,
   IonCol,
   IonModal,
+  IonSearchbar,
 } from "@ionic/react";
 import "./UserForm.css";
 import Bg from "../../components/Bg/Bg";
@@ -23,13 +24,13 @@ import { getSubjects } from "../../components/redux/states/subjectSlice";
 
 
 const validationSchema = Yup.object({
-  format_tutor: Yup.array().required("formato requerido"),
-  cost_tutor: Yup.number().required("Presupuesto requerido"),
-  method_tutor: Yup.array().required("Método requerido"),
+  format_tutor: Yup.array().required("Formato de clase requerido"),
+  cost_tutor: Yup.number().required("Presupuesto requerido").positive("Debe ser un número positivo").integer("El costo debe ser un número entero"),
+  method_tutor: Yup.array().required("Método de clase requerido"),
   type_tutor: Yup.string().required("Tipo de tutor requerido"),
-  type_group_tutor: Yup.array().required("Grupo requerido"),
+  type_group_tutor: Yup.array().required("Tipo de grupo requerido"),
   subjects_tutor: Yup.array().required("Materias requeridas"),
-  avaliability: Yup.array().required("Disponibilidad Requerida"),
+  availability: Yup.array().required("Disponibilidad requerida"),
 });
 
 interface TutorFormData {
@@ -39,19 +40,25 @@ interface TutorFormData {
   type_tutor: string | string;
   type_group_tutor: string[] | string;
   subjects_tutor: string[] | string;
-  avaliability: Slot[];
+  availability: Slot[];
 }
 
 const UserForm: React.FC = () => {
   const modal = useRef<HTMLIonModalElement>(null);
   const state = useAppSelector((state) => state.user);
   const stateSubjects = useAppSelector((state) => state.subject);
-  const [selectedSlots, setSelectedSlots] = useState<Slot[]>(state.user?.avaliability || []);
+  const [selectedSlots, setSelectedSlots] = useState<Slot[]>(state.user?.availability || []);
   const dispatch = useAppDispatch();
   const history = useHistory();
+  const [searchTerm, setSearchTerm] = useState('');
   const [subjects] = useState<string[]>(stateSubjects.subjects);
   const [showModal, setShowModal] = useState(false);
   const [clickedButton, setClickedButton] = useState(false);
+
+
+  const handleSearch = (event: any) => {
+    setSearchTerm(event.detail.value);
+  };
 
   useEffect(() => {
     
@@ -90,7 +97,7 @@ const UserForm: React.FC = () => {
       type_tutor: data.type_tutor || "",
       type_group_tutor: data.type_group_tutor || "",
       subjects_tutor: data.subjects_tutor || "",
-      avaliability: data.avaliability || [],
+      availability: data.availability || [],
     });
 
     const initialValues = getInitialValues(state.user);
@@ -108,8 +115,8 @@ const UserForm: React.FC = () => {
               initialValues={initialValues}
               validationSchema={validationSchema}
               onSubmit={(values, {resetForm}) => {
-                values.avaliability = selectedSlots;
-
+                values.availability = selectedSlots;
+                alert(JSON.stringify(values, null, 2));
                 if(state.registerCompleted) {
                   actualizarData(values);
                   history.push("/userSettings");
@@ -260,16 +267,18 @@ const UserForm: React.FC = () => {
                         {formikProps.errors.type_group_tutor}
                       </div>
                     ) : null}
-
+                    <IonSearchbar style={{width: "30vh"}} placeholder="Busca una materia" value={searchTerm} onIonChange={handleSearch}></IonSearchbar>
                     <div className='rol'>
                       <IonLabel className='category'>Materias </IonLabel>
                       <div
                         className='options long'
                         style={{padding: "5px 12px"}}
                         role="group"
+                        aria-checked="true" 
+                        
                         aria-labelledby="checkbox-group">
 
-                        {subjects.map((subject,index) => (
+                        {subjects.filter((item) => item.toLowerCase().includes(searchTerm.toLocaleLowerCase())).map((subject,index) => (
                           <label key={index} className="values">
                             <Field type='checkbox' name='subjects_tutor' value={subject} />
                             {subject}

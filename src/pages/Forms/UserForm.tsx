@@ -24,10 +24,10 @@ import { changeRegisterCompleted } from "../../components/redux/states/userSlice
 const validationSchema = Yup.object({
   career: Yup.string().required("Carrera requerida"),
   semester: Yup.number().required("Semestre requerido"),
-  format: Yup.array().required("formato Requerido"),
-  budget: Yup.number().required("Presupuesto Requerido"),
-  method: Yup.array().required("Método Requerido"),
-  type_group: Yup.array().required("Grupo Requerido"),
+  format: Yup.array().required("Formato de clase requerido"),
+  budget: Yup.number().required("Presupuesto requerido").positive("Debe ser un número positivo").integer("El presupuesto debe ser un número entero"),
+  method: Yup.array().required("Método de clase requerido"),
+  type_group: Yup.array().required("Tipo de grupo requerido"),
 });
 
 export interface Slot {
@@ -42,7 +42,7 @@ interface formData {
   budget: number | string;
   method: string[] | string;
   type_group: string[] | string;
-  avaliability: Slot[];
+  availability: Slot[];
 }
 
 const UserForm: React.FC = () => {
@@ -51,7 +51,7 @@ const UserForm: React.FC = () => {
   const dispatch = useAppDispatch();
   const modal = useRef<HTMLIonModalElement>(null);
   const [selectedSlots, setSelectedSlots] = useState<Slot[]>(
-    state.user?.avaliability || []
+    state.user?.availability || []
   );
   const [showModal, setShowModal] = useState(false);
   const [clickedButton, setClickedButton] = useState(false);
@@ -89,7 +89,7 @@ const UserForm: React.FC = () => {
     budget: data.budget || "",
     method: data.method || "",
     type_group: data.type_group || "",
-    avaliability: data.avaliability || selectedSlots,
+    availability: data.availability || selectedSlots,
   });
 
   const actualizarData = (values: formData) => {
@@ -110,7 +110,7 @@ const UserForm: React.FC = () => {
               initialValues={initialValues}
               validationSchema={validationSchema}
               onSubmit={(values, { resetForm }) => {
-                values.avaliability = selectedSlots;
+                values.availability = selectedSlots;
                 if (state.registerCompleted) {
                   actualizarData(values);
                   history.push("/userSettings");

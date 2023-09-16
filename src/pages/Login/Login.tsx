@@ -35,10 +35,10 @@ import Loading from "../../components/Loading";
 import { Network } from "@capacitor/network";
 
 const validationSchema = Yup.object({
-  email: Yup.string().email("Invalid email address").required("Email Required"),
+  email: Yup.string().email("Email inválido").required("Email requerido"),
   password: Yup.string()
-    .min(4, "Must be 4 characters or more")
-    .required("No password provided."),
+    .min(4, "La contraseña debe tener al menos 4 caracteres")
+    .required("Contraseña requerida"),
 });
 
 const PassRecovery: React.FC = () => {
