@@ -116,7 +116,6 @@ const UserForm: React.FC = () => {
               validationSchema={validationSchema}
               onSubmit={(values, {resetForm}) => {
                 values.availability = selectedSlots;
-                alert(JSON.stringify(values, null, 2));
                 if(state.registerCompleted) {
                   actualizarData(values);
                   history.push("/userSettings");

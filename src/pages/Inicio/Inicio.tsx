@@ -1,6 +1,6 @@
 /** @format */
 
-import { IonPage, IonTitle, IonInput, IonIcon, IonButton } from "@ionic/react";
+import { IonPage, IonTitle, IonInput, IonIcon, IonButton, IonText } from "@ionic/react";
 import { useAppDispatch, useAppSelector } from "../../components/redux/hooks";
 import { getTutors } from "../../components/redux/states/tutorSlice";
 import { useHistory } from "react-router";
@@ -35,6 +35,7 @@ const Inicio: React.FC = () => {
   const inputRef = useRef<HTMLIonInputElement>(null);
   const [tutores, setTutores] = useState<any[]>([]);
   const [conversations, setConversations] = useState<any[]>([]);
+  const [hasResults, setHasResults] = useState<boolean>(false);
 
   useEffect(() => {
     if (!stateUser.registerCompleted && stateUser.user?.is_tutor) {
@@ -61,7 +62,25 @@ const Inicio: React.FC = () => {
     if (inputRef.current?.value !== '') {
       setIsSearch(true);
       dispatch(getTutors(keyWords)).then((res) => {
-        setTutores(res.payload);
+        if (res.payload.length === 0) {
+          setHasResults(false);
+        } else {
+        const tutorsData = res.payload.map((user: any) => ({
+          id: user.id,
+          name: user.name,
+          availability: user.availability,
+          format_tutor: user.format_tutor,
+          cost_tutor: user.cost_tutor,
+          type_tutor: user.type_tutor,
+          method_tutor: user.method_tutor,
+          type_group_tutor: user.type_group_tutor,
+          tutor_opinions: user.tutor_opinions,
+          subjects_tutor: user.subjects_tutor,
+          image_url: user.image_url,
+        }));
+        setTutores(tutorsData);
+        setHasResults(true);
+      }
       });
     }
   };
@@ -74,7 +93,7 @@ const Inicio: React.FC = () => {
 
   const califications = (calificaciones: any) => {
     if (calificaciones != null) {
-      const suma = calificaciones.reduce((a: any, b: any) => a + b.calif, 0);
+      const suma = calificaciones.reduce((a: any, b: any) => a + b.calification_tutor, 0);
       const media = suma / calificaciones.length;
       return media;
     } else {
@@ -163,7 +182,12 @@ const Inicio: React.FC = () => {
               </SwiperSlide>
             </Swiper>
           </div>
-          {IsSearch && (
+          {(IsSearch && !hasResults) && (
+            <div className="resultados">
+                <IonText>No se encontraron resultados</IonText>
+            </div>
+          )}
+          {(IsSearch && hasResults) && (
             <div className='resultados'>
               <div className='resTitle'>
                 <IonTitle className='textoRec'>RESULTADOS</IonTitle>
@@ -179,10 +203,10 @@ const Inicio: React.FC = () => {
                     nombre={tutor.name}
                     modalidad={tutor.format_tutor}
                     descripcion={tutor.subjects_tutor}
-                    calificacion={califications(tutor.calification)}
                     precio={tutor.cost_tutor}
+                    calificacion={califications(tutor.tutor_opinions)}
                     numCalificacion={
-                      tutor.calification != null ? tutor.calification.length : 0
+                      tutor.tutor_opinions != null ? tutor.tutor_opinions.length : 0
                     }
                     imagen={tutor.image_url}
                   />

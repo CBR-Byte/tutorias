@@ -240,12 +240,12 @@ const InfoForm: React.FC = () => {
               ) : null}
 
               {!stateUser.user?.is_tutor && stateUser.user?.is_student ? (
-                <div className='rol divTutor'>
-                  <IonLabel className='selectTutor'>
+                <div className='rol'>
+                  <IonLabel className='category'>
                     ¿Quieres ser tutor ahora?{""}
                   </IonLabel>
                   <div className="options1">
-                    <label className='selectTutor'>
+                    <label>
                       <Field
                         type='radio'
                         name='is_tutor'
@@ -254,7 +254,7 @@ const InfoForm: React.FC = () => {
                       />
                       Sí
                     </label>
-                    <label className='selectTutor'>
+                    <label>
                       <Field
                         type='radio'
                         name='is_tutor'
@@ -270,24 +270,26 @@ const InfoForm: React.FC = () => {
                   <IonLabel className='category'>
                     ¿Vas a buscar tutorias?:{""}
                   </IonLabel>
-                  <label>
-                    <Field
-                      type='radio'
-                      name='is_student'
-                      value='true'
-                      style={{ marginLeft: "5px" }}
-                    />
-                    Sí
-                  </label>
-                  <label>
-                    <Field
-                      type='radio'
-                      name='is_student'
-                      value='false'
-                      style={{ marginLeft: "5px" }}
-                    />
-                    No
-                  </label>
+                  <div className="options1">
+                    <label>
+                      <Field
+                        type='radio'
+                        name='is_student'
+                        value='true'
+                        style={{ marginLeft: "5px" }}
+                      />
+                      Sí
+                    </label>
+                    <label>
+                      <Field
+                        type='radio'
+                        name='is_student'
+                        value='false'
+                        style={{ marginLeft: "5px" }}
+                      />
+                      No
+                    </label>
+                  </div>
                 </div>
               ) : null}
               {formikProps.touched.is_tutor && formikProps.errors.is_tutor ? (

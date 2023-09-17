@@ -17,7 +17,7 @@ export const getTutors = createAsyncThunk<
   { rejectValue: { errorMessage: string } }
 >("user/getTutors", async (data, thunkAPI) => {
   try {
-    const keyWords = data.join("&keywords=");
+    const keyWords = data.join(",");
     const response = await axios.get(
       `https://tutoriapp-7f467dd740dd.herokuapp.com/users/tutores?keywords=${keyWords}`
     );

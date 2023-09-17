@@ -100,9 +100,11 @@ export const getListUsers = createAsyncThunk<
   { rejectValue: MyErrorType }
 >("user/getListUsers", async (id) => {
   try {
-    const response = await axios.get(`https://tutoriapp-7f467dd740dd.herokuapp.com/users/userName/${id}`);
+    const response = await axios.get(
+      `https://tutoriapp-7f467dd740dd.herokuapp.com/users/userName/${id}`
+    );
     const user = await response.data;
-    return user.name
+    return user.name;
   } catch (error: any) {
     console.log(error);
   }
@@ -211,24 +213,23 @@ export const refreshToken = createAsyncThunk<
 });
 
 export const getConversation = createAsyncThunk<
-any,
-void,
-{ rejectValue: MyErrorType }
->(
-  "user/getConversation",
-  async (_, thunkAPI) => {
-    try {
-      const state = thunkAPI.getState() as User;
-      const id = state.user.user.id;
-      const response = await axios.get(`https://tutoriapp-7f467dd740dd.herokuapp.com/messages/${id}`);
-      return response.data;
-    } catch (error: any) {
-      return thunkAPI.rejectWithValue({
-        errorMessage: error.response.data.detail,
-      });
-    }
+  any,
+  void,
+  { rejectValue: MyErrorType }
+>("user/getConversation", async (_, thunkAPI) => {
+  try {
+    const state = thunkAPI.getState() as User;
+    const id = state.user.user.id;
+    const response = await axios.get(
+      `https://tutoriapp-7f467dd740dd.herokuapp.com/messages/${id}`
+    );
+    return response.data;
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue({
+      errorMessage: error.response.data.detail,
+    });
   }
-);
+});
 
 export const updateUserInfo = createAsyncThunk<
   any,
@@ -237,19 +238,36 @@ export const updateUserInfo = createAsyncThunk<
 >("user/updateUserInfo", async (data, thunkAPI) => {
   try {
     const state = thunkAPI.getState() as User;
-    const { id } = state.user.user;
-    const { access_token } = state.user;
-    const response = await axios.patch(
-      `https://tutoriapp-7f467dd740dd.herokuapp.com/users/update/${id}`,
-      data,
-      {
-        headers: {
-          Authorization: `Bearer ${access_token}`,
-        },
-      }
-    );
+    if (data.id) {
+      const id = data.id;
+      const { access_token } = state.user;
+      delete data.id;
+      const response = await axios.patch(
+        `https://tutoriapp-7f467dd740dd.herokuapp.com/users/update/${id}`,
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        }
+      );
 
-    return response.data;
+      return response.data;
+    } else {
+      const { id } = state.user.user;
+      const { access_token } = state.user;
+      const response = await axios.patch(
+        `https://tutoriapp-7f467dd740dd.herokuapp.com/users/update/${id}`,
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        }
+      );
+
+      return response.data;
+    }
   } catch (error: any) {
     if (error.response?.data.detail === "El token de accesso ha expirado") {
       const tokenRefresh = await storage.get(data.refresh_token);

@@ -27,9 +27,7 @@ import { Link } from "react-router-dom";
 
 const validationSchema = Yup.object({
   name: Yup.string().required("Nombre Requerido"),
-  email: Yup.string()
-    .email("Email inválido")
-    .required("Email Requerido"),
+  email: Yup.string().email("Email inválido").required("Email Requerido"),
   password: Yup.string()
     .min(4, "La contraseña debe tener al menos 4 caracteres")
     .required("Contraseña requerida"),
@@ -67,7 +65,7 @@ const Register: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if(stateUser.errorRegister){
+    if (stateUser.errorRegister) {
       setTimeout(() => {
         alert.current?.present();
       }, 200);
@@ -189,25 +187,25 @@ const Register: React.FC = () => {
                       <IonLabel className='category'>
                         Vas a ser tutor?:{""}
                       </IonLabel>
-                      <div className="options1">
-                      <label>
-                        <Field
-                          type='radio'
-                          name='is_tutor'
-                          value='true'
-                          style={{ marginLeft: "5px" }}
-                        />
-                        Sí
-                      </label>
-                      <label>
-                        <Field
-                          type='radio'
-                          name='is_tutor'
-                          value='false'
-                          style={{ marginLeft: "5px" }}
-                        />
-                        No
-                      </label>
+                      <div className='options1'>
+                        <label>
+                          <Field
+                            type='radio'
+                            name='is_tutor'
+                            value='true'
+                            style={{ marginLeft: "5px" }}
+                          />
+                          Sí
+                        </label>
+                        <label>
+                          <Field
+                            type='radio'
+                            name='is_tutor'
+                            value='false'
+                            style={{ marginLeft: "5px" }}
+                          />
+                          No
+                        </label>
                       </div>
                     </div>
                     {formikProps.touched.is_tutor &&
@@ -223,24 +221,26 @@ const Register: React.FC = () => {
                         <IonLabel className='category'>
                           Vas a buscar tutorias?:{""}
                         </IonLabel>
-                        <label>
-                          <Field
-                            type='radio'
-                            name='is_student'
-                            value='true'
-                            style={{ marginLeft: "5px" }}
-                          />
-                          Sí
-                        </label>
-                        <label>
-                          <Field
-                            type='radio'
-                            name='is_student'
-                            value='false'
-                            style={{ marginLeft: "5px" }}
-                          />
-                          No
-                        </label>
+                        <div className='options1'>
+                          <label>
+                            <Field
+                              type='radio'
+                              name='is_student'
+                              value='true'
+                              style={{ marginLeft: "5px" }}
+                            />
+                            Sí
+                          </label>
+                          <label>
+                            <Field
+                              type='radio'
+                              name='is_student'
+                              value='false'
+                              style={{ marginLeft: "5px" }}
+                            />
+                            No
+                          </label>
+                        </div>
                       </div>
                     )}
                     {formikProps.touched.is_student &&
