@@ -53,7 +53,7 @@ const Chat: React.FC = () => {
     []
   );
 
-  const newSocket = io("https://tutoriapp-7f467dd740dd.herokuapp.com", {
+  const newSocket = io("https://tutoriapp.azurewebsites.net", {
     path: "/sockets",
   });
   const history = useHistory();

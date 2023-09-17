@@ -76,7 +76,7 @@ export const uploadImage = createAsyncThunk<
 
   try {
     const response = await axios.post(
-      `https://tutoriapp-7f467dd740dd.herokuapp.com/blobs/upload/${email}`,
+      `https://tutoriapp.azurewebsites.net/blobs/upload/${email}`,
       data,
       {
         headers: {
@@ -87,7 +87,6 @@ export const uploadImage = createAsyncThunk<
 
     return response.data;
   } catch (error: any) {
-    alert(JSON.stringify(error.response.data.detail));
     return thunkAPI.rejectWithValue({
       errorMessage: error.response.data.detail,
     });
@@ -100,7 +99,7 @@ export const getListUsers = createAsyncThunk<
   { rejectValue: MyErrorType }
 >("user/getListUsers", async (id) => {
   try {
-    const response = await axios.get(`https://tutoriapp-7f467dd740dd.herokuapp.com/users/userName/${id}`);
+    const response = await axios.get(`https://tutoriapp.azurewebsites.net/users/userName/${id}`);
     const user = await response.data;
     return user.name
   } catch (error: any) {
@@ -119,7 +118,7 @@ export const verify = createAsyncThunk<
     const email = JSON.parse(data.email);
 
     const response = await axios.get(
-      `https://tutoriapp-7f467dd740dd.herokuapp.com/users/${email}`,
+      `https://tutoriapp.azurewebsites.net/users/${email}`,
       {
         headers: {
           Authorization: `Bearer ${token_access}`,
@@ -149,7 +148,7 @@ export const changePassword = createAsyncThunk<
     const token = state.user.access_token;
     const email = state.user.user.email;
     const response = await axios.post(
-      `https://tutoriapp-7f467dd740dd.herokuapp.com/change_password/auth/${email}`,
+      `https://tutoriapp.azurewebsites.net/change_password/auth/${email}`,
       data,
       { headers: { Authorization: `Bearer ${token}` } }
     );
@@ -169,7 +168,7 @@ export const deleteAccount = createAsyncThunk(
       const token = state.user.access_token;
       const id = state.user.user.id;
       const response = await axios.delete(
-        `https://tutoriapp-7f467dd740dd.herokuapp.com/users/delete/${id}`,
+        `https://tutoriapp.azurewebsites.net/users/delete/${id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       return response.data;
@@ -190,7 +189,7 @@ export const refreshToken = createAsyncThunk<
     const refresh = JSON.parse(token.refresh_token);
 
     const response = await axios.post(
-      `https://tutoriapp-7f467dd740dd.herokuapp.com/users/refresh`,
+      `https://tutoriapp.azurewebsites.net/users/refresh`,
       null,
       {
         headers: {
@@ -220,7 +219,7 @@ void,
     try {
       const state = thunkAPI.getState() as User;
       const id = state.user.user.id;
-      const response = await axios.get(`https://tutoriapp-7f467dd740dd.herokuapp.com/messages/${id}`);
+      const response = await axios.get(`https://tutoriapp.azurewebsites.net/messages/${id}`);
       return response.data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue({
@@ -240,7 +239,7 @@ export const updateUserInfo = createAsyncThunk<
     const { id } = state.user.user;
     const { access_token } = state.user;
     const response = await axios.patch(
-      `https://tutoriapp-7f467dd740dd.herokuapp.com/users/update/${id}`,
+      `https://tutoriapp.azurewebsites.net/users/update/${id}`,
       data,
       {
         headers: {
@@ -269,7 +268,7 @@ export const onLogin = createAsyncThunk<
 >("user/login", async (credentials, thunkAPI) => {
   try {
     const response = await axios.post(
-      "https://tutoriapp-7f467dd740dd.herokuapp.com/users/login",
+      "https://tutoriapp.azurewebsites.net/users/login",
       credentials
     );
     return response.data;
@@ -300,7 +299,7 @@ export const onSignUp = createAsyncThunk<
 
   try {
     const response = await axios.post(
-      "https://tutoriapp-7f467dd740dd.herokuapp.com/users/create",
+      "https://tutoriapp.azurewebsites.net/users/create",
       data
     );
     return response.data;

@@ -19,7 +19,7 @@ export const getTutors = createAsyncThunk<
   try {
     const keyWords = data.join("&keywords=");
     const response = await axios.get(
-      `https://tutoriapp-7f467dd740dd.herokuapp.com/users/tutores?keywords=${keyWords}`
+      `https://tutoriapp.azurewebsites.net/users/tutores?keywords=${keyWords}`
     );
     const users = await response.data;
     return users;
