@@ -96,7 +96,12 @@
 }
 .starPerfil {
     color: #F3A506;
+    opacity: 0.5;
     margin-left: 15px;
+    margin-right: 5px;
+}
+.Filled {
+    opacity: 1 !important;
 }
 .calificacionPerfil {
     font-size: 4vw;
@@ -107,4 +112,34 @@
     max-width: 60%;
     color: #155B68;
     padding: 10px  0px 10px 0px;
+}
+.opinar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 90vw;
+    gap: 5px;
+}
+.calificacion {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+.textoOpinion {
+    width: 90vw;
+    display: flex;
+    align-items: center;
+    color: #155B68;
+    justify-content: center;
+}
+.inputOpinion{
+    border-radius: 30px;
+    border: 2px solid #05938C;;
+    background-color: #D2D9E7;
+    width:100%;
+    height:56px;
+    padding: 10px;
 }

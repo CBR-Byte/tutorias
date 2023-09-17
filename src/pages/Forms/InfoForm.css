@@ -53,3 +53,12 @@ form{
     font-weight: 700;
     margin-bottom: 3vh;
 }
+.rol {
+    display: flex;
+    align-items: center;
+    margin-top: 1vh;
+    margin-bottom: 1vh;
+}
+.category {
+    margin-right: 2vw;
+}

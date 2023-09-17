@@ -12,44 +12,45 @@ import {
 import { arrowBack, star, chatbubbleEllipses } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
 import "./Profile.css";
-import { useHistory} from "react-router";
+import { useHistory } from "react-router";
 import { useParams } from "react-router";
-import { useAppSelector } from "../../components/redux/hooks";
+import { useAppSelector, useAppDispatch } from "../../components/redux/hooks";
+import {
+  updateUserInfo,
+  getConversation,
+} from "../../components/redux/states/userSlice";
+
+interface Opinion {
+  opinion: string;
+  calification_tutor: number;
+  name_user: string;
+  url_img: string;
+}
 
 interface UserInfo {
   id: string;
   name: string;
-  career: string;
-  semester: number;
   availability: {
     day: number;
     hour: number;
   }[];
-  format: string[];
   format_tutor: string[];
-  is_tutor: boolean;
-  is_student: boolean;
   cost_tutor: number;
   type_tutor: string;
-  password: string;
-  email: string;
-  budget: number;
-  method: string[];
   method_tutor: string[];
-  type_group: string[];
   type_group_tutor: string[];
-  tutor_opinions: null | any; // You can replace any with a proper type for tutor opinions
+  tutor_opinions: null | Opinion[];
   subjects_tutor: string[];
-  keywords: null | any; // You can replace any with a proper type for keywords
-  calification: null | any; // You can replace any with a proper type for calification
-  clicks: null | any; // You can replace any with a proper type for clicks
   image_url: string;
 }
 
 const Profile: React.FC = () => {
   const state = useAppSelector((state) => state.user);
   const tutors = useAppSelector((state) => state.tutor);
+  const dispatch = useAppDispatch();
   const [dataProfile, setDataProfile] = useState<UserInfo>();
+  const [opinion, setOpinion] = useState<Opinion>();
+  const [canOpinion, setCanOpinion] = useState<boolean>(false);
   const days = ["L", "M", "X", "J", "V", "S"];
   const hours = [
     "8am",
@@ -67,19 +68,49 @@ const Profile: React.FC = () => {
     "8pm",
   ];
   const history = useHistory();
-  const {id} = useParams<{id:string}>();
-  
+  const { id } = useParams<{ id: string }>();
+
   useEffect(() => {
-    if(id === state.user?.id){
+    dispatch(getConversation()).then((res) => {
+      const found = res.payload.find((user: any) => user._id === id);
+      if (found) {
+        setCanOpinion(true);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    if (id === state.user?.id) {
       setDataProfile(state.user);
-    }
-    else{
-      const tutorParam = tutors.tutors?.find((tutor : any) => tutor.id === id);
+    } else {
+      const tutorParam = tutors.tutors?.find((tutor: any) => tutor.id === id);
       setDataProfile(tutorParam);
     }
-    
-  }, [])
-  
+  }, []);
+
+  const handleOpinion = () => {
+    if (opinion?.calification_tutor && opinion?.opinion) {
+      const newOpinion = {
+        ...opinion,
+        name_user: state.user?.name,
+        url_img: state.user?.image_url,
+      };
+      const newTutor = {
+        ...dataProfile,
+        tutor_opinions: [
+          ...(dataProfile?.tutor_opinions ? dataProfile?.tutor_opinions : []),
+          newOpinion,
+        ],
+      };
+      setDataProfile(newTutor as UserInfo);
+      const tutorDispatch = {
+        id: id,
+        tutor_opinions: newTutor.tutor_opinions,
+      };
+      dispatch(updateUserInfo(tutorDispatch));
+    }
+  };
+
   return (
     <IonPage>
       <div style={{ zIndex: "-1" }} className='circle1' />
@@ -89,7 +120,15 @@ const Profile: React.FC = () => {
       <div style={{ zIndex: "-1" }} className='circles3 bottom2' />
       <div style={{ zIndex: "-1" }} className='circles3 bottom3' />
       <div style={{ overflow: "scroll" }}>
-        <div style={{position: "fixed", zIndex:"1000", display: "flex", flexDirection: "row", width: "100%"}}>
+        <div
+          style={{
+            position: "fixed",
+            zIndex: "1000",
+            display: "flex",
+            flexDirection: "row",
+            width: "100%",
+          }}
+        >
           <IonButton
             style={{
               marginTop: "25px",
@@ -105,7 +144,7 @@ const Profile: React.FC = () => {
           </IonButton>
           <IonButton
             onClick={() => history.push(`/chat/${dataProfile?.id}`)}
-            fill="clear"
+            fill='clear'
             color={"tetriary"}
             style={{
               marginTop: "25px",
@@ -115,14 +154,21 @@ const Profile: React.FC = () => {
             }}
             shape='round'
           >
-            <IonIcon style={{fontSize: "40px", right: "10px", position: "relative"}} icon={chatbubbleEllipses} />
+            <IonIcon
+              style={{ fontSize: "40px", right: "10px", position: "relative" }}
+              icon={chatbubbleEllipses}
+            />
           </IonButton>
-        </div> 
+        </div>
         <div className='contPerfil'>
           <div className='topPerfil'>
             <img
               className='imgProfile'
-              src={dataProfile?.image_url? dataProfile?.image_url : "https://profilephotos2.blob.core.windows.net/tutoriapp/image_default.png"}
+              src={
+                dataProfile?.image_url
+                  ? dataProfile?.image_url
+                  : "https://profilephotos2.blob.core.windows.net/tutoriapp/image_default.png"
+              }
               alt='Profile image'
             />
             <IonText className='nombrePerfil'>{dataProfile?.name}</IonText>
@@ -135,15 +181,21 @@ const Profile: React.FC = () => {
               </div>
               <div className='datosCard'>
                 <div className='leftCard'>Modalidad de las clases:</div>
-                <div className='rightCard'>{dataProfile?.format_tutor.join(" y ")}</div>
+                <div className='rightCard'>
+                  {dataProfile?.format_tutor.join(" y ")}
+                </div>
               </div>
               <div className='datosCard'>
                 <div className='leftCard'>Formato de clase:</div>
-                <div className='rightCard'>{dataProfile?.type_group_tutor.join(", ")}</div>
+                <div className='rightCard'>
+                  {dataProfile?.type_group_tutor.join(", ")}
+                </div>
               </div>
               <div className='datosCard'>
                 <div className='leftCard'>Materias:</div>
-                <div className='rightCard'>{dataProfile?.subjects_tutor.join(", ")}</div>
+                <div className='rightCard'>
+                  {dataProfile?.subjects_tutor.join(", ")}
+                </div>
               </div>
               <div className='datosCard'>
                 <div className='leftCard'>Tipo de tutor:</div>
@@ -151,17 +203,16 @@ const Profile: React.FC = () => {
               </div>
               <div className='datosCard'>
                 <div className='leftCard'>Métodos de enseñanza</div>
-                <div className='rightCard'>{dataProfile?.method_tutor.join(", ")}</div>
+                <div className='rightCard'>
+                  {dataProfile?.method_tutor.join(", ")}
+                </div>
               </div>
             </div>
           </div>
           <div className='disponibilidad'>
             <IonText className='nombrePerfil'>Disponibilidad</IonText>
-            <IonGrid
-              className='horario'
-              style={{margin:'0'}}
-            >
-              <IonRow className='grid-container' style={{padding:'0'}}>
+            <IonGrid className='horario' style={{ margin: "0" }}>
+              <IonRow className='grid-container' style={{ padding: "0" }}>
                 {days.map((day, dayIndex) => (
                   <IonRow key={dayIndex}>
                     <IonCol style={{ color: "#D2D9E7" }} className='dias'>
@@ -188,50 +239,84 @@ const Profile: React.FC = () => {
             </IonGrid>
           </div>
           <div className='opiniones'>
-            <IonText className='nombrePerfil'>Opiniones</IonText>
-            <div
-              className='cardPerfil'
-              style={{ alignItems: "center", gap: "15px" }}
-            >
-              <div className='contOpiniones'>
-                <div className='leftOpinion'>
-                  <div className="perfilOpinion">
-                    <img
-                      style={{ width: "100%", height: "100%" }}
-                      className='imgProfile'
-                      src='https://www.w3schools.com/w3images/avatar1.png'
+            {(dataProfile?.tutor_opinions || canOpinion) && (
+              <IonText className='nombrePerfil'>Opiniones</IonText>
+            )}
+            {canOpinion && (
+              <div className='opinar'>
+                <div className='calificacion'>
+                  {Array.from(Array(5).keys()).map((index) => (
+                    <IonIcon
+                      key={index}
+                      className={`starPerfil ${
+                        opinion && index < opinion?.calification_tutor
+                          ? "Filled"
+                          : ""
+                      }`}
+                      icon={star}
+                      onClick={() =>
+                        setOpinion({
+                          ...opinion,
+                          calification_tutor: index + 1,
+                        } as Opinion)
+                      }
                     />
-                    <IonText>
-                      Juaana
-                    </IonText>
-                  </div>
-                    <IonIcon className='starPerfil' icon={star} />
-                    <h1 className="calificacionPerfil">5</h1>
+                  ))}
                 </div>
-                <div className='rightOpinion'>
-                  <IonText>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nam veritatis praesentium explicabo magnam blanditiis molestiae eveniet dicta minus recusandae voluptatibus impedit ex, at tempora officiis doloremque! Assumenda, deleniti reiciendis. Delectus.</IonText>
+                <div className='textoOpinion'>
+                  <input
+                    className='inputOpinion'
+                    placeholder='Escribe tu opinión'
+                    type='text'
+                    onChange={(e) =>
+                      setOpinion({
+                        ...opinion,
+                        opinion: e.target.value,
+                      } as Opinion)
+                    }
+                  />
+                </div>
+                <div>
+                  <IonButton
+                    onClick={handleOpinion}
+                    className='buttonOpinion'
+                    shape='round'
+                  >
+                    Enviar
+                  </IonButton>
                 </div>
               </div>
-              <div className='contOpiniones'>
-                <div className='leftOpinion'>
-                  <div className="perfilOpinion">
-                    <img
-                      style={{ width: "100%", height: "100%" }}
-                      className='imgProfile'
-                      src='https://www.w3schools.com/w3images/avatar1.png'
-                    />
-                    <IonText>
-                      Juaana
-                    </IonText>
+            )}
+            {dataProfile?.tutor_opinions && (
+              <div
+                className='cardPerfil'
+                style={{ alignItems: "center", gap: "15px" }}
+              >
+                {dataProfile?.tutor_opinions?.map((opinion, index) => (
+                  <div key={index} className='contOpiniones'>
+                    <div className='leftOpinion'>
+                      <div className='perfilOpinion'>
+                        <img
+                          style={{ width: "100%", height: "100%" }}
+                          className='imgProfile'
+                          src={opinion.url_img}
+                        />
+                        <IonText style={{ fontWeight: "600" }}>
+                          {opinion.name_user}
+                        </IonText>
+                      </div>
+                      <IonIcon className='starPerfil Filled' icon={star} />
+                      <h1 className='calificacionPerfil'>
+                        {opinion.calification_tutor}
+                      </h1>
+                    </div>
+                    <div className='rightOpinion'>
+                      <IonText>{opinion.opinion}</IonText>
+                    </div>
                   </div>
-                    <IonIcon className='starPerfil' icon={star} />
-                    <h1 className="calificacionPerfil">5</h1>
-                </div>
-                <div className='rightOpinion'>
-                  <IonText>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nam veritatis praesentium explicabo magnam blanditiis molestiae eveniet dicta minus recusandae voluptatibus impedit ex, at tempora officiis doloremque! Assumenda, deleniti reiciendis. Delectus.</IonText>
-                </div>
+                ))}
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
