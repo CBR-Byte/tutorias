@@ -10,7 +10,7 @@ interface Tutor {
 const initialState: Tutor = {
     tutors: null,
     };
-
+const  path = import.meta.env.VITE_PATH_BACKEND;
 export const getTutors = createAsyncThunk<
   any,
   any,
@@ -19,7 +19,7 @@ export const getTutors = createAsyncThunk<
   try {
     const keyWords = data.join(",");
     const response = await axios.get(
-      `https://tutoriapp-7f467dd740dd.herokuapp.com/users/tutores?keywords=${keyWords}`
+      `${path}/users/tutores?keywords=${keyWords}`
     );
     const users = await response.data;
     return users;

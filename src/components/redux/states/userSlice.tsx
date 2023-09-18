@@ -65,6 +65,8 @@ export type token = {
   email: string;
 };
 
+const path = import.meta.env.VITE_PATH_BACKEND;
+
 export const uploadImage = createAsyncThunk<
   any,
   any,
@@ -76,7 +78,7 @@ export const uploadImage = createAsyncThunk<
 
   try {
     const response = await axios.post(
-      `https://tutoriapp-7f467dd740dd.herokuapp.com/blobs/upload/${email}`,
+      `${path}/blobs/upload/${email}`,
       data,
       {
         headers: {
@@ -101,7 +103,7 @@ export const getListUsers = createAsyncThunk<
 >("user/getListUsers", async (id) => {
   try {
     const response = await axios.get(
-      `https://tutoriapp-7f467dd740dd.herokuapp.com/users/userName/${id}`
+      `${path}/users/userName/${id}`
     );
     const user = await response.data;
     return user.name;
@@ -121,7 +123,7 @@ export const verify = createAsyncThunk<
     const email = JSON.parse(data.email);
 
     const response = await axios.get(
-      `https://tutoriapp-7f467dd740dd.herokuapp.com/users/${email}`,
+      `${path}/users/${email}`,
       {
         headers: {
           Authorization: `Bearer ${token_access}`,
@@ -137,7 +139,6 @@ export const verify = createAsyncThunk<
     };
   } catch (err: any) {
     thunkAPI.dispatch(refreshToken({ refresh_token: data.refresh }));
-    //return thunkAPI.rejectWithValue({ errorMessage: err.response.data.detail });
   }
 });
 
@@ -151,7 +152,7 @@ export const changePassword = createAsyncThunk<
     const token = state.user.access_token;
     const email = state.user.user.email;
     const response = await axios.post(
-      `https://tutoriapp-7f467dd740dd.herokuapp.com/change_password/auth/${email}`,
+      `${path}/change_password/auth/${email}`,
       data,
       { headers: { Authorization: `Bearer ${token}` } }
     );
@@ -171,7 +172,7 @@ export const deleteAccount = createAsyncThunk(
       const token = state.user.access_token;
       const id = state.user.user.id;
       const response = await axios.delete(
-        `https://tutoriapp-7f467dd740dd.herokuapp.com/users/delete/${id}`,
+        `${path}/users/delete/${id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       return response.data;
@@ -192,7 +193,7 @@ export const refreshToken = createAsyncThunk<
     const refresh = JSON.parse(token.refresh_token);
 
     const response = await axios.post(
-      `https://tutoriapp-7f467dd740dd.herokuapp.com/users/refresh`,
+      `${path}/users/refresh`,
       null,
       {
         headers: {
@@ -221,7 +222,7 @@ export const getConversation = createAsyncThunk<
     const state = thunkAPI.getState() as User;
     const id = state.user.user.id;
     const response = await axios.get(
-      `https://tutoriapp-7f467dd740dd.herokuapp.com/messages/${id}`
+      `${path}/messages/${id}`
     );
     return response.data;
   } catch (error: any) {
@@ -243,21 +244,21 @@ export const updateUserInfo = createAsyncThunk<
       const { access_token } = state.user;
       delete data.id;
       const response = await axios.patch(
-        `https://tutoriapp-7f467dd740dd.herokuapp.com/users/update/${id}`,
+        `${path}/users/update/${id}`,
         data,
         {
           headers: {
             Authorization: `Bearer ${access_token}`,
           },
         }
-      );
+      );``
 
       return response.data;
     } else {
       const { id } = state.user.user;
       const { access_token } = state.user;
       const response = await axios.patch(
-        `https://tutoriapp-7f467dd740dd.herokuapp.com/users/update/${id}`,
+        `${path}/users/update/${id}`,
         data,
         {
           headers: {
@@ -287,7 +288,7 @@ export const onLogin = createAsyncThunk<
 >("user/login", async (credentials, thunkAPI) => {
   try {
     const response = await axios.post(
-      "https://tutoriapp-7f467dd740dd.herokuapp.com/users/login",
+      `${path}/users/login`,
       credentials
     );
     return response.data;
@@ -318,7 +319,7 @@ export const onSignUp = createAsyncThunk<
 
   try {
     const response = await axios.post(
-      "https://tutoriapp-7f467dd740dd.herokuapp.com/users/create",
+      `${path}/users/create`,
       data
     );
     return response.data;

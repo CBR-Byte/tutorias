@@ -9,6 +9,8 @@ interface Subject {
   subjects: string[];
 }
 
+const path = import.meta.env.VITE_PATH_BACKEND;
+
 export const getSubjects = createAsyncThunk<
   Subject,
   void,
@@ -18,7 +20,7 @@ export const getSubjects = createAsyncThunk<
 
   try {
     const response = await axios.get(
-      "https://tutoriapp-7f467dd740dd.herokuapp.com/subjects"
+      `${path}/subjects`
     );
     const subjectNames = Object.values(response.data).map(
       (subject: any) => subject.name

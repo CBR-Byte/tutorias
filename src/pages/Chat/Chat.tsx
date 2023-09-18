@@ -53,9 +53,14 @@ const Chat: React.FC = () => {
     []
   );
 
-  const newSocket = io("https://tutoriapp-7f467dd740dd.herokuapp.com", {
-    path: "/sockets",
-  });
+  const path = import.meta.env.VITE_PATH_BACKEND;
+  
+  
+  if (path) {
+    var newSocket = io(path, {
+      path: "/sockets",
+    })
+  }
   const history = useHistory();
 
   const handleBubbleClick = async (idHandler: string) => {
