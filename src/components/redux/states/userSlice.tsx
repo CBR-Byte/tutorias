@@ -105,7 +105,7 @@ export const getListUsers = createAsyncThunk<
       `${path}/users/userName/${id}`
     );
     const user = await response.data;
-    return user.name;
+    return user;
   } catch (error: any) {
     console.log(error);
   }

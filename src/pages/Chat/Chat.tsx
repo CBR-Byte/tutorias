@@ -35,6 +35,15 @@ interface ConversationsProfiles {
   image_url: string;
   read: boolean;
 }
+const path = import.meta.env.VITE_PATH_BACKEND;
+
+  if (path) {
+    var newSocket = io(path, {
+      path: "/sockets",
+      transports: ["websocket"],
+      upgrade: false
+    });
+  }
 
 const Chat: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -47,30 +56,27 @@ const Chat: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [nameConversation, setNameConversation] = useState<string>("");
   const scroll = useRef<HTMLDivElement>(null);
+  const [isTutor, setIsTutor] = useState<boolean>(false);
   const messageRef = useRef<HTMLInputElement>(null);
+  const [notification, setNotification] = useState<boolean>(false);
   const [isButtonVisible, setIsButtonVisible] = useState(false);
   const [conversations, setConversations] = useState<ConversationsProfiles[]>(
     []
   );
 
-  const path = import.meta.env.VITE_PATH_BACKEND;
-  
-  
-  if (path) {
-    var newSocket = io(path, {
-      path: "/sockets",
-    })
-  }
   const history = useHistory();
 
   const handleBubbleClick = async (idHandler: string) => {
     setIdReceiver(idHandler);
     setIdBuuble(idHandler);
+    setNotification(false);
   };
   const fetchData = async () => {
     setIdBuuble(id);
     const disp = (await dispatch(getListUsers(id))).payload;
-    setNameConversation(disp);
+    console.log(disp);
+    setNameConversation(disp.name);
+    setIsTutor(disp.is_tutor);
     setIdReceiver(id);
     newSocket.emit("join_room", { idUser: userId, idReceiver: id });
   };
@@ -83,34 +89,41 @@ const Chat: React.FC = () => {
         image_url: user.image_url,
         read: user.read,
       }));
+      usersData.find((conversation: any) => !conversation.read)
+        ? setNotification(true)
+        : setNotification(false);
       setConversations(usersData);
     });
     if (id) {
+      newSocket.connect();
       fetchData();
     }
   }, [id]);
 
   useEffect(() => {
     // Configurar la conexión al servidor WebSocket
+    newSocket.on("messages", (data: any) => {
+      console.log("messages");
+      setMessages(data.messages);
+    });
     
-      newSocket.on("chat", (data: any) => {
-        const message = data.message;
-        // if(message === messages[messages.length - 1]){
-        //   console.log("mismo mensaje")
-        // }else setMessages((prevMessages) => [...prevMessages, message]);
-        setMessages((prevMessages) => [...prevMessages, message]);
-      });
-  
-      newSocket.on("disconnect", () => {
-        newSocket.close();
-      });
-
-    newSocket.on("join_room", (data: any) => {
-      newSocket.emit("messages", { idUser: userId, idReceiver: idReceiver });
+    newSocket.on("chat", (data: any) => {
+      console.log("chat");
+      const messages = data.messages;
+      // if(message === messages[messages.length - 1]){
+      //   console.log("mismo mensaje")
+      // }else setMessages((prevMessages) => [...prevMessages, message]);
+      setMessages(messages);
     });
 
-    newSocket.on("messages", (data: any) => {
-      setMessages(data.messages);
+    newSocket.on("disconnect", () => {
+      newSocket.close();
+      console.log("desconectado");
+    });
+
+    newSocket.on("join_room", (data: any) => {
+      console.log("join_room");
+      newSocket.emit("messages", { idUser: userId, idReceiver: idReceiver });
     });
 
     return () => {
@@ -245,7 +258,7 @@ const Chat: React.FC = () => {
                     <div className='topChat'>
                       <IonText
                         onClick={() => {
-                          history.push(`/profile/${id}`);
+                          isTutor ? history.push(`/profile/${id}`) : null;
                         }}
                       >
                         {nameConversation}
@@ -322,14 +335,7 @@ const Chat: React.FC = () => {
               )}
             </div>
           )}
-          <Footer
-            active='chat'
-            notification={
-              conversations.find((conversation) => !conversation.read)
-                ? true
-                : false
-            }
-          />
+          <Footer active='chat' notification={notification} />
         </>
       )}
     </IonPage>

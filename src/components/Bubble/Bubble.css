@@ -8,8 +8,9 @@
 .topBubble {
     height: 80%;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: end;
 }
 .bottomBubble {
     height: 20%;
@@ -25,7 +26,10 @@
     font-size: 1.5vh;
 }
 .bubbleDot {
-    position:relative;
+    z-index: 1;
+    position: absolute;
+    top:10px;
+    right: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -36,23 +40,5 @@
     height: 30px;
     width: 30px;
     overflow: visible;
-    right: -35px;
-    bottom: 35px;
-    background-color: #2895A5;
-}
-.bubbleDot {
-    position:relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2vh;
-    z-index: 1;
-    border: #D2D9E7 2px solid;
-    border-radius: 50%;
-    height: 30px;
-    width: 30px;
-    overflow: visible;
-    right: -35px;
-    bottom: 35px;
     background-color: #2895A5;
 }
