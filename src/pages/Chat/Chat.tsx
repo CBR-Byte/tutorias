@@ -67,18 +67,15 @@ const Chat: React.FC = () => {
   const history = useHistory();
 
   const handleBubbleClick = async (idHandler: string) => {
-    setIdReceiver(idHandler);
     setIdBuuble(idHandler);
     setNotification(false);
   };
   const fetchData = async () => {
     setIdBuuble(id);
     const disp = (await dispatch(getListUsers(id))).payload;
-    console.log(disp);
     setNameConversation(disp.name);
     setIsTutor(disp.is_tutor);
-    setIdReceiver(id);
-    newSocket.emit("join_room", { idUser: userId, idReceiver: id });
+    newSocket.emit("join_room", { idUser: userId, idReceiver: idReceiver });
   };
 
   useEffect(() => {
@@ -103,12 +100,10 @@ const Chat: React.FC = () => {
   useEffect(() => {
     // Configurar la conexión al servidor WebSocket
     newSocket.on("messages", (data: any) => {
-      console.log("messages");
       setMessages(data.messages);
     });
     
     newSocket.on("chat", (data: any) => {
-      console.log("chat");
       const messages = data.messages;
       // if(message === messages[messages.length - 1]){
       //   console.log("mismo mensaje")
@@ -118,11 +113,9 @@ const Chat: React.FC = () => {
 
     newSocket.on("disconnect", () => {
       newSocket.close();
-      console.log("desconectado");
     });
 
     newSocket.on("join_room", (data: any) => {
-      console.log("join_room");
       newSocket.emit("messages", { idUser: userId, idReceiver: idReceiver });
     });
 

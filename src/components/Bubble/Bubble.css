@@ -10,6 +10,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    position:relative;
     justify-content: end;
 }
 .bottomBubble {
@@ -28,8 +29,8 @@
 .bubbleDot {
     z-index: 1;
     position: absolute;
-    top:10px;
-    right: 10px;
+    top:0px;
+    right: 0px;
     display: flex;
     align-items: center;
     justify-content: center;
