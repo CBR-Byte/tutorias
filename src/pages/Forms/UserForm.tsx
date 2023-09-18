@@ -294,7 +294,7 @@ const UserForm: React.FC = () => {
                       {formikProps.errors.method}
                     </div>
                   ) : null}
-                  {(!state.user?.is_tutor || state.registerCompleted) && (
+                  {(!state.user?.is_tutor || !state.registerCompleted) && (
                     <div className='btn'>
                       <IonButton
                         style={{ width: "60vw" }}

@@ -89,7 +89,6 @@ export const uploadImage = createAsyncThunk<
 
     return response.data;
   } catch (error: any) {
-    alert(JSON.stringify(error.response.data.detail));
     return thunkAPI.rejectWithValue({
       errorMessage: error.response.data.detail,
     });
@@ -230,7 +229,8 @@ export const getConversation = createAsyncThunk<
       errorMessage: error.response.data.detail,
     });
   }
-});
+}
+);
 
 export const updateUserInfo = createAsyncThunk<
   any,
