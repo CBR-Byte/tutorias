@@ -6,6 +6,8 @@ import {
   IonButton,
   IonLabel,
   IonModal,
+  IonRadio,
+  IonRadioGroup,
   IonTitle,
 } from "@ionic/react";
 import { Field, Form, Formik } from "formik";
@@ -67,7 +69,7 @@ const InfoForm: React.FC = () => {
 
   useEffect(() => {
     setAlert(false);
-    if(stateUser.alertUpdate){
+    if (stateUser.alertUpdate) {
       setTimeout(() => {
         setAlert(stateUser.alertUpdate);
       }, 200);
@@ -244,51 +246,63 @@ const InfoForm: React.FC = () => {
                   <IonLabel className='category'>
                     ¿Quieres ser tutor ahora?{""}
                   </IonLabel>
-                  <div className="options1">
-                    <label>
-                      <Field
-                        type='radio'
-                        name='is_tutor'
-                        value='true'
-                        style={{ marginLeft: "5px" }}
-                      />
-                      Sí
-                    </label>
-                    <label>
-                      <Field
-                        type='radio'
-                        name='is_tutor'
-                        value='false'
-                        style={{ marginLeft: "5px" }}
-                      />
-                      No
-                    </label>
+                  <div>
+                    <IonRadioGroup
+                      onIonChange={formikProps.handleChange}
+                      name='is_tutor'
+                      className='radioGroup2'
+                    >
+                      <label className='options2'>
+                        <Field
+                          as={IonRadio}
+                          name='is_tutor'
+                          value='true'
+                          style={{ marginLeft: "5px" }}
+                        />
+                        Sí
+                      </label>
+                      <label className="options2">
+                        <Field
+                          as={IonRadio}
+                          name='is_tutor'
+                          value='false'
+                          style={{ marginLeft: "5px" }}
+                        />
+                        No
+                      </label>
+                    </IonRadioGroup>
                   </div>
                 </div>
               ) : stateUser.user?.is_tutor && !stateUser.user?.is_student ? (
                 <div className='rol'>
-                  <IonLabel className='category'>
-                    ¿Vas a buscar tutorias?:{""}
+                  <IonLabel className='category' style={{marginBottom:"15px"}}>
+                    ¿Vas a buscar tutorias?{""}
                   </IonLabel>
-                  <div className="options1">
-                    <label>
-                      <Field
-                        type='radio'
-                        name='is_student'
-                        value='true'
-                        style={{ marginLeft: "5px" }}
-                      />
-                      Sí
-                    </label>
-                    <label>
-                      <Field
-                        type='radio'
-                        name='is_student'
-                        value='false'
-                        style={{ marginLeft: "5px" }}
-                      />
-                      No
-                    </label>
+                  <div>
+                  <IonRadioGroup
+                      onIonChange={formikProps.handleChange}
+                      name='is_student'
+                      className='radioGroup2'
+                    >
+                      <label className='options2'>
+                        <Field
+                          as={IonRadio}
+                          name='is_student'
+                          value='true'
+                          style={{ marginLeft: "5px" }}
+                        />
+                        Sí
+                      </label>
+                      <label className="options2">
+                        <Field
+                          as={IonRadio}
+                          name='is_student'
+                          value='false'
+                          style={{ marginLeft: "5px" }}
+                        />
+                        No
+                      </label>
+                    </IonRadioGroup>
                   </div>
                 </div>
               ) : null}

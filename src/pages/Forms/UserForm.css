@@ -32,6 +32,17 @@
 .long {
     height: 15vh;
 }
+.long1 {
+    height: 15vh;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+.searchbar{
+    width: 60vw;
+    padding: 0;
+    font-size: 2vh;
+    background-color: #D2D9E7;
+}
 .reg {
     font-size: 30px;
     font-weight: 700;
@@ -43,4 +54,20 @@
 .btn {
     text-align: center;
     margin-top: 1vh;
+}
+.radio {
+    background-color: #05938C !important;
+    color:#D2D9E7 !important;
+}
+.options1 {
+    display: flex;
+    flex-direction: column;
+    width: min-content !important;
+    height: 3vh;
+    justify-content: center;
+}
+.radioGroup {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
 }

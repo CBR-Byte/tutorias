@@ -20,6 +20,7 @@ import "swiper/css/effect-cards";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import Loading from "../../components/Loading";
+import { Keyboard } from "@capacitor/keyboard";
 
 interface Message {
   message: string;
@@ -126,11 +127,7 @@ const Chat: React.FC = () => {
 
   useEffect(() => {
     if (scroll.current) {
-      scroll.current.scrollIntoView({
-        behavior: "smooth",
-        block: "end",
-        inline: "nearest",
-      });
+      scrollToBottom();
     }
   }, [messages]);
 
@@ -203,6 +200,32 @@ const Chat: React.FC = () => {
   useEffect(() => {
     firstTimeFunction();
   });
+
+  useEffect(() => {
+    Keyboard.addListener("keyboardWillShow", info => {
+      const enviar = document.getElementById("enviar");
+      const chat = document.getElementById("chatDiv");
+      if (enviar) {
+        const height = info.keyboardHeight;
+        enviar.style.bottom = `calc(10px + ${height}px)`;
+        if (chat) {
+          const newHeight = height - 10;
+          chat.style.height = `calc(100% - ${newHeight}px)`;
+          scrollToBottom( );
+        }
+      }
+    });
+    Keyboard.addListener("keyboardWillHide", () => {
+      const enviar = document.getElementById("enviar");
+      const chat = document.getElementById("chatDiv");
+      if (enviar) {
+        enviar.style.bottom = "9vh";
+        if (chat) {
+          chat.style.height = "100%";
+        }
+      }
+    });
+  }, []);
 
   return (
     <IonPage>
@@ -300,12 +323,12 @@ const Chat: React.FC = () => {
                       </div>
                     )}
                   </div>
-                  <div className='enviar'>
+                  <div id="enviar" className='enviar'>
                     <input
                       ref={messageRef}
                       className='inputEnviar'
                       type='text'
-                      placeholder='Type your message'
+                      placeholder='Mensaje'
                       value={inputMessage}
                       onChange={(e) => setInputMessage(e.target.value)}
                       onKeyDown={(e) => {

@@ -62,3 +62,17 @@ form{
 .category {
     margin-right: 2vw;
 }
+.options2 {
+    display: flex;
+    flex-direction: column;
+    width: min-content;
+    gap: 5px;
+    height: 3vh;
+    justify-content: center;
+    align-items: center;
+}
+.radioGroup2 {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}

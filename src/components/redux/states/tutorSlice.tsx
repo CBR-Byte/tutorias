@@ -11,6 +11,7 @@ const initialState: Tutor = {
     tutors: null,
     };
 const  path = import.meta.env.VITE_PATH_BACKEND;
+
 export const getTutors = createAsyncThunk<
   any,
   any,
@@ -30,13 +31,33 @@ export const getTutors = createAsyncThunk<
     });
   }
 });
+
+export const getAllTutors = createAsyncThunk<
+  any,
+  any,
+  { rejectValue: { errorMessage: string } }
+  >("user/getTutors", async (data, thunkAPI) => {
+    try {
+      const response = await axios.get(
+        `${path}/users/tutores?keywords=`
+      );
+      const users = await response.data;
+      return users;
+    } catch (error: any) {
+      console.log(error);
+      return thunkAPI.rejectWithValue({
+        errorMessage: error.response.data.detail,
+      });
+    }
+  });
+
 export const tutorSlice = createSlice({
   name: "tutors",
   initialState: 
     initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(getTutors.fulfilled, (state, action) => {
+    builder.addCase(getAllTutors.fulfilled, (state, action) => {
       state.tutors = action.payload;
     });
   },

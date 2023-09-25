@@ -1,11 +1,27 @@
 /** @format */
 
-import { IonPage, IonTitle, IonInput, IonIcon, IonButton, IonText } from "@ionic/react";
+import {
+  IonPage,
+  IonTitle,
+  IonInput,
+  IonIcon,
+  IonButton,
+  IonText,
+  IonRange,
+  IonRadio,
+  IonRadioGroup,
+  IonItem,
+  IonSelect,
+  IonSelectOption,
+} from "@ionic/react";
 import { useAppDispatch, useAppSelector } from "../../components/redux/hooks";
-import { getTutors } from "../../components/redux/states/tutorSlice";
+import {
+  getTutors,
+  getAllTutors,
+} from "../../components/redux/states/tutorSlice";
 import { useHistory } from "react-router";
 import "../Register/Register.css";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import "./Inicio.css";
 import { search, filter } from "ionicons/icons/";
 import Card from "../../components/Card/Card";
@@ -25,7 +41,18 @@ import "swiper/css/effect-cards";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import Footer from "../../components/Footer/Footer";
-import { getConversation } from "../../components/redux/states/userSlice";
+import {
+  getConversation,
+  setKeywordsorClicks,
+} from "../../components/redux/states/userSlice";
+
+interface filterOptions {
+  cost_tutor?: number | { lower: number; upper: number };
+  type_tutor: string;
+  method_tutor: string[];
+  type_group_tutor: string[];
+  format_tutor: string[];
+}
 
 const Inicio: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -36,6 +63,14 @@ const Inicio: React.FC = () => {
   const [tutores, setTutores] = useState<any[]>([]);
   const [conversations, setConversations] = useState<any[]>([]);
   const [hasResults, setHasResults] = useState<boolean>(false);
+  const [isFilter, setIsFilter] = useState<boolean>(false);
+  const [initialPrice, setInitialPrice] = useState<number[]>([]);
+  const [filtros, setFiltros] = useState<filterOptions>({
+    type_tutor: "",
+    method_tutor: [],
+    type_group_tutor: [],
+    format_tutor: [],
+  });
 
   useEffect(() => {
     if (!stateUser.registerCompleted && stateUser.user?.is_tutor) {
@@ -57,33 +92,107 @@ const Inicio: React.FC = () => {
     });
   }, []);
 
+  useMemo(() => {
+    dispatch(getAllTutors([]));
+  }, [tutores]);
+
   const searchTutors = () => {
     const keyWords = inputRef.current?.value?.toString().split(" ");
-    if (inputRef.current?.value !== '') {
+    const keywordsState = stateUser.user?.keywords;
+    dispatch(setKeywordsorClicks({ keywords: keywordsState.concat(keyWords) }));
+    console.log(keyWords);
+    if (inputRef.current?.value !== "") {
       setIsSearch(true);
       dispatch(getTutors(keyWords)).then((res) => {
         if (res.payload.length === 0) {
           setHasResults(false);
         } else {
-        const tutorsData = res.payload.map((user: any) => ({
-          id: user.id,
-          name: user.name,
-          availability: user.availability,
-          format_tutor: user.format_tutor,
-          cost_tutor: user.cost_tutor,
-          type_tutor: user.type_tutor,
-          method_tutor: user.method_tutor,
-          type_group_tutor: user.type_group_tutor,
-          tutor_opinions: user.tutor_opinions,
-          subjects_tutor: user.subjects_tutor,
-          image_url: user.image_url,
-        }));
-        setTutores(tutorsData);
-        setHasResults(true);
-      }
+          const tutorsData = res.payload.map((user: any) => ({
+            id: user.id,
+            name: user.name,
+            availability: user.availability,
+            format_tutor: user.format_tutor,
+            cost_tutor: user.cost_tutor,
+            type_tutor: user.type_tutor,
+            method_tutor: user.method_tutor,
+            type_group_tutor: user.type_group_tutor,
+            tutor_opinions: user.tutor_opinions,
+            subjects_tutor: user.subjects_tutor,
+            image_url: user.image_url,
+          }));
+          const upper = Math.max.apply(
+            Math,
+            tutorsData.map((tutor: any) => tutor.cost_tutor)
+          );
+          const lower = Math.min.apply(
+            Math,
+            tutorsData.map((tutor: any) => tutor.cost_tutor)
+          );
+          setInitialPrice([lower, upper]);
+          setFiltros({
+            cost_tutor: { lower: lower, upper: upper },
+            type_tutor: "",
+            method_tutor: [],
+            type_group_tutor: [],
+            format_tutor: [],
+          });
+          JSON.stringify(tutores.sort((a, b) => (a.id < b.id ? -1 : 1))) ===
+          JSON.stringify(
+            tutorsData.sort((a: any, b: any) => (a.id < b.id ? -1 : 1))
+          )
+            ? null
+            : setTutores(tutorsData);
+          setHasResults(true);
+        }
       });
     }
   };
+
+  const toggleFilter = () => {
+    setIsFilter((prevState) => !prevState);
+  };
+
+  const filterTutors = () => {
+    const filtrado = tutores
+      .filter((tutor) =>
+        filtros.cost_tutor === undefined
+          ? true
+          : typeof filtros.cost_tutor === "object" &&
+            !Number.isNaN(filtros.cost_tutor.lower)
+          ? tutor.cost_tutor >= filtros.cost_tutor.lower &&
+            tutor.cost_tutor <= filtros.cost_tutor.upper
+          : true
+      )
+      .filter((tutor) =>
+        filtros.type_tutor === ""
+          ? true
+          : tutor.type_tutor === filtros.type_tutor
+      )
+      .filter((tutor) =>
+        filtros.method_tutor.length === 0
+          ? true
+          : tutor.method_tutor.some((method: string) =>
+              filtros.method_tutor.includes(method)
+            )
+      )
+      .filter((tutor) =>
+        filtros.type_group_tutor.length === 0
+          ? true
+          : tutor.type_group_tutor.some((type: string) =>
+              filtros.type_group_tutor.includes(type)
+            )
+      )
+      .filter((tutor) =>
+        filtros.format_tutor.length === 0
+          ? true
+          : tutor.format_tutor.some((format: string) =>
+              filtros.format_tutor.includes(format)
+            )
+      );
+    return filtrado;
+  };
+
+  const newTutors = isFilter ? filterTutors() : tutores;
 
   const handleInput = (event: React.KeyboardEvent<HTMLIonInputElement>) => {
     if (event.key === "Enter") {
@@ -93,12 +202,33 @@ const Inicio: React.FC = () => {
 
   const califications = (calificaciones: any) => {
     if (calificaciones != null) {
-      const suma = calificaciones.reduce((a: any, b: any) => a + b.calification_tutor, 0);
+      const suma = calificaciones.reduce(
+        (a: any, b: any) => a + b.calification_tutor,
+        0
+      );
       const media = suma / calificaciones.length;
       return media;
     } else {
       return 0;
     }
+  };
+
+  const showFilters = () => {
+    const filters = document.getElementById("filters");
+    if (filters?.style.display === "none") {
+      filters.style.display = "flex";
+    } else {
+      filters && (filters.style.display = "none");
+    }
+  };
+
+  const handleCard = (idHandle: string) => {
+    const clicksState = stateUser.user?.clicks;
+    clicksState
+      ? dispatch(setKeywordsorClicks({ clicks: clicksState.concat(idHandle) }))
+      : dispatch(setKeywordsorClicks({ clicks: [idHandle] }));
+
+    history.push(`/profile/${idHandle}`);
   };
 
   return (
@@ -124,13 +254,9 @@ const Inicio: React.FC = () => {
             <IonTitle className='textoRec'>RECOMENDADOS</IonTitle>
             <Swiper
               effect={"cards"}
-              hashNavigation={{
-                watchState: true,
-              }}
               pagination={{
                 clickable: true,
               }}
-              navigation={true}
               grabCursor={true}
               centeredSlides={true}
               slidesPerView={"auto"}
@@ -182,35 +308,184 @@ const Inicio: React.FC = () => {
               </SwiperSlide>
             </Swiper>
           </div>
-          {(IsSearch && !hasResults) && (
-            <div className="resultados">
-                <IonText>No se encontraron resultados</IonText>
+          {IsSearch && !hasResults && (
+            <div className='resultados'>
+              <IonText>No se encontraron resultados</IonText>
             </div>
           )}
-          {(IsSearch && hasResults) && (
+          {IsSearch && hasResults && (
             <div className='resultados'>
               <div className='resTitle'>
-                <IonTitle className='textoRec'>RESULTADOS</IonTitle>
-                <IonButton className='filter' fill='clear'>
-                  <IonIcon icon={filter} className='iconFilter' />
-                </IonButton>
+                <IonTitle className='textoRes'>RESULTADOS</IonTitle>
+                <div className='filter'>
+                  <IonIcon
+                    onClick={() => showFilters()}
+                    icon={filter}
+                    className='iconFilter'
+                  />
+                </div>
+              </div>
+              <div
+                style={{ display: "none" }}
+                id='filters'
+                className='filterContent'
+              >
+                <div className='divFilter'>
+                  <div>
+                    <h3 className='labelFilter'>Precio</h3>
+                  </div>
+                  <div>
+                    <IonRange
+                      dualKnobs={true}
+                      pin={true}
+                      step={1000}
+                      min={initialPrice[0]}
+                      max={initialPrice[1]}
+                      disabled={
+                        initialPrice[0] === initialPrice[1] ? true : false
+                      }
+                      onIonChange={(e) =>
+                        setFiltros({ ...filtros, cost_tutor: e.detail.value })
+                      }
+                    >
+                      <h3 className='labelFilter' slot='start'>
+                        <IonText slot='start'>${initialPrice[0]}</IonText>
+                      </h3>
+                      <h3 className='labelFilter' slot='end'>
+                        <IonText slot='end'>${initialPrice[1]}</IonText>
+                      </h3>
+                    </IonRange>
+                  </div>
+                </div>
+                <div className='divFilter'>
+                  <h3 className='labelFilter'>Modalidad</h3>
+                  <IonRadioGroup
+                    onIonChange={(e) =>
+                      e.detail.value === undefined
+                        ? setFiltros({ ...filtros, format_tutor: [] })
+                        : setFiltros({
+                            ...filtros,
+                            format_tutor: [e.detail.value],
+                          })
+                    }
+                    allowEmptySelection={true}
+                  >
+                    <IonRadio
+                      style={{ marginRight: "15px" }}
+                      value='Presencial'
+                    >
+                      Presencial
+                    </IonRadio>
+                    <IonRadio value='Virtual'>Virtual</IonRadio>
+                  </IonRadioGroup>
+                </div>
+                <div className='divFilter'>
+                  <h3 className='labelFilter'>Formato</h3>
+                  <IonRadioGroup
+                    onIonChange={(e) =>
+                      e.detail.value === undefined
+                        ? setFiltros({ ...filtros, type_group_tutor: [] })
+                        : setFiltros({
+                            ...filtros,
+                            type_group_tutor: [e.detail.value],
+                          })
+                    }
+                    allowEmptySelection={false}
+                  >
+                    <IonRadio
+                      style={{ marginRight: "15px" }}
+                      value='Individual'
+                    >
+                      Individual
+                    </IonRadio>
+                    <IonRadio value='Grupal'>Grupal</IonRadio>
+                  </IonRadioGroup>
+                </div>
+                <div style={{ marginBottom: "-20px" }} className='divFilter'>
+                  <h3 className='labelFilter'>Tipo de tutor</h3>
+                  <IonRadioGroup
+                    onIonChange={(e) =>
+                      e.detail.value === undefined
+                        ? setFiltros({ ...filtros, type_tutor: "" })
+                        : setFiltros({
+                            ...filtros,
+                            type_tutor: e.detail.value,
+                          })
+                    }
+                    allowEmptySelection={true}
+                  >
+                    <IonRadio
+                      style={{ marginRight: "15px" }}
+                      value='Estudiante'
+                    >
+                      Estudiante
+                    </IonRadio>
+                    <IonRadio value='Profesor'>Profesor</IonRadio>
+                  </IonRadioGroup>
+                </div>
+                <div style={{ alignItems: "center" }} className='divFilter'>
+                  <IonItem>
+                    <IonSelect
+                      className='selectFilter'
+                      aria-label='method_tutor'
+                      placeholder='Método de enseñanza'
+                      multiple={true}
+                      onIonChange={(e) =>
+                        setFiltros({ ...filtros, method_tutor: e.detail.value })
+                      }
+                    >
+                      <IonSelectOption value='Aprendizaje Activo'>
+                        Activo
+                      </IonSelectOption>
+                      <IonSelectOption value='Aprendizaje reflexivo'>
+                        Reflexivo
+                      </IonSelectOption>
+                      <IonSelectOption value='Aprendizaje teórico'>
+                        Teórico
+                      </IonSelectOption>
+                      <IonSelectOption value='Aprendizaje práctico'>
+                        Práctico
+                      </IonSelectOption>
+                      <IonSelectOption value='Aprendizaje visual'>
+                        Visual
+                      </IonSelectOption>
+                      <IonSelectOption value='Aprendizaje auditivo'>
+                        Auditivo
+                      </IonSelectOption>
+                      <IonSelectOption value='Aprendizaje kinestésico'>
+                        Kinestésico
+                      </IonSelectOption>
+                    </IonSelect>
+                  </IonItem>
+                </div>
+                <div className='divFilter'>
+                  <IonButton shape='round' onClick={toggleFilter}>
+                    {isFilter ? "Quitar filtros" : "Aplicar filtros"}
+                  </IonButton>
+                </div>
               </div>
               <div className='res'>
-                {tutores.map((tutor) => (
-                  <Card
-                    key={tutor.id}
-                    onClick={() => history.push(`/profile/${tutor.id}`)}
-                    nombre={tutor.name}
-                    modalidad={tutor.format_tutor}
-                    descripcion={tutor.subjects_tutor}
-                    precio={tutor.cost_tutor}
-                    calificacion={califications(tutor.tutor_opinions)}
-                    numCalificacion={
-                      tutor.tutor_opinions != null ? tutor.tutor_opinions.length : 0
-                    }
-                    imagen={tutor.image_url}
-                  />
-                ))}
+                {newTutors.length > 0 ? (
+                  newTutors.map((tutor) => (
+                    <Card
+                      key={tutor.id}
+                      onClick={() => handleCard(tutor.id)}
+                      nombre={tutor.name}
+                      modalidad={tutor.format_tutor}
+                      descripcion={tutor.subjects_tutor}
+                      precio={tutor.cost_tutor}
+                      calificacion={califications(tutor.tutor_opinions)}
+                      numCalificacion={
+                        tutor.tutor_opinions != null
+                          ? tutor.tutor_opinions.length
+                          : 0
+                      }
+                      imagen={tutor.image_url}
+                    />
+                  ))
+                ) : (
+                  <IonText>No se encontraron resultados</IonText>
+                )}
               </div>
             </div>
           )}

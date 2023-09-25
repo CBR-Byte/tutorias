@@ -8,6 +8,8 @@ import {
   IonGrid,
   IonCol,
   IonAlert,
+  IonRadio,
+  IonRadioGroup,
 } from "@ionic/react";
 import { arrowBack } from "ionicons/icons/";
 import "./Register.css";
@@ -187,25 +189,31 @@ const Register: React.FC = () => {
                       <IonLabel className='category'>
                         Vas a ser tutor?:{""}
                       </IonLabel>
-                      <div className='options1'>
-                        <label>
-                          <Field
-                            type='radio'
-                            name='is_tutor'
-                            value='true'
-                            style={{ marginLeft: "5px" }}
-                          />
-                          Sí
-                        </label>
-                        <label>
-                          <Field
-                            type='radio'
-                            name='is_tutor'
-                            value='false'
-                            style={{ marginLeft: "5px" }}
-                          />
-                          No
-                        </label>
+                      <div style={{marginTop:"10px"}}>
+                        <IonRadioGroup
+                          onIonChange={formikProps.handleChange}
+                          name='is_tutor'
+                          className='radioGroup3'
+                        >
+                          <label className='options3'>
+                            <Field
+                              as={IonRadio}
+                              name='is_tutor'
+                              value='true'
+                              style={{ marginLeft: "5px" }}
+                            />
+                            Sí
+                          </label>
+                          <label className='options3'>
+                            <Field
+                              as={IonRadio}
+                              name='is_tutor'
+                              value='false'
+                              style={{ marginLeft: "5px" }}
+                            />
+                            No
+                          </label>
+                        </IonRadioGroup>
                       </div>
                     </div>
                     {formikProps.touched.is_tutor &&
@@ -221,25 +229,31 @@ const Register: React.FC = () => {
                         <IonLabel className='category'>
                           Vas a buscar tutorias?:{""}
                         </IonLabel>
-                        <div className='options1'>
-                          <label>
-                            <Field
-                              type='radio'
-                              name='is_student'
-                              value='true'
-                              style={{ marginLeft: "5px" }}
-                            />
-                            Sí
-                          </label>
-                          <label>
-                            <Field
-                              type='radio'
-                              name='is_student'
-                              value='false'
-                              style={{ marginLeft: "5px" }}
-                            />
-                            No
-                          </label>
+                        <div style={{marginTop:"10px"}}>
+                          <IonRadioGroup
+                            onIonChange={formikProps.handleChange}
+                            name='is_student'
+                            className='radioGroup2'
+                          >
+                            <label className='options2'>
+                              <Field
+                                as={IonRadio}
+                                name='is_student'
+                                value='true'
+                                style={{ marginLeft: "5px" }}
+                              />
+                              Sí
+                            </label>
+                            <label className='options2'>
+                              <Field
+                                as={IonRadio}
+                                name='is_student'
+                                value='false'
+                                style={{ marginLeft: "5px" }}
+                              />
+                              No
+                            </label>
+                          </IonRadioGroup>
                         </div>
                       </div>
                     )}

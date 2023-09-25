@@ -232,6 +232,32 @@ export const getConversation = createAsyncThunk<
 }
 );
 
+export const setKeywordsorClicks = createAsyncThunk<
+  any,
+  any,
+  { rejectValue: MyErrorType }
+>("user/updateKeywordsorClicks", async (data, thunkAPI) => {
+  try {
+    const state = thunkAPI.getState() as User;
+    const id = state.user.user.id;
+    const { access_token } = state.user;
+    const response = await axios.patch(
+      `${path}/users/update/${id}`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue({
+      errorMessage: error.response.data.detail,
+    });
+  }
+});
+
 export const updateUserInfo = createAsyncThunk<
   any,
   any,
@@ -451,6 +477,9 @@ export const userSlice = createSlice({
       })
       .addCase(updateUserInfo.rejected, (state) => {
         state.isLoading = false;
+      })
+      .addCase(setKeywordsorClicks.fulfilled, (state, action) => {
+        state.user = action.payload;
       })
       .addCase(changePassword.fulfilled, (state, action) => {
         state.errorMessage = action.payload?.message;

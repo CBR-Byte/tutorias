@@ -71,16 +71,26 @@
 }
 .recomendados {
     margin-bottom: 3vh;
+    width: 100vw;
 }
 .textoRec {
     font-weight: 600;
+    width: 100vw;
+    margin-bottom: 1vh;
+}
+.textoRes {
+    font-weight: 600;
+    padding: 0px;
+    margin-left: 10vw;
 }
 .resultados {
-    height: 33vh;
+    max-height: 33vh;
     display: flex;
     align-items: center;
-    justify-content: center;
     flex-direction: column;
+    width: 100vw;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 .iconosB {
     position: relative;
@@ -101,19 +111,17 @@
     background-color: #2895a5 !important;
 }
 .res {
-    overflow: scroll;
-    height: 29vh
+    height: 35vh
 }
 .filter {
-    position: absolute  ;
-    margin-right: 4vh;
-    right: 0;
+    position: static;
+    width: min-content;
 }
 .resTitle {
+    position: static;
     display: flex;
-    align-items: center;
-    margin-bottom: 2vh;
     justify-content: center;
+    width: 80vw;
 }
 .iconFilter {    
     height: 4vh;
@@ -136,5 +144,42 @@
     right: 25px;
     top: 0;
     background-color: #D2D9E7;
-
+}
+.filterContent {
+    width: 80vw;
+    z-index: 1;
+    height: max-content;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 3vh;
+    margin-bottom: 2vh;
+    margin-top: 2vh;
+}
+ion-range {
+    --bar-height: 5px;
+    --bar-border-radius: 8px;
+    --knob-size: 20px;
+    --bar-background: #05938C;
+    --pin-background: #155B68;
+    --bar-background-active: #155B68;
+    padding: 0;
+    height: 2vh;
+}
+.divFilter {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    height: 4vh;
+    justify-content: center;
+    gap: 1vh;
+    
+}
+.labelFilter {
+    font-size: 2vh;
+    margin: 0px 10px 0px 10px;
+}
+.selectFilter {
+    width: fit-content;
 }
