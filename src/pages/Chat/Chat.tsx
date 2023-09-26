@@ -150,7 +150,9 @@ const Chat: React.FC = () => {
       console.log("emit message");
     });
 
-    newSocket.on("chat", (data: any) => {
+    newSocket.off("chat").on("chat", (data: any) => {
+      console.log("emit chat");
+      
       const message = data.message;
       updateMessages(message);
     });
@@ -278,7 +280,7 @@ const Chat: React.FC = () => {
     handleBubbleClick(idPrueba);
     setIdReceiver(idPrueba);
     setNameConversation(name);
-    loadChat();
+   // loadChat();
     history.push(`/chat/${idPrueba}`);
   };
   useEffect(() => {
