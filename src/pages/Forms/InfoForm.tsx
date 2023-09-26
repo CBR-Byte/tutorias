@@ -18,7 +18,6 @@ import { useAppDispatch, useAppSelector } from "../../components/redux/hooks";
 import {
   changeAlertUpdateFalse,
   changeAlertUpdateTrue,
-  changeErrorRegister,
   changePassword,
   updateUserInfo,
 } from "../../components/redux/states/userSlice";
@@ -63,7 +62,7 @@ const InfoForm: React.FC = () => {
   };
 
   const handleCloseAlert = () => {
-    dispatch(changeAlertUpdateFalse()); //puede ser el error de que salga el alert
+    dispatch(changeAlertUpdateFalse());
     setAlert(false);
   };
 

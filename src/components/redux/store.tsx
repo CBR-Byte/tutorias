@@ -3,6 +3,8 @@ import {userSlice} from './states/userSlice'
 import { storage } from "../redux/states/userSlice";
 import {subjectSlice} from './states/subjectSlice';
 import { tutorSlice } from './states/tutorSlice';
+import { chatSlice } from './states/chatSlice';
+//import { chatSlice } from './states/chatSlice';
 
 const storeData = async (value: any) => {
   try {
@@ -41,7 +43,6 @@ const loginMiddleware = (store:any) => (next:any) => (action:any) => {
 
 const refresh= (store:any) => (next:any) => (action:any) => {
   if (action.type === 'user/tokenRef/fulfilled') {
-
     updateAccessToken(action.payload);
   }
   return next(action);
@@ -56,9 +57,27 @@ const logoutMiddleware = (store:any) => (next:any) => (action:any) => {
 };
 
 
+const storeHistorial = async (value: any) => {
+  try {
+    await storage.set('historial', {historial: JSON.stringify(value?.historial)});
+  } catch (error) {
+    console.log(error);
+  }
+};
+const saveHistorial = (store: any) => (next:any) => (action:any) => {
+  if (action.type === 'chat/getHistorial/fulfilled') {
+    try {
+      storeHistorial(action.payload);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+  return next(action);
+};
+
 export const store = configureStore({
-  reducer: {user : userSlice.reducer, subject : subjectSlice.reducer, tutor : tutorSlice.reducer},
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(loginMiddleware, logoutMiddleware,refresh),
+  reducer: {user : userSlice.reducer, subject : subjectSlice.reducer, tutor : tutorSlice.reducer, chat: chatSlice.reducer},
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(loginMiddleware, logoutMiddleware,refresh, saveHistorial,),
   devTools: true,
 })
 

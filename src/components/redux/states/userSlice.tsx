@@ -26,7 +26,7 @@ export interface User {
   user?: any;
 }
 
-interface MyErrorType {
+export interface MyErrorType {
   errorMessage: string;
 }
 
@@ -107,7 +107,7 @@ export const getListUsers = createAsyncThunk<
     const user = await response.data;
     return user;
   } catch (error: any) {
-    console.log(error);
+    
   }
 });
 
@@ -137,7 +137,7 @@ export const verify = createAsyncThunk<
       user: response.data.userData,
     };
   } catch (err: any) {
-    thunkAPI.dispatch(refreshToken({ refresh_token: data.refresh }));
+    thunkAPI.dispatch(refreshToken({ refresh_token: JSON.parse(data.refresh) }));
   }
 });
 
@@ -146,8 +146,8 @@ export const changePassword = createAsyncThunk<
   any,
   { rejectValue: MyErrorType }
 >("user/changePassword", async (data, thunkAPI) => {
+  const state = thunkAPI.getState() as User;
   try {
-    const state = thunkAPI.getState() as User;
     const token = state.user.access_token;
     const email = state.user.user.email;
     const response = await axios.post(
@@ -157,6 +157,14 @@ export const changePassword = createAsyncThunk<
     );
     return response.data;
   } catch (error: any) {
+    if (error.response?.data.detail === "JWTDecodeError" || error.response?.data.detail === "Porfavor proporcione un token de accesso") {
+        thunkAPI.dispatch(refreshToken({ refresh_token: state.user.refresh_token }));
+        thunkAPI.dispatch(changeAlertUpdateTrue());
+        return thunkAPI.rejectWithValue({
+          errorMessage: "hubo un error al cambiar la contraseña, por favor intente de nuevo",
+        });
+    }
+    thunkAPI.dispatch(changeAlertUpdateTrue());
     return thunkAPI.rejectWithValue({
       errorMessage: error.response.data.detail,
     });
@@ -185,12 +193,12 @@ export const deleteAccount = createAsyncThunk(
 
 export const refreshToken = createAsyncThunk<
   any,
-  any,
-  { rejectValue: MyErrorType }
+  any
+  //{ rejectValue: MyErrorType }
 >("user/tokenRef", async (token, thunkAPI) => {
   try {
-    const refresh = JSON.parse(token.refresh_token);
-
+    const refresh = token.refresh_token;
+    
     const response = await axios.post(
       `${path}/users/refresh`,
       null,
@@ -206,6 +214,7 @@ export const refreshToken = createAsyncThunk<
       user: response.data.user,
     };
   } catch (error: any) {
+    thunkAPI.dispatch(logOut());
     return thunkAPI.rejectWithValue({
       errorMessage: error.response.data.detail,
     });
@@ -263,8 +272,8 @@ export const updateUserInfo = createAsyncThunk<
   any,
   { rejectValue: MyErrorType }
 >("user/updateUserInfo", async (data, thunkAPI) => {
-  try {
-    const state = thunkAPI.getState() as User;
+  const state = thunkAPI.getState() as User;
+  try {  
     if (data.id) {
       const id = data.id;
       const { access_token } = state.user;
@@ -296,13 +305,19 @@ export const updateUserInfo = createAsyncThunk<
       return response.data;
     }
   } catch (error: any) {
-    if (error.response?.data.detail === "El token de accesso ha expirado") {
-      const tokenRefresh = await storage.get(data.refresh_token);
+    const tokenRefresh = state.user.refresh_token;
+    if ((error.response?.data.detail === "El token de acceso ha expirado") || (error.response?.data.detail === "JWTDecodeError")) {   
       thunkAPI.dispatch(refreshToken({ refresh_token: tokenRefresh }));
-    }
 
+      
+      return thunkAPI.rejectWithValue({
+        errorMessage: "Hubo un error al actualizar los datos, por favor intente de nuevo",
+      });
+    }
+    
+    
     return thunkAPI.rejectWithValue({
-      errorMessage: error.response.data.detail,
+      errorMessage: "Hubo un error al actualizar los datos, por favor intente de nuevo",
     });
   }
 });
@@ -401,6 +416,7 @@ export const userSlice = createSlice({
         state.isLoading = false;
         state.registerCompleted = true;
         state.errorLogin = false;
+        state.alertUpdate = false;
         state.user = action.payload.user;
       })
       .addCase(onLogin.pending, (state) => {
@@ -419,6 +435,7 @@ export const userSlice = createSlice({
         state.errorMessage = "";
         state.isAuthenticated = true;
         state.isLoading = false;
+        state.alertUpdate = false;
         state.registerCompleted = false;
         state.errorRegister = false;
         state.user = action.payload.user;
@@ -455,17 +472,16 @@ export const userSlice = createSlice({
         state.refresh_token = action.payload.refresh_token;
         state.token_type = "bearer";
         state.status = "success";
-        state.errorMessage = "";
         state.isLoading = false;
         state.isAuthenticated = true;
         state.registerCompleted = true;
         state.errorRegister = false;
         state.user = action.payload.user;
       })
-      .addCase(refreshToken.rejected, (state, action) => {
-        state = initialState;
-        state.errorMessage = action.payload?.errorMessage;
-      })
+      // .addCase(refreshToken.rejected, (state, action) => {
+      //   state = initialState;
+      //   state.errorMessage = action.payload?.errorMessage;
+      // })
       .addCase(updateUserInfo.fulfilled, (state, action) => {
         state.isLoading = false;
         state.user = action.payload;
@@ -475,8 +491,9 @@ export const userSlice = createSlice({
       .addCase(updateUserInfo.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(updateUserInfo.rejected, (state) => {
+      .addCase(updateUserInfo.rejected, (state, action) => {
         state.isLoading = false;
+        state.errorMessage = action.payload?.errorMessage;
       })
       .addCase(setKeywordsorClicks.fulfilled, (state, action) => {
         state.user = action.payload;
@@ -516,7 +533,7 @@ export const userSlice = createSlice({
       .addCase(uploadImage.fulfilled, (state, action) => {
         state.isLoading = false;
         state.user.image_url = action.payload.url;
-      });
+      })
   },
 });
 

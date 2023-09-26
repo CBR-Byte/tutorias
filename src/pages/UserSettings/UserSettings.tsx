@@ -11,6 +11,8 @@ import { deleteAccount, getConversation } from "../../components/redux/states/us
 import { useAppDispatch } from "../../components/redux/hooks";
 import { Camera, CameraResultType } from "@capacitor/camera";
 import { uploadImage } from "../../components/redux/states/userSlice";
+import { newSocket } from "../../socket";
+import { updateMessages } from "../../services";
 
 const UserSettings: React.FC = () => {
   const history = useHistory();
@@ -18,6 +20,7 @@ const UserSettings: React.FC = () => {
   const stateUser = useAppSelector((state) => state.user);
   const [showAlert, setShowAlert] = useState(false);
   const [conversations, setConversations] = useState<any[]>([]);
+  const [notification, setNotification] = useState(false)
 
   const getPath = async () => {
     const image = await Camera.getPhoto({
@@ -48,6 +51,12 @@ const UserSettings: React.FC = () => {
         read: user.read,
       }));
       setConversations(usersData);
+    });
+
+    newSocket.on("chat", (data: any) => {
+      setNotification(true);
+      const newMessage = data.message;
+      updateMessages(newMessage);
     });
   }, []);
 
@@ -86,7 +95,7 @@ const UserSettings: React.FC = () => {
         <div style={{ zIndex: "-1" }} className='circles3 bottom2' />
         <div style={{ zIndex: "-1" }} className='circles3 bottom3' />
         <div className='contenedor'>
-          <h1 className='titleProfile'>Perfil</h1>
+          <h1 className='titleProfile'>Configuraciones</h1>
           <div className='topProfile'>
             <img
               className='imgProfile'
@@ -153,7 +162,7 @@ const UserSettings: React.FC = () => {
         <Footer
           active='profile'
           notification={
-            conversations.find((conversation) => !conversation.read)
+            notification || conversations.find((conversation) => !conversation.read)
               ? true
               : false
           }

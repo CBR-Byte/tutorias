@@ -30,9 +30,10 @@ import { getSubjects } from "../../components/redux/states/subjectSlice";
 const validationSchema = Yup.object({
   format_tutor: Yup.array().required("Formato de clase requerido"),
   cost_tutor: Yup.number()
-    .required("Presupuesto requerido")
-    .positive("Debe ser un número positivo")
-    .integer("El costo debe ser un número entero"),
+  .required("Presupuesto requerido")
+  .positive("Debe ser un número positivo")
+  .integer("El presupuesto debe ser un número entero")
+  .moreThan(4999, "El presupuesto debe ser mayor"),
   method_tutor: Yup.array().required("Método de clase requerido"),
   type_tutor: Yup.string().required("Tipo de tutor requerido"),
   type_group_tutor: Yup.array().required("Tipo de grupo requerido"),
@@ -65,7 +66,7 @@ const UserForm: React.FC = () => {
   const [clickedButton, setClickedButton] = useState(false);
 
   const handleSearch = (event: any) => {
-    setSearchTerm(event.detail.value);
+    setSearchTerm(event.detail.value.trim());
   };
 
   useEffect(() => {

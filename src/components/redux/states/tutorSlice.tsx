@@ -25,7 +25,7 @@ export const getTutors = createAsyncThunk<
     const users = await response.data;
     return users;
   } catch (error: any) {
-    console.log(error);
+    
     return thunkAPI.rejectWithValue({
       errorMessage: error.response.data.detail,
     });
@@ -44,7 +44,7 @@ export const getAllTutors = createAsyncThunk<
       const users = await response.data;
       return users;
     } catch (error: any) {
-      console.log(error);
+      
       return thunkAPI.rejectWithValue({
         errorMessage: error.response.data.detail,
       });

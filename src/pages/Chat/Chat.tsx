@@ -5,7 +5,7 @@ import Footer from "../../components/Footer/Footer";
 import "./Chat.css";
 import React, { useEffect, useState, useRef } from "react";
 import { IonButton, IonIcon, IonPage, IonText, IonTitle } from "@ionic/react";
-import { io } from "socket.io-client";
+
 import { send, caretDown } from "ionicons/icons/";
 import { useHistory, useParams } from "react-router";
 import { useAppDispatch, useAppSelector } from "../../components/redux/hooks";
@@ -19,7 +19,9 @@ import "swiper/css";
 import "swiper/css/effect-cards";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
+import { storage } from "../../components/redux/states/userSlice";
 import Loading from "../../components/Loading";
+import { newSocket } from "../../socket";
 import { Keyboard } from "@capacitor/keyboard";
 
 interface Message {
@@ -28,6 +30,7 @@ interface Message {
   receiver: string;
   date: string;
   time: string;
+  read: boolean;
 }
 
 interface ConversationsProfiles {
@@ -36,15 +39,6 @@ interface ConversationsProfiles {
   image_url: string;
   read: boolean;
 }
-const path = import.meta.env.VITE_PATH_BACKEND;
-
-  if (path) {
-    var newSocket = io(path, {
-      path: "/sockets",
-      transports: ["websocket"],
-      upgrade: false
-    });
-  }
 
 const Chat: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -66,7 +60,6 @@ const Chat: React.FC = () => {
   );
 
   const history = useHistory();
-
   const handleBubbleClick = async (idHandler: string) => {
     setIdBuuble(idHandler);
     setNotification(false);
@@ -76,7 +69,6 @@ const Chat: React.FC = () => {
     const disp = (await dispatch(getListUsers(id))).payload;
     setNameConversation(disp.name);
     setIsTutor(disp.is_tutor);
-    newSocket.emit("join_room", { idUser: userId, idReceiver: idReceiver });
   };
 
   useEffect(() => {
@@ -92,37 +84,88 @@ const Chat: React.FC = () => {
         : setNotification(false);
       setConversations(usersData);
     });
+    setIdReceiver(id);
+  }, []);
+
+  const loadChat = async () => {
+    let allMessages2 = await storage.get("historial");
+    allMessages2 = await JSON.parse(allMessages2.historial);
+    for (let message of allMessages2) {
+      if (message.id === id) {
+        setMessages(message.messages);
+        break;
+      }
+    }
+  };
+
+  useEffect(() => {
     if (id) {
-      newSocket.connect();
+      loadChat();
+    }
+
+    if (id) {
       fetchData();
     }
   }, [id]);
 
+  //atualiza los mensajes en localstorage cuando el usuario recibe un mensaje
+  const updateMessages = async (newMessage: any) => {
+    let allMessages2 = await storage.get("historial");
+    allMessages2 = JSON.parse(allMessages2?.historial);
+    const verificationId = allMessages2.find(
+      (message: any) => message.id === newMessage.sender
+    );
+    if (!verificationId) {
+      await storage.set("historial", {
+        historial: JSON.stringify([
+          ...allMessages2,
+          { id: newMessage.receiver, message: [newMessage] },
+        ]),
+      });
+    }
+    if (verificationId) {
+      for (let message of allMessages2) {
+        if (message.id === newMessage.sender) {
+          message.messages.push(newMessage);
+          break;
+        }
+      }
+      await storage.set("historial", {
+        historial: JSON.stringify(allMessages2),
+      });
+      const newMessages = allMessages2.find(
+        (message: any) => message.id === idReceiver
+      );
+      if (newMessages) {
+        setMessages(newMessages.messages);
+      }
+    }
+
+  };
+
   useEffect(() => {
-    // Configurar la conexión al servidor WebSocket
+    // listener del socket
     newSocket.on("messages", (data: any) => {
-      setMessages(data.messages);
+      //setMessages(data.messages);
+      console.log("emit message");
     });
-    
+
     newSocket.on("chat", (data: any) => {
-      const messages = data.messages;
-      // if(message === messages[messages.length - 1]){
-      //   console.log("mismo mensaje")
-      // }else setMessages((prevMessages) => [...prevMessages, message]);
-      setMessages(messages);
+      const message = data.message;
+      updateMessages(message);
     });
 
     newSocket.on("disconnect", () => {
-      newSocket.close();
+      //newSocket.close();
     });
 
     newSocket.on("join_room", (data: any) => {
-      newSocket.emit("messages", { idUser: userId, idReceiver: idReceiver });
+      //newSocket.emit("messages", { idUser: userId, idReceiver: idReceiver });
     });
 
-    return () => {
-      newSocket.disconnect();
-    };
+    // return () => {
+    //   newSocket.disconnect();
+    // };
   }, [id]);
 
   useEffect(() => {
@@ -131,6 +174,39 @@ const Chat: React.FC = () => {
     }
   }, [messages]);
 
+  //actualizar mensajes cuando el usuario manda el mensaje
+  const updateChat = async (newMessage: Message) => {
+
+    setMessages((prev) => [...prev, newMessage]);
+
+    let allMessages2 = await storage.get("historial");
+    allMessages2 = JSON.parse(allMessages2?.historial);
+
+    const verifyId = allMessages2.find(
+      (message: any) => message.id === newMessage.receiver
+    );
+
+    if (!verifyId) {
+      await storage.set("historial", {
+        historial: JSON.stringify([
+          ...allMessages2,
+          { id: newMessage.receiver, message: [newMessage] },
+        ]),
+      });
+    } else {
+      for (let message of allMessages2) {
+        if (message.id === newMessage.receiver) {
+          message.messages.push(newMessage);
+          break;
+        }
+      }
+      await storage.set("historial", {
+        historial: JSON.stringify(allMessages2),
+      });
+    }
+  };
+
+  //enviar mensaje al otro usuario
   const sendMessage = (destinatario: string) => {
     if (inputMessage.trim().length > 0) {
       const date = new Date();
@@ -152,9 +228,11 @@ const Chat: React.FC = () => {
         receiver: destinatario,
         date: dateFormatted,
         time: timeFormatted,
+        read: false,
       };
       newSocket.emit("chat", message);
       setInputMessage("");
+      updateChat(message);
     }
   };
 
@@ -186,7 +264,7 @@ const Chat: React.FC = () => {
 
   setTimeout(() => {
     setIsLoading(false);
-  }, 500);
+  }, 1000);
 
   const [firsTime, setFirsTime] = useState<Boolean>(true);
   const firstTimeFunction = () => {
@@ -196,7 +274,13 @@ const Chat: React.FC = () => {
       setFirsTime(false);
     }
   };
-
+  const updateBubble = async (idPrueba: string, name: string) => {
+    handleBubbleClick(idPrueba);
+    setIdReceiver(idPrueba);
+    setNameConversation(name);
+    loadChat();
+    history.push(`/chat/${idPrueba}`);
+  };
   useEffect(() => {
     firstTimeFunction();
   });
@@ -257,10 +341,7 @@ const Chat: React.FC = () => {
                           img={conversation.image_url}
                           read={conversation.read}
                           onClick={() => {
-                            handleBubbleClick(conversation._id);
-                            setIdReceiver(conversation._id);
-                            setNameConversation(conversation.name);
-                            history.push(`/chat/${conversation._id}`);
+                            updateBubble(conversation._id, conversation.name);
                           }}
                         />
                       </div>

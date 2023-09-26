@@ -77,6 +77,8 @@ const Profile: React.FC = () => {
         setCanOpinion(true);
       }
     });
+
+    
   }, []);
 
   useEffect(() => {
@@ -86,6 +88,7 @@ const Profile: React.FC = () => {
       const tutorParam = tutors.tutors?.find((tutor: any) => tutor.id === id);
       setDataProfile(tutorParam);
     }
+    
   }, []);
 
   const handleOpinion = () => {

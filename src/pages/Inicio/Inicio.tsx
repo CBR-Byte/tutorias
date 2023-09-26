@@ -41,11 +41,6 @@ import "swiper/css/effect-cards";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import Footer from "../../components/Footer/Footer";
-import {
-  getConversation,
-  setKeywordsorClicks,
-} from "../../components/redux/states/userSlice";
-
 interface filterOptions {
   cost_tutor?: number | { lower: number; upper: number };
   type_tutor: string;
@@ -53,6 +48,16 @@ interface filterOptions {
   type_group_tutor: string[];
   format_tutor: string[];
 }
+import {
+  getConversation,
+  setKeywordsorClicks
+} from "../../components/redux/states/userSlice";
+import {
+  getHistorial
+} from "../../components/redux/states/chatSlice";
+import { join, newSocket } from "../../socket";
+import { updateMessages } from "../../services";
+
 
 const Inicio: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -63,6 +68,10 @@ const Inicio: React.FC = () => {
   const [tutores, setTutores] = useState<any[]>([]);
   const [conversations, setConversations] = useState<any[]>([]);
   const [hasResults, setHasResults] = useState<boolean>(false);
+  const [notification, setNotification] = useState(false)
+
+  //actualizar mensajes ucando usuario recibe un mensaje
+
   const [isFilter, setIsFilter] = useState<boolean>(false);
   const [initialPrice, setInitialPrice] = useState<number[]>([]);
   const [filtros, setFiltros] = useState<filterOptions>({
@@ -78,6 +87,18 @@ const Inicio: React.FC = () => {
     } else if (!stateUser.registerCompleted && stateUser.user?.is_student) {
       history.push("/userForm");
     }
+    // if(historial === null){
+    //   dispatch(getHistorial(stateUser.user?.id));
+    // }else dispatch(updateHistorial(historial));
+    dispatch(getHistorial(stateUser.user?.id)).then((res) => {
+      join(stateUser?.user?.id);
+    });
+
+    newSocket.on("chat", (data: any) => {
+      setNotification(true);
+      const newMessage = data.message;
+      updateMessages(newMessage);
+    });
   }, []);
 
   useEffect(() => {
@@ -88,6 +109,7 @@ const Inicio: React.FC = () => {
         image_url: user.image_url,
         read: user.read,
       }));
+
       setConversations(usersData);
     });
   }, []);
@@ -100,7 +122,6 @@ const Inicio: React.FC = () => {
     const keyWords = inputRef.current?.value?.toString().split(" ");
     const keywordsState = stateUser.user?.keywords;
     dispatch(setKeywordsorClicks({ keywords: keywordsState.concat(keyWords) }));
-    console.log(keyWords);
     if (inputRef.current?.value !== "") {
       setIsSearch(true);
       dispatch(getTutors(keyWords)).then((res) => {
@@ -493,6 +514,7 @@ const Inicio: React.FC = () => {
         <Footer
           active='inicio'
           notification={
+            notification ||
             conversations.find((conversation) => !conversation.read)
               ? true
               : false

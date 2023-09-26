@@ -25,7 +25,11 @@ const validationSchema = Yup.object({
   career: Yup.string().required("Carrera requerida"),
   semester: Yup.number().required("Semestre requerido"),
   format: Yup.array().required("Formato de clase requerido"),
-  budget: Yup.number().required("Presupuesto requerido").positive("Debe ser un número positivo").integer("El presupuesto debe ser un número entero"),
+  budget: Yup.number()
+  .required("Presupuesto requerido")
+  .positive("Debe ser un número positivo")
+  .integer("El presupuesto debe ser un número entero")
+  .moreThan(4999, "El presupuesto debe ser mayor"),
   method: Yup.array().required("Método de clase requerido"),
   type_group: Yup.array().required("Tipo de grupo requerido"),
 });
