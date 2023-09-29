@@ -1,8 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { MyErrorType, User } from "./userSlice";
 import axios from "axios";
-
-const path = import.meta.env.VITE_PATH_BACKEND;
+import { path } from "../../../services";
 
 
 export const getHistorial = createAsyncThunk<
@@ -47,6 +46,22 @@ export const getConversation = createAsyncThunk<
   }
 }
 );
+
+export const getListUsers = createAsyncThunk<
+  any,
+  any,
+  { rejectValue: MyErrorType }
+>("chat/getListUsers", async (id) => {
+  try {
+    const response = await axios.get(
+      `${path}/users/userName/${id}`
+    );
+    const user = await response.data;
+    return user;
+  } catch (error: any) {
+    
+  }
+});
 
 export const chatSlice = createSlice({
     name: "chat",

@@ -32,7 +32,7 @@ import "../../components/Bg/Bg.css";
 import axios from "axios";
 import { arrowBack } from "ionicons/icons";
 import Loading from "../../components/Loading";
-import { Network } from "@capacitor/network";
+import { path } from "../../services";
 
 const validationSchema = Yup.object({
   email: Yup.string().email("Email inválido").required("Email requerido"),
@@ -61,7 +61,7 @@ const PassRecovery: React.FC = () => {
       const data = { token: token, password: state.password };
       await axios
         .post(
-          `https://tutoriapp.azurewebsites.net/change_password/`,
+          `${path}/change_password/`,
           data
         )
         .then((res) => {
@@ -111,7 +111,7 @@ const PassRecovery: React.FC = () => {
   const fetchEmail = async (email: string) => {
     await axios
       .post(
-        `https://tutoriapp.azurewebsites.net/password_reset/${email}`
+        `${path}/password_reset/${email}`
       )
       .then((res) => {
         setState({

@@ -16,9 +16,9 @@ import { useHistory } from "react-router";
 import { useParams } from "react-router";
 import { useAppSelector, useAppDispatch } from "../../components/redux/hooks";
 import {
-  updateUserInfo,
-  getConversation,
+  updateUserInfo
 } from "../../components/redux/states/userSlice";
+import { getConversation } from "../../components/redux/states/chatSlice";
 
 interface Opinion {
   opinion: string;
@@ -156,6 +156,7 @@ const Profile: React.FC = () => {
               width: "30%",
             }}
             shape='round'
+            disabled={id === state.user?.id}
           >
             <IonIcon
               style={{ fontSize: "40px", right: "10px", position: "relative" }}

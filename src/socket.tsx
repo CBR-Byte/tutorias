@@ -1,9 +1,7 @@
 
 import { io } from "socket.io-client";
 import { storage } from "./components/redux/states/userSlice";
-import { useAppSelector } from "./components/redux/hooks";
-
-const path = import.meta.env.VITE_PATH_BACKEND;
+import { path } from "./services";
 export const newSocket = io(path, {
     path: "/sockets",
     transports: ["websocket"],

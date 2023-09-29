@@ -25,3 +25,5 @@ export const updateMessages = async(newMessage:any) => {
       
     }
 }
+
+export const path = import.meta.env.VITE_PATH_BACKEND;

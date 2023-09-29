@@ -9,10 +9,6 @@ import { IonButton, IonIcon, IonPage, IonText, IonTitle } from "@ionic/react";
 import { send, caretDown } from "ionicons/icons/";
 import { useHistory, useParams } from "react-router";
 import { useAppDispatch, useAppSelector } from "../../components/redux/hooks";
-import {
-  getConversation,
-  getListUsers,
-} from "../../components/redux/states/userSlice";
 import Bubble from "../../components/Bubble/Bubble";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -23,6 +19,7 @@ import { storage } from "../../components/redux/states/userSlice";
 import Loading from "../../components/Loading";
 import { newSocket } from "../../socket";
 import { Keyboard } from "@capacitor/keyboard";
+import { getConversation, getListUsers } from "../../components/redux/states/chatSlice";
 
 interface Message {
   message: string;
@@ -145,7 +142,7 @@ const Chat: React.FC = () => {
 
   useEffect(() => {
     // listener del socket
-    newSocket.on("messages", (data: any) => {
+    newSocket.on("messReaded", (data: any) => {
       //setMessages(data.messages);
       console.log("emit message");
     });
@@ -159,10 +156,6 @@ const Chat: React.FC = () => {
 
     newSocket.on("disconnect", () => {
       //newSocket.close();
-    });
-
-    newSocket.on("join_room", (data: any) => {
-      //newSocket.emit("messages", { idUser: userId, idReceiver: idReceiver });
     });
 
     // return () => {
@@ -276,12 +269,12 @@ const Chat: React.FC = () => {
       setFirsTime(false);
     }
   };
-  const updateBubble = async (idPrueba: string, name: string) => {
-    handleBubbleClick(idPrueba);
-    setIdReceiver(idPrueba);
+  const updateBubble = async (idChat: string, name: string) => {
+    newSocket.emit("messReaded", {idUser: userId, idReceiver: idChat})
+    handleBubbleClick(idChat);
+    setIdReceiver(idChat);
     setNameConversation(name);
-   // loadChat();
-    history.push(`/chat/${idPrueba}`);
+    history.push(`/chat/${idChat}`);
   };
   useEffect(() => {
     firstTimeFunction();

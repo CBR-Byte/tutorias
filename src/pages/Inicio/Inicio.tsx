@@ -49,10 +49,10 @@ interface filterOptions {
   format_tutor: string[];
 }
 import {
-  getConversation,
   setKeywordsorClicks
 } from "../../components/redux/states/userSlice";
 import {
+  getConversation,
   getHistorial
 } from "../../components/redux/states/chatSlice";
 import { join, newSocket } from "../../socket";

@@ -18,7 +18,7 @@ import * as Yup from "yup";
 import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../components/redux/hooks";
 import { useHistory } from "react-router";
-import { updateUserInfo } from "../../components/redux/states/userSlice";
+import { changeAlertFormsTrue, updateUserInfo } from "../../components/redux/states/userSlice";
 import { changeRegisterCompleted } from "../../components/redux/states/userSlice";
 
 const validationSchema = Yup.object({
@@ -123,6 +123,7 @@ const UserForm: React.FC = () => {
                   actualizarData(values);
                   history.push("/inicio");
                 }
+                dispatch(changeAlertFormsTrue())
                 resetForm();
               }}
             >

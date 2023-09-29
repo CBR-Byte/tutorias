@@ -3,13 +3,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { userSlice } from "./userSlice";
+import { path } from "../../../services";
 import { AppDispatch } from "../store";
 
 interface Subject {
   subjects: string[];
 }
-
-const path = import.meta.env.VITE_PATH_BACKEND;
 
 export const getSubjects = createAsyncThunk<
   Subject,

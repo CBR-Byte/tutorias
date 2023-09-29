@@ -22,6 +22,7 @@ import { Slot } from "./UserForm";
 import { useAppDispatch, useAppSelector } from "../../components/redux/hooks";
 import { useHistory } from "react-router";
 import {
+  changeAlertFormsTrue,
   changeRegisterCompleted,
   updateUserInfo,
 } from "../../components/redux/states/userSlice";
@@ -128,7 +129,6 @@ const UserForm: React.FC = () => {
                 values.availability = selectedSlots;
                 if (state.registerCompleted) {
                   actualizarData(values);
-                  console.log(values);
                   history.push("/userSettings");
                 } else if (state.user?.is_student && !state.registerCompleted) {
                   actualizarData(values);
@@ -138,6 +138,7 @@ const UserForm: React.FC = () => {
                   dispatch(changeRegisterCompleted());
                   history.push("/inicio");
                 }
+                dispatch(changeAlertFormsTrue())
                 resetForm();
               }}
             >

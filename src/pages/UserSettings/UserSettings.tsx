@@ -7,12 +7,13 @@ import { useHistory } from "react-router";
 import { useAppSelector } from "../../components/redux/hooks";
 import "./UserSettings.css";
 import { useEffect, useState } from "react";
-import { deleteAccount, getConversation } from "../../components/redux/states/userSlice";
+import { changeAlertFormsFalse, deleteAccount } from "../../components/redux/states/userSlice";
 import { useAppDispatch } from "../../components/redux/hooks";
 import { Camera, CameraResultType } from "@capacitor/camera";
 import { uploadImage } from "../../components/redux/states/userSlice";
 import { newSocket } from "../../socket";
 import { updateMessages } from "../../services";
+import { getConversation } from "../../components/redux/states/chatSlice";
 
 const UserSettings: React.FC = () => {
   const history = useHistory();
@@ -21,7 +22,9 @@ const UserSettings: React.FC = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [conversations, setConversations] = useState<any[]>([]);
   const [notification, setNotification] = useState(false)
-
+  const [alert2, setAlert2] = useState(false)
+  const alertForm = useAppSelector((state) => state.user?.alertForms);
+  const alertFormMessage = useAppSelector((state) => state.user?.errorMessage);
   const getPath = async () => {
     const image = await Camera.getPhoto({
       quality: 100,
@@ -41,7 +44,16 @@ const UserSettings: React.FC = () => {
       setShowAlert(false);
     }
   };
-
+  useEffect(() => {
+    setTimeout(() => {
+      if(alertForm){
+        setAlert2(true)
+      }else{
+        setAlert2(false)
+      }
+    }, 200);
+  }, [alertForm])
+  
   useEffect(() => {
     dispatch(getConversation()).then((res) => {
       const usersData = res.payload.map((user: any) => ({
@@ -86,6 +98,13 @@ const UserSettings: React.FC = () => {
           ]}
           header={"Eliminar cuenta"}
           message={"¿Está seguro que desea eliminar su cuenta?"}
+        />
+        <IonAlert
+        isOpen={alert2}
+        onDidDismiss={() => dispatch(changeAlertFormsFalse())}
+        header={"Info"}
+        message={alertFormMessage}
+        buttons={["OK"]}
         />
         <Header />
         <div style={{ zIndex: "-1" }} className='circle1' />

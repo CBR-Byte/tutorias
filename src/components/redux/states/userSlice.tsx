@@ -3,6 +3,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { Storage } from "@ionic/storage";
+import { path } from "../../../services";
 
 export const storage = new Storage();
 
@@ -21,6 +22,7 @@ export interface User {
   errorMessage?: string;
   errorRegister: boolean;
   alertUpdate: boolean;
+  alertForms: boolean;
   errorLogin: boolean;
   isAuthenticated: boolean;
   user?: any;
@@ -50,6 +52,7 @@ const initialState: User = {
   errorLogin: false,
   errorRegister: false,
   alertUpdate: false,
+  alertForms: false,
   isAuthenticated: false,
   user: null,
 };
@@ -65,7 +68,7 @@ export type token = {
   email: string;
 };
 
-const path = import.meta.env.VITE_PATH_BACKEND;
+
 
 export const uploadImage = createAsyncThunk<
   any,
@@ -92,22 +95,6 @@ export const uploadImage = createAsyncThunk<
     return thunkAPI.rejectWithValue({
       errorMessage: error.response.data.detail,
     });
-  }
-});
-
-export const getListUsers = createAsyncThunk<
-  any,
-  any,
-  { rejectValue: MyErrorType }
->("user/getListUsers", async (id) => {
-  try {
-    const response = await axios.get(
-      `${path}/users/userName/${id}`
-    );
-    const user = await response.data;
-    return user;
-  } catch (error: any) {
-    
   }
 });
 
@@ -220,26 +207,6 @@ export const refreshToken = createAsyncThunk<
     });
   }
 });
-
-export const getConversation = createAsyncThunk<
-  any,
-  void,
-  { rejectValue: MyErrorType }
->("user/getConversation", async (_, thunkAPI) => {
-  try {
-    const state = thunkAPI.getState() as User;
-    const id = state.user.user.id;
-    const response = await axios.get(
-      `${path}/messages/${id}`
-    );
-    return response.data;
-  } catch (error: any) {
-    return thunkAPI.rejectWithValue({
-      errorMessage: error.response.data.detail,
-    });
-  }
-}
-);
 
 export const setKeywordsorClicks = createAsyncThunk<
   any,
@@ -385,6 +352,8 @@ export const userSlice = createSlice({
       state.registerCompleted = true;
       state.errorRegister = false;
       state.errorLogin = false;
+      state.alertUpdate = false;
+      state.alertForms = false;
       state.isAuthenticated = false;
       state.user = null;
     },
@@ -403,6 +372,12 @@ export const userSlice = createSlice({
     changeAlertUpdateTrue: (state) => {
       state.alertUpdate = true;
     },
+    changeAlertFormsFalse: (state) => {
+      state.alertForms = false;
+    },
+    changeAlertFormsTrue: (state) => {
+      state.alertForms = true;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -417,6 +392,7 @@ export const userSlice = createSlice({
         state.registerCompleted = true;
         state.errorLogin = false;
         state.alertUpdate = false;
+        state.alertForms = false;
         state.user = action.payload.user;
       })
       .addCase(onLogin.pending, (state) => {
@@ -436,6 +412,7 @@ export const userSlice = createSlice({
         state.isAuthenticated = true;
         state.isLoading = false;
         state.alertUpdate = false;
+        state.alertForms = false;
         state.registerCompleted = false;
         state.errorRegister = false;
         state.user = action.payload.user;
@@ -520,6 +497,8 @@ export const userSlice = createSlice({
         state.registerCompleted = true;
         state.errorRegister = false;
         state.errorLogin = false;
+        state.alertUpdate = false;
+        state.alertForms = false;
         state.isAuthenticated = false;
         state.user = null;
       })
@@ -545,5 +524,7 @@ export const {
   changeLoading,
   changeAlertUpdateFalse,
   changeAlertUpdateTrue,
+  changeAlertFormsFalse,
+  changeAlertFormsTrue,
 } = userSlice.actions;
 export default userSlice.reducer;

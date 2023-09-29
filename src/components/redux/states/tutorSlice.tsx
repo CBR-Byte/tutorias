@@ -1,6 +1,7 @@
 /** @format */
 
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { path } from "../../../services";
 import axios from "axios";
 
 interface Tutor {
@@ -10,7 +11,7 @@ interface Tutor {
 const initialState: Tutor = {
     tutors: null,
     };
-const  path = import.meta.env.VITE_PATH_BACKEND;
+
 
 export const getTutors = createAsyncThunk<
   any,
