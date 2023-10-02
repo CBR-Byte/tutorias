@@ -19,7 +19,10 @@ import { storage } from "../../components/redux/states/userSlice";
 import Loading from "../../components/Loading";
 import { newSocket } from "../../socket";
 import { Keyboard } from "@capacitor/keyboard";
-import { getConversation, getListUsers } from "../../components/redux/states/chatSlice";
+import {
+  getConversation,
+  getListUsers,
+} from "../../components/redux/states/chatSlice";
 
 interface Message {
   message: string;
@@ -34,6 +37,11 @@ interface ConversationsProfiles {
   _id: string;
   name: string;
   image_url: string;
+  read: boolean;
+}
+
+interface Read {
+  id: string;
   read: boolean;
 }
 
@@ -52,6 +60,7 @@ const Chat: React.FC = () => {
   const messageRef = useRef<HTMLInputElement>(null);
   const [notification, setNotification] = useState<boolean>(false);
   const [isButtonVisible, setIsButtonVisible] = useState(false);
+  const [isRead, setIsRead] = useState<Read[]>([]);
   const [conversations, setConversations] = useState<ConversationsProfiles[]>(
     []
   );
@@ -80,8 +89,10 @@ const Chat: React.FC = () => {
         ? setNotification(true)
         : setNotification(false);
       setConversations(usersData);
+      const updateIsRead = usersData.map((user: any) => ({  id: user._id, read: user.read }));
+      setIsRead(updateIsRead);
+      setIdReceiver(id);
     });
-    setIdReceiver(id);
   }, []);
 
   const loadChat = async () => {
@@ -137,7 +148,6 @@ const Chat: React.FC = () => {
         setMessages(newMessages.messages);
       }
     }
-
   };
 
   useEffect(() => {
@@ -148,8 +158,19 @@ const Chat: React.FC = () => {
     });
 
     newSocket.off("chat").on("chat", (data: any) => {
-      console.log("emit chat");
-      
+      if (id == undefined || id != data.message.sender) {
+        const msg = {
+          id: data.message.sender,
+          read: false,
+        };
+        const index = isRead.findIndex((read) => read.id === msg.id);
+        if (index !== -1) {
+          const updatedIsRead = [...isRead];
+          updatedIsRead[index].read = false;
+          setIsRead(updatedIsRead);
+          console.log(updatedIsRead);
+        }
+      }
       const message = data.message;
       updateMessages(message);
     });
@@ -161,7 +182,7 @@ const Chat: React.FC = () => {
     // return () => {
     //   newSocket.disconnect();
     // };
-  }, [id]);
+  }, [id, isRead]);
 
   useEffect(() => {
     if (scroll.current) {
@@ -171,7 +192,6 @@ const Chat: React.FC = () => {
 
   //actualizar mensajes cuando el usuario manda el mensaje
   const updateChat = async (newMessage: Message) => {
-
     setMessages((prev) => [...prev, newMessage]);
 
     let allMessages2 = await storage.get("historial");
@@ -270,7 +290,7 @@ const Chat: React.FC = () => {
     }
   };
   const updateBubble = async (idChat: string, name: string) => {
-    newSocket.emit("messReaded", {idUser: userId, idReceiver: idChat})
+    newSocket.emit("messReaded", { idUser: userId, idReceiver: idChat });
     handleBubbleClick(idChat);
     setIdReceiver(idChat);
     setNameConversation(name);
@@ -281,7 +301,7 @@ const Chat: React.FC = () => {
   });
 
   useEffect(() => {
-    Keyboard.addListener("keyboardWillShow", info => {
+    Keyboard.addListener("keyboardWillShow", (info) => {
       const enviar = document.getElementById("enviar");
       const chat = document.getElementById("chatDiv");
       if (enviar) {
@@ -290,7 +310,7 @@ const Chat: React.FC = () => {
         if (chat) {
           const newHeight = height - 10;
           chat.style.height = `calc(100% - ${newHeight}px)`;
-          scrollToBottom( );
+          scrollToBottom();
         }
       }
     });
@@ -331,11 +351,34 @@ const Chat: React.FC = () => {
                   <SwiperSlide>
                     {conversations.map((conversation) => (
                       <div style={{ height: "100%" }} key={conversation._id}>
+                        {/* || isRead.find((read) => read.id === conversation._id) ? true : false */}
                         <Bubble
                           name={conversation.name}
                           img={conversation.image_url}
-                          read={conversation.read}
+                          read={
+                            isRead.find(
+                              (read) =>
+                                read.id === conversation._id &&
+                                read.read === false
+                            )
+                              ? false
+                              : true
+                          }
                           onClick={() => {
+                            const index = isRead.findIndex(
+                              (read) => read.id === conversation._id
+                            );
+
+                            if (index !== -1) {
+                              // Crea una copia del estado isRead
+                              const updatedIsRead = [...isRead];
+
+                              // Actualiza el objeto en el índice encontrado
+                              updatedIsRead[index].read = true;
+
+                              // Actualiza el estado con la nueva copia
+                              setIsRead(updatedIsRead);
+                            }
                             updateBubble(conversation._id, conversation.name);
                           }}
                         />
@@ -399,7 +442,7 @@ const Chat: React.FC = () => {
                       </div>
                     )}
                   </div>
-                  <div id="enviar" className='enviar'>
+                  <div id='enviar' className='enviar'>
                     <input
                       ref={messageRef}
                       className='inputEnviar'

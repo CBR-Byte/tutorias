@@ -137,16 +137,12 @@ const UserForm: React.FC = () => {
                       placeholder='Carrera'
                       className='options'
                       style={{ paddingTop: "15px", marginTop: "5px" }}
-                    >
-                      {carreras.map((carrera) => (
-                        <option
-                          className='values'
-                          key={carrera}
-                          value={carrera}
-                        >
-                          {carrera}
-                        </option>
-                      ))}
+                    > <option className='values' value=''>Seleccionar carrera</option>
+                    {carreras.map((carrera) => (
+                      <option className='values' key={carrera} value={carrera}>
+                        {carrera}
+                      </option>
+                    ))}
                     </Field>
                     {formikProps.touched.career && formikProps.errors.career ? (
                       <div style={{ color: "red" }}>
