@@ -16,8 +16,8 @@ import { useHistory } from "react-router";
 import { useParams } from "react-router";
 import { useAppSelector, useAppDispatch } from "../../components/redux/hooks";
 import {
-  updateUserInfo
-} from "../../components/redux/states/userSlice";
+  updateOpinions
+} from "../../components/redux/states/tutorSlice";
 import { getConversation } from "../../components/redux/states/chatSlice";
 
 interface Opinion {
@@ -110,7 +110,13 @@ const Profile: React.FC = () => {
         id: id,
         tutor_opinions: newTutor.tutor_opinions,
       };
-      dispatch(updateUserInfo(tutorDispatch));
+      dispatch(updateOpinions(tutorDispatch));
+      const input = document.getElementById("inputOpinion") as HTMLInputElement;
+      input.value = "";
+      setOpinion({
+        ...opinion,
+        calification_tutor: 0,
+      });
     }
   };
 
@@ -269,6 +275,7 @@ const Profile: React.FC = () => {
                 </div>
                 <div className='textoOpinion'>
                   <input
+                    id="inputOpinion"
                     className='inputOpinion'
                     placeholder='Escribe tu opinión'
                     type='text'

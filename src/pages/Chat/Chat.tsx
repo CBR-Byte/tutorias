@@ -154,7 +154,6 @@ const Chat: React.FC = () => {
     // listener del socket
     newSocket.on("messReaded", (data: any) => {
       //setMessages(data.messages);
-      console.log("emit message");
     });
 
     newSocket.off("chat").on("chat", (data: any) => {
@@ -168,7 +167,6 @@ const Chat: React.FC = () => {
           const updatedIsRead = [...isRead];
           updatedIsRead[index].read = false;
           setIsRead(updatedIsRead);
-          console.log(updatedIsRead);
         }
       }
       const message = data.message;

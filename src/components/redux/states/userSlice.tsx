@@ -253,8 +253,7 @@ export const updateUserInfo = createAsyncThunk<
             Authorization: `Bearer ${access_token}`,
           },
         }
-      );``
-
+      );
       return response.data;
     } else {
       const { id } = state.user.user;
@@ -281,8 +280,6 @@ export const updateUserInfo = createAsyncThunk<
         errorMessage: "Hubo un error al actualizar los datos, por favor intente de nuevo",
       });
     }
-    
-    
     return thunkAPI.rejectWithValue({
       errorMessage: "Hubo un error al actualizar los datos, por favor intente de nuevo",
     });
