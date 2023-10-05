@@ -41,13 +41,6 @@ import "swiper/css/effect-cards";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import Footer from "../../components/Footer/Footer";
-interface filterOptions {
-  cost_tutor?: number | { lower: number; upper: number };
-  type_tutor: string;
-  method_tutor: string[];
-  type_group_tutor: string[];
-  format_tutor: string[];
-}
 import {
   setKeywordsorClicks
 } from "../../components/redux/states/userSlice";
@@ -58,6 +51,13 @@ import {
 import { join, newSocket } from "../../socket";
 import { updateMessages } from "../../services";
 
+interface filterOptions {
+  cost_tutor?: number | { lower: number; upper: number };
+  type_tutor: string;
+  method_tutor: string[];
+  type_group_tutor: string[];
+  format_tutor: string[];
+}
 
 const Inicio: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -68,10 +68,7 @@ const Inicio: React.FC = () => {
   const [tutores, setTutores] = useState<any[]>([]);
   const [conversations, setConversations] = useState<any[]>([]);
   const [hasResults, setHasResults] = useState<boolean>(false);
-  const [notification, setNotification] = useState(false)
-
-  //actualizar mensajes ucando usuario recibe un mensaje
-
+  const [notification, setNotification] = useState(false);
   const [isFilter, setIsFilter] = useState<boolean>(false);
   const [initialPrice, setInitialPrice] = useState<number[]>([]);
   const [filtros, setFiltros] = useState<filterOptions>({
@@ -121,7 +118,11 @@ const Inicio: React.FC = () => {
   const searchTutors = () => {
     const keyWords = inputRef.current?.value?.toString().split(" ");
     const keywordsState = stateUser.user?.keywords;
-    dispatch(setKeywordsorClicks({ keywords: keywordsState.concat(keyWords) }));
+    keywordsState
+      ? dispatch(
+          setKeywordsorClicks({ keywords: keywordsState.concat(keyWords) })
+        )
+      : dispatch(setKeywordsorClicks({ keywords: keyWords }));
     if (inputRef.current?.value !== "") {
       setIsSearch(true);
       dispatch(getTutors(keyWords)).then((res) => {
@@ -130,6 +131,7 @@ const Inicio: React.FC = () => {
         } else {
           const tutorsData = res.payload.map((user: any) => ({
             id: user.id,
+            email: user.email,
             name: user.name,
             availability: user.availability,
             format_tutor: user.format_tutor,
@@ -243,11 +245,12 @@ const Inicio: React.FC = () => {
     }
   };
 
-  const handleCard = (idHandle: string) => {
+  const handleCard = (idHandle: string, emailHandle: string) => {
+    console.log(emailHandle)
     const clicksState = stateUser.user?.clicks;
     clicksState
-      ? dispatch(setKeywordsorClicks({ clicks: clicksState.concat(idHandle) }))
-      : dispatch(setKeywordsorClicks({ clicks: [idHandle] }));
+      ? dispatch(setKeywordsorClicks({ clicks: clicksState.concat(emailHandle) }))
+      : dispatch(setKeywordsorClicks({ clicks: [emailHandle] }));
 
     history.push(`/profile/${idHandle}`);
   };
@@ -490,7 +493,9 @@ const Inicio: React.FC = () => {
                   newTutors.map((tutor) => (
                     <Card
                       key={tutor.id}
-                      onClick={() => handleCard(tutor.id)}
+                      onClick={() =>
+                        handleCard(tutor.id, tutor.email)
+                      }
                       nombre={tutor.name}
                       modalidad={tutor.format_tutor}
                       descripcion={tutor.subjects_tutor}

@@ -41,6 +41,7 @@ export const getAllTutors = createAsyncThunk<
   try {
     const response = await axios.get(`${path}/users/tutores?keywords=`);
     const users = await response.data;
+    console.log(users);
     return users;
   } catch (error: any) {
     return thunkAPI.rejectWithValue({
