@@ -41,8 +41,24 @@ export const getAllTutors = createAsyncThunk<
   try {
     const response = await axios.get(`${path}/users/tutores?keywords=`);
     const users = await response.data;
-    console.log(users);
     return users;
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue({
+      errorMessage: error.response.data.detail,
+    });
+  }
+});
+
+export const getRecommendations = createAsyncThunk<
+  any,
+  any,
+  { rejectValue: { errorMessage: string } }
+>("tutor/getRecommendations", async (id, thunkAPI) => {
+  try {
+    const response = await axios.get(`${path}/users/tutores/recommendations/${id}`);
+    const tutors = await response.data;
+    console.log(tutors);
+    return tutors;
   } catch (error: any) {
     return thunkAPI.rejectWithValue({
       errorMessage: error.response.data.detail,

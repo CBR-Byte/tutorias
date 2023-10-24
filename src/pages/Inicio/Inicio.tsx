@@ -18,6 +18,7 @@ import { useAppDispatch, useAppSelector } from "../../components/redux/hooks";
 import {
   getTutors,
   getAllTutors,
+  getRecommendations,
 } from "../../components/redux/states/tutorSlice";
 import { useHistory } from "react-router";
 import "../Register/Register.css";
@@ -41,12 +42,10 @@ import "swiper/css/effect-cards";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import Footer from "../../components/Footer/Footer";
-import {
-  setKeywordsorClicks
-} from "../../components/redux/states/userSlice";
+import { setKeywordsorClicks } from "../../components/redux/states/userSlice";
 import {
   getConversation,
-  getHistorial
+  getHistorial,
 } from "../../components/redux/states/chatSlice";
 import { join, newSocket } from "../../socket";
 import { updateMessages } from "../../services";
@@ -62,6 +61,7 @@ interface filterOptions {
 const Inicio: React.FC = () => {
   const dispatch = useAppDispatch();
   const stateUser = useAppSelector((state) => state.user);
+  const stateTutors = useAppSelector((state) => state.tutor);
   const history = useHistory();
   const [IsSearch, setIsSearch] = useState<boolean>(false);
   const inputRef = useRef<HTMLIonInputElement>(null);
@@ -71,12 +71,37 @@ const Inicio: React.FC = () => {
   const [notification, setNotification] = useState(false);
   const [isFilter, setIsFilter] = useState<boolean>(false);
   const [initialPrice, setInitialPrice] = useState<number[]>([]);
+  const [recomendations, setRecomendations] = useState<any[]>([]);
   const [filtros, setFiltros] = useState<filterOptions>({
     type_tutor: "",
     method_tutor: [],
     type_group_tutor: [],
     format_tutor: [],
   });
+  const tips = [
+    "Dormir bien mejora tus calificaciones",
+    "No dejes todo para el final",
+    "La práctica hace al maestro",
+    "No te compares con los demás",
+    "No te rindas, recuerda por qué empezaste",
+    "No te estreses, todo saldrá bien",
+    "No te desanimes, todo esfuerzo tiene su recompensa",
+    "No te distraigas, enfócate en tus objetivos",
+    "No te olvides de ti, tu salud es lo más importante",
+  ];
+
+  useEffect(() => {
+    if (stateUser.user?.is_student) {
+      dispatch(getRecommendations(stateUser.user?.id)).then((res) => {
+        const all = stateTutors.tutors;
+        const emails = res.payload.map((user: any) => user[0]);
+        const recomendations = emails.map((email: any) => {
+          return all.find((tutor: any) => tutor.email === email);
+        });
+        setRecomendations(recomendations);
+      });
+    }
+  }, []);
 
   useEffect(() => {
     if (!stateUser.registerCompleted && stateUser.user?.is_tutor) {
@@ -84,9 +109,6 @@ const Inicio: React.FC = () => {
     } else if (!stateUser.registerCompleted && stateUser.user?.is_student) {
       history.push("/userForm");
     }
-    // if(historial === null){
-    //   dispatch(getHistorial(stateUser.user?.id));
-    // }else dispatch(updateHistorial(historial));
     dispatch(getHistorial(stateUser.user?.id)).then((res) => {
       join(stateUser?.user?.id);
     });
@@ -246,10 +268,11 @@ const Inicio: React.FC = () => {
   };
 
   const handleCard = (idHandle: string, emailHandle: string) => {
-    console.log(emailHandle)
     const clicksState = stateUser.user?.clicks;
     clicksState
-      ? dispatch(setKeywordsorClicks({ clicks: clicksState.concat(emailHandle) }))
+      ? dispatch(
+          setKeywordsorClicks({ clicks: clicksState.concat(emailHandle) })
+        )
       : dispatch(setKeywordsorClicks({ clicks: [emailHandle] }));
 
     history.push(`/profile/${idHandle}`);
@@ -274,64 +297,55 @@ const Inicio: React.FC = () => {
               placeholder='Buscar'
             />
           </div>
-          <div className='recomendados'>
-            <IonTitle className='textoRec'>RECOMENDADOS</IonTitle>
-            <Swiper
-              effect={"cards"}
-              pagination={{
-                clickable: true,
-              }}
-              grabCursor={true}
-              centeredSlides={true}
-              slidesPerView={"auto"}
-              cardsEffect={{ slideShadows: false }}
-              autoplay={{ delay: 2500, disableOnInteraction: false }}
-              modules={[
-                EffectCards,
-                Pagination,
-                Autoplay,
-                Navigation,
-                HashNavigation,
-              ]}
-            >
-              <SwiperSlide>
-                <Card
-                  onClick={() => console.log("hola")}
-                  nombre='Juan Pablo Gómez'
-                  modalidad='Virtual'
-                  descripcion='python, java, c++, cálculo, geometría, física, química'
-                  calificacion={4.5}
-                  precio={10000}
-                  numCalificacion={10}
-                  imagen='https://www.w3schools.com/howto/img_avatar.png'
-                />
-              </SwiperSlide>
-              <SwiperSlide>
-                <Card
-                  onClick={() => console.log("hola")}
-                  nombre='Camila Suarez Gómez'
-                  modalidad='presencial'
-                  descripcion='python, java, c++, cálculo, geometría, física, química,inglés, español'
-                  calificacion={5}
-                  precio={30000}
-                  numCalificacion={41}
-                  imagen='https://www.w3schools.com/w3images/avatar4.png'
-                />
-              </SwiperSlide>
-              <SwiperSlide>
-                <Card
-                  onClick={() => console.log("hola")}
-                  nombre='Jaime Obando Gómez'
-                  modalidad='presencial'
-                  descripcion='python, java, c++, cálculo, geometría, física, química,inglés, español'
-                  calificacion={5}
-                  precio={30000}
-                  numCalificacion={41}
-                  imagen='https://www.w3schools.com/w3images/avatar5.png'
-                />
-              </SwiperSlide>
-            </Swiper>
-          </div>
+          {stateUser.user?.is_student && (
+            <div className='recomendados'>
+              <IonTitle className='textoRec'>RECOMENDADOS</IonTitle>
+              {recomendations.length > 0 ? (
+                <Swiper
+                  effect={"cards"}
+                  pagination={{
+                    clickable: true,
+                  }}
+                  grabCursor={true}
+                  centeredSlides={true}
+                  slidesPerView={"auto"}
+                  cardsEffect={{ slideShadows: false }}
+                  autoplay={{ delay: 2500, disableOnInteraction: false }}
+                  modules={[
+                    EffectCards,
+                    Pagination,
+                    Autoplay,
+                    Navigation,
+                    HashNavigation,
+                  ]}
+                >
+                  {recomendations.map((tutor) => (
+                    <SwiperSlide id={tutor.id}>
+                      <Card
+                        onClick={() => handleCard(tutor.id, tutor.email)}
+                        nombre={tutor.name}
+                        modalidad={tutor.format_tutor}
+                        descripcion={tutor.subjects_tutor}
+                        calificacion={califications(tutor.tutor_opinions)}
+                        precio={tutor.cost_tutor}
+                        numCalificacion={
+                          tutor.tutor_opinions != null
+                            ? tutor.tutor_opinions.length
+                            : 0
+                        }
+                        imagen={tutor.image_url}
+                      />
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              ) : (
+                <div className='divLoader'>
+                  <div className='loader'></div>
+                  {tips[Math.floor(Math.random() * tips.length)]}
+                </div>
+              )}
+            </div>
+          )}
           {IsSearch && !hasResults && (
             <div className='resultados'>
               <IonText>No se encontraron resultados</IonText>
@@ -493,9 +507,7 @@ const Inicio: React.FC = () => {
                   newTutors.map((tutor) => (
                     <Card
                       key={tutor.id}
-                      onClick={() =>
-                        handleCard(tutor.id, tutor.email)
-                      }
+                      onClick={() => handleCard(tutor.id, tutor.email)}
                       nombre={tutor.name}
                       modalidad={tutor.format_tutor}
                       descripcion={tutor.subjects_tutor}
