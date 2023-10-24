@@ -191,7 +191,7 @@ const InfoForm: React.FC = () => {
         </Bg>
       </IonModal>
       <div className='contInfo'>
-        <h1 className='titleInfo'>Información</h1>
+        <h1 className='titleInfo'>Información Personal</h1>
         <Formik
           initialValues={
             {

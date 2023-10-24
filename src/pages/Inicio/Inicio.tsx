@@ -508,7 +508,7 @@ const Inicio: React.FC = () => {
                       onClick={() => handleCard(tutor.id, tutor.email)}
                       nombre={tutor.name}
                       modalidad={tutor.format_tutor}
-                      descripcion={tutor.subjects_tutor}
+                      descripcion={tutor.subjects_tutor.join(", ")}
                       precio={tutor.cost_tutor}
                       calificacion={califications(tutor.tutor_opinions)}
                       numCalificacion={
