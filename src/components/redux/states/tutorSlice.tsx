@@ -57,7 +57,6 @@ export const getRecommendations = createAsyncThunk<
   try {
     const response = await axios.get(`${path}/users/tutores/recommendations/${id}`);
     const tutors = await response.data;
-    console.log(tutors);
     return tutors;
   } catch (error: any) {
     return thunkAPI.rejectWithValue({

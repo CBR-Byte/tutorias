@@ -241,7 +241,7 @@ const UserForm: React.FC = () => {
                           <Field
                             type='checkbox'
                             name='method_tutor'
-                            value='Aprendizaje Activo'
+                            value='Aprendizaje activo'
                           />
                           Aprendizaje Activo
                         </label>
@@ -265,9 +265,9 @@ const UserForm: React.FC = () => {
                           <Field
                             type='checkbox'
                             name='method_tutor'
-                            value='Aprendizaje práctico'
+                            value='Aprendizaje pragmático'
                           />
-                          Aprendizaje Práctico
+                          Aprendizaje Pragmático
                         </label>
                         <label>
                           <Field
@@ -291,7 +291,7 @@ const UserForm: React.FC = () => {
                             name='method_tutor'
                             value='Aprendizaje kinestésico'
                           />
-                          Aprendizaje kinestésico
+                          Aprendizaje Kinestésico
                         </label>
                       </div>
                     </div>

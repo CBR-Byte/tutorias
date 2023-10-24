@@ -91,16 +91,18 @@ const Inicio: React.FC = () => {
   ];
 
   useEffect(() => {
-    if (stateUser.user?.is_student) {
-      dispatch(getRecommendations(stateUser.user?.id)).then((res) => {
-        const all = stateTutors.tutors;
-        const emails = res.payload.map((user: any) => user[0]);
-        const recomendations = emails.map((email: any) => {
-          return all.find((tutor: any) => tutor.email === email);
+    dispatch(getAllTutors([])).then((res) => {
+      if (stateUser.user?.is_student) {
+        const all = res.payload;
+        dispatch(getRecommendations(stateUser.user?.id)).then((res) => {
+          const emails = res.payload.map((user: any) => user[0]);
+          const recomendations = emails.map((email: any) => {
+            return all.find((tutor: any) => tutor.email === email);
+          });
+          setRecomendations(recomendations);
         });
-        setRecomendations(recomendations);
-      });
-    }
+      }
+    });
   }, []);
 
   useEffect(() => {
@@ -132,10 +134,6 @@ const Inicio: React.FC = () => {
       setConversations(usersData);
     });
   }, []);
-
-  useMemo(() => {
-    dispatch(getAllTutors([]));
-  }, [tutores]);
 
   const searchTutors = () => {
     const keyWords = inputRef.current?.value?.toString().split(" ");
