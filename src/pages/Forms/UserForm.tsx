@@ -105,7 +105,7 @@ const UserForm: React.FC = () => {
       <IonGrid>
         <IonRow className='reg'>
           <IonCol>
-            <IonLabel>Formulario</IonLabel>
+            <IonLabel>Formulario de Estudiante</IonLabel>
           </IonCol>
         </IonRow>
         <IonRow className='row'>

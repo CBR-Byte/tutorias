@@ -148,7 +148,7 @@ const UserSettings: React.FC = () => {
                   className='btnProfile'
                   shape='round'
                 >
-                  Editar datos de tutor
+                  Editar datos de Tutor
                 </IonButton>
               </>
             ) : null}
@@ -158,7 +158,7 @@ const UserSettings: React.FC = () => {
                 className='btnProfile'
                 shape='round'
               >
-                Editar formulario de usuario
+                Editar datos de Estudiante
               </IonButton>
             ) : null}
             <IonButton
