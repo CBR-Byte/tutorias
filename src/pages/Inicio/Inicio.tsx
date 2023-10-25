@@ -94,13 +94,21 @@ const Inicio: React.FC = () => {
     dispatch(getAllTutors([])).then((res) => {
       if (stateUser.user?.is_student) {
         const all = res.payload;
-        dispatch(getRecommendations(stateUser.user?.id)).then((res) => {
-          const emails = res.payload.map((user: any) => user[0]);
+        if (stateTutors.recommendations === undefined || stateTutors.recommendations === null) {
+          dispatch(getRecommendations(stateUser.user?.id)).then((res) => {
+            const emails = res.payload.map((user: any) => user[0]);
+            const recomendations = emails.map((email: any) => {
+              return all.find((tutor: any) => tutor.email === email);
+            });
+            setRecomendations(recomendations);
+          });
+        } else {
+          const emails = stateTutors.recommendations.map((user: any) => user[0]);
           const recomendations = emails.map((email: any) => {
             return all.find((tutor: any) => tutor.email === email);
           });
           setRecomendations(recomendations);
-        });
+        }
       }
     });
   }, []);
@@ -318,12 +326,12 @@ const Inicio: React.FC = () => {
                   ]}
                 >
                   {recomendations.map((tutor) => (
-                    <SwiperSlide id={tutor.id}>
+                    <SwiperSlide key={tutor.id}>
                       <Card
                         onClick={() => handleCard(tutor.id, tutor.email)}
                         nombre={tutor.name}
                         modalidad={tutor.format_tutor}
-                        descripcion={tutor.subjects_tutor}
+                        descripcion={tutor.subjects_tutor.join(", ")}
                         calificacion={califications(tutor.tutor_opinions)}
                         precio={tutor.cost_tutor}
                         numCalificacion={

@@ -22,6 +22,7 @@ import {
   updateUserInfo,
 } from "../../components/redux/states/userSlice";
 import { Link } from "react-router-dom";
+import { useHistory } from "react-router";
 
 const validationSchema = Yup.object({
   name: Yup.string().required("Nombre Requerido"),
@@ -48,6 +49,7 @@ const InfoForm: React.FC = () => {
   const stateUser = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
   const [alert, setAlert] = useState<boolean>(false);
+  const history = useHistory();
 
   interface Values {
     name: string;
@@ -206,6 +208,9 @@ const InfoForm: React.FC = () => {
             updateInfo(values);
             dispatch(changeAlertUpdateTrue());
             resetForm();
+            if (values.is_student){
+              history.push("/userForm")
+            }
           }}
         >
           {(formikProps) => (

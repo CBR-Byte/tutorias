@@ -8,6 +8,7 @@ import { refreshToken } from "./userSlice";
 
 interface Tutor {
   tutors: any;
+  recommendations?: any;
 }
 
 const initialState: Tutor = {
@@ -100,6 +101,16 @@ export const updateOpinions = createAsyncThunk<
   }
 });
 
+export const cleanRecommendations = createAsyncThunk("tutor/cleanRecommendations", async (_, thunkAPI) => {
+  try {
+    return null;
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue({
+      errorMessage: error.response.data.detail,
+    });
+  }
+});
+
 export const tutorSlice = createSlice({
   name: "tutors",
   initialState: initialState,
@@ -126,6 +137,12 @@ export const tutorSlice = createSlice({
       };
       tutors[index] = new_opinions;
       state.tutors = tutors;
+    });
+    builder.addCase(getRecommendations.fulfilled, (state, action) => {
+      state.recommendations = action.payload;
+    });
+    builder.addCase(cleanRecommendations.fulfilled, (state, action) => {
+      state.recommendations = action.payload;
     });
   },
 });

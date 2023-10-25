@@ -1,6 +1,7 @@
 import { IonButton, IonIcon, IonTitle } from "@ionic/react"
 import { useAppDispatch } from "../redux/hooks";
 import { logOut } from "../redux/states/userSlice";
+import { cleanRecommendations } from "../redux/states/tutorSlice";
 import { logOut as out} from "ionicons/icons/";
 import "../../pages/Inicio/Inicio.css";
 
@@ -9,6 +10,7 @@ const dispatch = useAppDispatch();
 
     const closeSesion = () => {
         dispatch(logOut());
+        dispatch(cleanRecommendations());
       };
     return (
             <div className='headerInicio'>
