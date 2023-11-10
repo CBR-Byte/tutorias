@@ -380,7 +380,7 @@ const Login: React.FC = () => {
         <IonGrid className='grid'>
           <IonRow>
             <IonCol>
-              <IonTitle className='title'>Tutoriaap</IonTitle>
+              <IonTitle className='title'>TutoriApp</IonTitle>
             </IonCol>
           </IonRow>
           <IonRow className='row'>
