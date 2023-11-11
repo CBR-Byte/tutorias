@@ -501,6 +501,7 @@ export const userSlice = createSlice({
       })
       .addCase(uploadImage.rejected, (state, action) => {
         state.isLoading = false;
+        state.alertForms = true;
         state.errorMessage = action.payload?.errorMessage;
       })
       .addCase(uploadImage.pending, (state) => {
